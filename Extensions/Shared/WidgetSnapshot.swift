@@ -16,10 +16,12 @@ struct WidgetSnapshot: Codable, Equatable {
     var nextEvent: Event?
     var recent: [Meeting] = []
 
-    private static let group = "group.com.meetlaud.app"
+    /// Set from the build settings, so a fork can sign with its own App Group.
+    private static let group = Bundle.main.object(forInfoDictionaryKey: "AppGroupIdentifier") as? String
 
     private static var file: URL? {
-        FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: group)?
+        guard let group else { return nil }
+        return FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: group)?
             .appending(path: "widget.json")
     }
 

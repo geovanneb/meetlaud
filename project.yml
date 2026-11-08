@@ -65,7 +65,7 @@ targets:
       path: App/Meetlaud.entitlements
       properties:
         com.apple.security.application-groups:
-          - group.com.meetlaud.app
+          - $(APP_GROUP_IDENTIFIER)
     info:
       path: App/Info.plist
       properties:
@@ -95,6 +95,7 @@ targets:
             CFBundleURLSchemes:
               - meetlaud
         ITSAppUsesNonExemptEncryption: false
+        AppGroupIdentifier: $(APP_GROUP_IDENTIFIER)
         NSMicrophoneUsageDescription: Meetlaud records your meetings. Audio stays on this device.
         NSCameraUsageDescription: Add photos of slides and whiteboards to your meetings, and scan a pairing code.
         NSLocalNetworkUsageDescription: Meetlaud sends your meetings to a computer you paired, on your own network.
@@ -117,7 +118,7 @@ targets:
           - audio
           - processing
         BGTaskSchedulerPermittedIdentifiers:
-          - com.meetlaud.app.transcribe.*
+          - $(APP_BUNDLE_IDENTIFIER).transcribe.*
   MeetlaudWidgets:
     type: app-extension
     platform: iOS
@@ -132,20 +133,21 @@ targets:
       - sdk: SwiftUI.framework
     settings:
       PRODUCT_NAME: MeetlaudWidgets
-      PRODUCT_BUNDLE_IDENTIFIER: com.meetlaud.app.widgets
+      PRODUCT_BUNDLE_IDENTIFIER: $(APP_BUNDLE_IDENTIFIER).widgets
       SKIP_INSTALL: YES
       LD_RUNPATH_SEARCH_PATHS: $(inherited) @executable_path/Frameworks @executable_path/../../Frameworks
     entitlements:
       path: Extensions/Widgets/MeetlaudWidgets.entitlements
       properties:
         com.apple.security.application-groups:
-          - group.com.meetlaud.app
+          - $(APP_GROUP_IDENTIFIER)
     info:
       path: Extensions/Widgets/Info.plist
       properties:
         CFBundleDisplayName: $(PRODUCT_DISPLAY_NAME)
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        AppGroupIdentifier: $(APP_GROUP_IDENTIFIER)
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
   MeetlaudUITests:
@@ -158,7 +160,7 @@ targets:
     settings:
       GENERATE_INFOPLIST_FILE: YES
       PRODUCT_NAME: MeetlaudUITests
-      PRODUCT_BUNDLE_IDENTIFIER: com.meetlaud.app.uitests
+      PRODUCT_BUNDLE_IDENTIFIER: $(APP_BUNDLE_IDENTIFIER).uitests
 schemes:
   Meetlaud:
     build:

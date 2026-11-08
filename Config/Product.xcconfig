@@ -1,6 +1,10 @@
 // The product name lives here and in the String Catalog, nowhere else.
 PRODUCT_DISPLAY_NAME = Meetlaud
 PRODUCT_NAME = Meetlaud
-PRODUCT_BUNDLE_IDENTIFIER = com.meetlaud.app
+// To run on a device, a fork can set its own APP_BUNDLE_IDENTIFIER in Local.xcconfig.
+// The extension, test, App Group, and background task identifiers derive from it.
+APP_BUNDLE_IDENTIFIER = com.meetlaud.app
+PRODUCT_BUNDLE_IDENTIFIER = $(APP_BUNDLE_IDENTIFIER)
+APP_GROUP_IDENTIFIER = group.$(APP_BUNDLE_IDENTIFIER)
 MARKETING_VERSION = 0.1.0
 CURRENT_PROJECT_VERSION = 1
