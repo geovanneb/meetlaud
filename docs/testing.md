@@ -136,7 +136,7 @@ gates (Linux, seconds) ─┬─► lint + unit tests                        ─
 
 - `LICENSE` (Apache-2.0), `THIRD_PARTY_NOTICES.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`.
 - Issue and PR templates with a checklist.
-- `CLAUDE.md` with rules for agents.
+- `AGENTS.md` with rules for agents (`CLAUDE.md` points to it).
 - Every relevant decision goes into `docs/decisions.md`.
 - Conventional Commits and a generated changelog.
 - No CLA, unless needed later.

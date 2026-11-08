@@ -16,3 +16,7 @@ Extensions/Widgets/Info.plist
 
 # Local agent settings
 .claude/
+
+# Personal agent notes for one clone (see AGENTS.md)
+AGENTS.local.md
+CLAUDE.local.md
