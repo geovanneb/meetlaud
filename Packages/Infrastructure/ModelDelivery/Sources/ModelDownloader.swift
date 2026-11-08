@@ -27,6 +27,10 @@ public final class ModelDownloader: NSObject, ModelInstaller, @unchecked Sendabl
     private var inFlight: [Int: Int64] = [:]
     private var damageRetries: [String: Int] = [:]
     private var pausing: Set<String> = []
+    /// Models being verified and moved. Each file's task checks "all staged?" when it completes, and with several
+    /// files more than one can see yes before the first finish has moved the folder. A second finish would then
+    /// find no staging folder and report a failure over a good install.
+    private var finishing: Set<String> = []
     private var backgroundCompletion: (@Sendable () -> Void)?
 
     public init(
@@ -195,8 +199,10 @@ public final class ModelDownloader: NSObject, ModelInstaller, @unchecked Sendabl
     // MARK: - Finishing
 
     private func finish(_ model: ModelDescriptor) {
+        guard lock.withLock({ finishing.insert(model.id).inserted }) else { return }
         update(model.id, .verifying)
         Task.detached(priority: .utility) { [self] in
+            defer { lock.withLock { _ = finishing.remove(model.id) } }
             do {
                 try verify(model)
                 try FileManager.default.moveItem(at: staging(model.id), to: installed(model.id))
@@ -232,6 +238,8 @@ public final class ModelDownloader: NSObject, ModelInstaller, @unchecked Sendabl
             return damageRetries[model.id, default: 0]
         }
         if retries <= Self.retriesAfterDamage {
+            // The retry finishes on its own later, so this finish must let go first.
+            lock.withLock { _ = finishing.remove(model.id) }
             start(file, of: model)
         } else {
             lock.withLock { damageRetries[model.id] = 0 }

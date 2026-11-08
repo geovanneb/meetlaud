@@ -33,3 +33,4 @@ The first public version. Everything below runs on the device.
 - Speakers: a "Speakers" section at the top of the Summary shows how much each person spoke, their turns, and their longest turn.
 - Transcription: each window is cleaned before the model hears it (rumble filter and leveling of quiet voices), Whisper splits audio at pauses, and vocabulary spellings are given to the engine as hints. The recording itself is never changed.
 - Network activity: the note now mentions the computer you paired, and the history can be cleared.
+- AI models: a model with several files could report a failed install while it was actually fine, when two downloads finished at the same moment.
