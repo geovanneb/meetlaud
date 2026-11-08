@@ -13,7 +13,10 @@ final class ContinuedProcessingLease: BackgroundWorkLease {
         guard !isRequested else { return }
         isRequested = true
         // Must match BGTaskSchedulerPermittedIdentifiers, which starts with the bundle identifier.
-        let prefix = Bundle.main.bundleIdentifier ?? "com.meetlaud.app"
+        guard let prefix = Bundle.main.bundleIdentifier else {
+            isRequested = false
+            return
+        }
         let identifier = "\(prefix).transcribe.\(UUID().uuidString)"
         BGTaskScheduler.shared.register(forTaskWithIdentifier: identifier, using: .main) { [weak self] task in
             guard let task = task as? BGContinuedProcessingTask else { return }

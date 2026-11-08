@@ -51,7 +51,7 @@ DEVELOPMENT_TEAM = YOUR_TEAM_ID
 APP_BUNDLE_IDENTIFIER = com.example.meetlaud
 ```
 
-The project's own identifiers belong to the maintainer's team, so pick a bundle identifier of your own. The widget, App Group, test, and background task identifiers derive from it.
+The project's own identifiers belong to the maintainer's team, so pick a bundle identifier of your own. The widget, App Group, test, and background task identifiers derive from it. Set `APP_BUNDLE_IDENTIFIER`, not `PRODUCT_BUNDLE_IDENTIFIER`, which would change only the app.
 
 In the simulator, the app runs with scripted engines and sample data, so you can work on every screen without downloading models. Useful launch arguments: `--fake-capture --seed-library` for the test library, and `--showcase` for the fictional meetings in the screenshots.
 
