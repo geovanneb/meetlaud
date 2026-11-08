@@ -84,6 +84,7 @@ make ci
 | `make build` | Builds the app | Yes |
 | `make test` | Unit tests (Swift Testing) | Yes |
 | `make test-ui` | UI tests and the accessibility audit | Yes |
+| `make test-ui-smoke` | The UI smoke set that pull requests run in CI | Yes |
 | `make format` | Formats the code | No |
 | `make screenshots` | Regenerates the README pictures in light and dark | Yes |
 
@@ -103,7 +104,7 @@ Then:
 2. **Fork the repo** and create a branch from the latest `main`, named `feat/`, `fix/`, `docs/`, `test/`, `refactor/`, or `chore/` plus a short description (for example `fix/widget-dark-mode`).
 3. **Make your change**, with tests where it makes sense.
 4. **Open a pull request** against `main`. Fill in the template and link the issue (`Closes #123`).
-5. **CI must pass** and a maintainer reviews. We squash-merge, so the PR title becomes the commit message on `main`.
+5. **CI must pass** and a maintainer reviews. A pull request runs lint, unit tests, and a UI smoke set, in about 10 minutes; a documentation-only one takes about a minute. Every UI test runs on `main` and every night ([details](docs/testing.md#cicd)). We squash-merge, so the PR title becomes the commit message on `main`.
 
 ## Keeping pull requests independent
 

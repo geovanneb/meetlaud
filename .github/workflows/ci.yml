@@ -4,15 +4,23 @@ on:
   push:
     branches: [main]
   pull_request:
+  schedule:
+    - cron: "0 18 * * *" # 03:00 in Japan, every UI test against the latest main
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.ref }}
+  # The nightly run has its own group, so it never cancels a push to main, or the other way around.
+  group: ci-${{ github.ref }}-${{ github.event_name == 'schedule' && 'nightly' || 'run' }}
   cancel-in-progress: true
 
+# Two tiers, so a pull request gets an answer in about 10 minutes instead of 30:
+# - A pull request runs lint, unit tests, and the UI smoke set (Tools/ui-smoke-tests.txt) on two macOS machines.
+#   It runs every UI test when it changes the UI tests, CI, the build, or Package.resolved (Tools/ci-scope).
+# - A pull request that only changes documentation skips the macOS jobs.
+# - Every push to main, the nightly run, and a manual run run every UI test, in the four groups below.
 # Where the time goes, and why the jobs look like this:
 # - The UI tests were 28 of 43 minutes, one app launch after another on one simulator. They run in four groups,
 #   on four machines at once. The last group is "everything not named above", so a new test class always runs.
@@ -27,20 +35,45 @@ jobs:
     name: Privacy and architecture gates
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    outputs:
+      ios: ${{ steps.scope.outputs.ios }}
+      full: ${{ steps.scope.outputs.full }}
     steps:
       - uses: actions/checkout@v7
       - run: python3 -m unittest discover -s Tools/tests -q
       - run: Tools/check-architecture
       - run: Tools/check-privacy
       - run: Tools/check-l10n
+      - name: Decide what to run
+        id: scope
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [ "$EVENT" = pull_request ]; then
+            # If the base cannot be read, the diff is empty and ci-scope runs everything.
+            git fetch --quiet --depth=1 origin "$BASE" || true
+            { git diff --name-only "$BASE" HEAD || true; } | Tools/ci-scope > scope.txt
+          else
+            printf 'ios=true\nfull=true\n' > scope.txt
+          fi
+          cat scope.txt
+          cat scope.txt >> "$GITHUB_OUTPUT"
 
   unit:
     name: Lint and unit tests
     needs: gates
+    if: needs.gates.outputs.ios == 'true'
     runs-on: macos-26
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v7
+      # Starts booting while the caches restore, and survives a runner image without the usual simulator.
+      - name: Pick a simulator
+        run: |
+          destination=$(Tools/ci-simulator)
+          echo "DESTINATION=$destination" >> "$GITHUB_ENV"
+          xcrun simctl boot "${destination##*id=}" || true
       - id: xcode
         run: echo "version=$(xcodebuild -version | shasum | cut -c1-12)" >> "$GITHUB_OUTPUT"
       - name: Restore packages
@@ -83,6 +116,7 @@ jobs:
   ui:
     name: UI tests (${{ matrix.name }})
     needs: gates
+    if: needs.gates.outputs.full == 'true'
     runs-on: macos-26
     timeout-minutes: 45
     strategy:
@@ -105,6 +139,12 @@ jobs:
             saves: false
     steps:
       - uses: actions/checkout@v7
+      # Starts booting while the caches restore, and survives a runner image without the usual simulator.
+      - name: Pick a simulator
+        run: |
+          destination=$(Tools/ci-simulator)
+          echo "DESTINATION=$destination" >> "$GITHUB_ENV"
+          xcrun simctl boot "${destination##*id=}" || true
       - id: xcode
         run: echo "version=$(xcodebuild -version | shasum | cut -c1-12)" >> "$GITHUB_OUTPUT"
       - name: Restore packages
@@ -144,15 +184,70 @@ jobs:
             build/CompilationCache.noindex
           key: dd-ui-${{ steps.xcode.outputs.version }}-${{ hashFiles('Packages/Package.resolved') }}-${{ github.sha }}
 
+  ui-smoke:
+    name: UI tests (smoke)
+    needs: gates
+    if: needs.gates.outputs.ios == 'true' && needs.gates.outputs.full != 'true'
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      # Starts booting while the caches restore, and survives a runner image without the usual simulator.
+      - name: Pick a simulator
+        run: |
+          destination=$(Tools/ci-simulator)
+          echo "DESTINATION=$destination" >> "$GITHUB_ENV"
+          xcrun simctl boot "${destination##*id=}" || true
+      - id: xcode
+        run: echo "version=$(xcodebuild -version | shasum | cut -c1-12)" >> "$GITHUB_OUTPUT"
+      - name: Restore packages
+        uses: actions/cache/restore@v4
+        with:
+          path: build/spm
+          key: spm-${{ steps.xcode.outputs.version }}-${{ hashFiles('Packages/Package.resolved') }}
+          restore-keys: spm-${{ steps.xcode.outputs.version }}-
+      - name: Restore build products
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            build/Build
+            build/ModuleCache.noindex
+            build/CompilationCache.noindex
+          key: dd-ui-${{ steps.xcode.outputs.version }}-${{ hashFiles('Packages/Package.resolved') }}-${{ github.sha }}
+          restore-keys: dd-ui-${{ steps.xcode.outputs.version }}-${{ hashFiles('Packages/Package.resolved') }}-
+      - run: brew bundle --file=Brewfile
+      - run: >-
+          make test-ui-smoke XCODEFLAGS="-clonedSourcePackagesDirPath $SPM
+          -resultBundlePath ${{ github.workspace }}/build/results/ui.xcresult"
+      - name: Upload results on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-results-smoke
+          path: build/results
+          retention-days: 7
+
   # The main ruleset requires a check with this name. It passes only when every job above passes, so the rule keeps
   # working however the jobs are split.
   result:
     name: Build and test (iOS)
-    needs: [unit, ui]
+    needs: [gates, unit, ui, ui-smoke]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - run: |
-          echo "unit: ${{ needs.unit.result }}, ui: ${{ needs.ui.result }}"
-          test "${{ needs.unit.result }}" = success && test "${{ needs.ui.result }}" = success
+      # A skipped job passes only when the scope said to skip it: docs-only skips all three, and each tier skips the
+      # other UI job.
+      - env:
+          GATES: ${{ needs.gates.result }}
+          IOS: ${{ needs.gates.outputs.ios }}
+          FULL: ${{ needs.gates.outputs.full }}
+          UNIT: ${{ needs.unit.result }}
+          UI: ${{ needs.ui.result }}
+          SMOKE: ${{ needs.ui-smoke.result }}
+        run: |
+          echo "gates: $GATES, ios: $IOS, full: $FULL, unit: $UNIT, ui: $UI, smoke: $SMOKE"
+          test "$GATES" = success
+          if [ "$IOS" != true ]; then exit 0; fi
+          test "$UNIT" = success
+          if [ "$FULL" = true ]; then test "$UI" = success; else test "$SMOKE" = success; fi

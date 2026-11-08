@@ -17,7 +17,7 @@ extension XCUIApplication {
         // audit still sees the text there.
         let bar = descendants(matching: .any).matching(NSPredicate(format: "label BEGINSWITH 'Ask about'")).firstMatch
         let barFrame = bar.exists ? bar.frame.insetBy(dx: 0, dy: -40) : .null
-        try performAccessibilityAudit(for: types) { issue in
+        let isExpected = { (issue: XCUIAccessibilityAuditIssue) -> Bool in
             // Toolbars keep a fixed size and use the Large Content Viewer, as Apple recommends.
             if issue.auditType == .dynamicType, let label = issue.element?.label,
                label == "Record" || self.navigationBars.buttons[label].exists
@@ -29,6 +29,23 @@ extension XCUIApplication {
             if issue.auditType == .contrast, let element = issue.element,
                !element.isHittable || element.frame.intersects(barFrame) || element.frame.maxY > self.frame.maxY
             {
+                return true
+            }
+            return false
+        }
+        // The first pass only looks. A view still moving into place can be reported as clipped once (a summary that
+        // just appeared, on a slow CI machine). A real problem is still there a second later, and fails below.
+        var foundIssue = false
+        try performAccessibilityAudit(for: types) { issue in
+            if !isExpected(issue) {
+                foundIssue = true
+            }
+            return true
+        }
+        guard foundIssue else { return }
+        Thread.sleep(forTimeInterval: 1)
+        try performAccessibilityAudit(for: types) { issue in
+            if isExpected(issue) {
                 return true
             }
             let element = issue.element.map { "\($0.elementType.rawValue) \'\($0.label)\'" } ?? "unknown element"

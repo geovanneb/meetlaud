@@ -84,6 +84,9 @@ The maintainer **squash-merges**, so the original commits of a merged PR are not
 
 - `make ci` must pass. Without a Mac build, at least `make check` must pass, and say in
   the PR which steps you could not run.
+- CI on a pull request runs only the UI smoke set, unless the PR touches the UI tests, CI,
+  or the build (see `docs/testing.md`). When you change a screen, run its UI test class
+  locally (`make test-ui XCODEFLAGS="-only-testing:MeetlaudUITests/<Class>"`).
 - Use fictional data only. Never put real recordings, real people, or company names into
   code, tests, screenshots, commits, or PR text.
 - Every new dependency needs its license, and its models' licenses, checked and recorded
@@ -106,5 +109,6 @@ make check       # architecture, privacy, and localization rules, no build neede
 make lint        # the rules above, plus formatting
 make test        # unit tests
 make test-ui     # UI tests and accessibility audit
+make test-ui-smoke  # the UI smoke set that pull requests run (Tools/ui-smoke-tests.txt)
 make ci          # everything
 ```
