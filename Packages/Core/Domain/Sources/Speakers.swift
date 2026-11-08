@@ -110,59 +110,6 @@ public protocol SpeakerStore: Sendable {
     func recordings(with person: UUID) async throws -> [RecordingID]
 }
 
-public enum VoiceMatch: Equatable, Sendable {
-    /// Close enough to show the name as a suggestion.
-    case suggested(personID: UUID, score: Float)
-    /// Too close to ignore, too far to name. Keeps "Speaker N".
-    case uncertain(personID: UUID, score: Float)
-    case unknown
-}
-
-/// Compares voices. A wrong name in a meeting record is worse than no name, so the thresholds lean careful.
-public enum VoiceMatcher {
-    /// Provisional until SP-3 measures them on real voices.
-    public static let suggestThreshold: Float = 0.75
-    public static let uncertainThreshold: Float = 0.6
-
-    public static func similarity(_ lhs: [Float], _ rhs: [Float]) -> Float {
-        guard lhs.count == rhs.count, !lhs.isEmpty else { return 0 }
-        var dot: Float = 0
-        var left: Float = 0
-        var right: Float = 0
-        for index in lhs.indices {
-            dot += lhs[index] * rhs[index]
-            left += lhs[index] * lhs[index]
-            right += rhs[index] * rhs[index]
-        }
-        let scale = (left * right).squareRoot()
-        return scale > 0 ? dot / scale : 0
-    }
-
-    public static func match(_ embedding: [Float], against prints: [VoicePrint]) -> VoiceMatch {
-        let scored = prints.map { ($0.personID, similarity(embedding, $0.embedding)) }
-        guard let best = scored.max(by: { $0.1 < $1.1 }) else { return .unknown }
-        if best.1 >= suggestThreshold {
-            return .suggested(personID: best.0, score: best.1)
-        }
-        if best.1 >= uncertainThreshold {
-            return .uncertain(personID: best.0, score: best.1)
-        }
-        return .unknown
-    }
-
-    /// The average of two embeddings, weighted by how much speech each one saw.
-    public static func blend(
-        _ lhs: [Float],
-        weight leftWeight: TimeInterval,
-        _ rhs: [Float],
-        weight rightWeight: TimeInterval,
-    ) -> [Float] {
-        guard lhs.count == rhs.count, leftWeight + rightWeight > 0 else { return rhs }
-        let left = Float(leftWeight / (leftWeight + rightWeight))
-        return zip(lhs, rhs).map { $0 * left + $1 * (1 - left) }
-    }
-}
-
 /// Turns raw turns into the recording's speakers, and recognizes people who were saved before.
 public struct SpeakerPipeline: Sendable {
     public typealias ModelResolver = @Sendable () async -> (model: ModelDescriptor, folder: URL?)?
@@ -235,33 +182,50 @@ public struct SpeakerPipeline: Sendable {
         }
     }
 
-    private static func centroid(_ turns: [SpeakerTurn]) -> [Float] {
+    /// FluidAudio's embeddings are raw, so each turn is normalized before it counts, by its length in time.
+    static func centroid(_ turns: [SpeakerTurn]) -> [Float] {
         guard let size = turns.first(where: { !$0.embedding.isEmpty })?.embedding.count else { return [] }
         var sum = [Float](repeating: 0, count: size)
         for turn in turns where turn.embedding.count == size {
             let weight = Float(turn.end - turn.start)
+            let unit = VoiceMatcher.normalized(turn.embedding)
             for index in sum.indices {
-                sum[index] += turn.embedding[index] * weight
+                sum[index] += unit[index] * weight
             }
         }
-        return sum
+        return VoiceMatcher.normalized(sum)
     }
 
-    /// Each person gets one speaker at most: the closest match wins.
+    /// Each person gets one speaker at most, and each speaker one person. Every pair is scored, and the closest
+    /// pairs are settled first. Asking each speaker for its single best person instead lets two speakers chase the
+    /// same one, and the second goes unnamed even when its own person was a close second.
     private func recognize(_ speakers: inout [Labeled], prints: [VoicePrint]) async throws {
+        guard !prints.isEmpty else { return }
         let people = try await store.people()
-        var taken: Set<UUID> = []
-        let ranked = speakers.indices.compactMap { index -> Candidate? in
-            guard case let .suggested(person, score) = VoiceMatcher.match(
-                speakers[index].speaker.embedding, against: prints,
-            ) else { return nil }
-            return Candidate(index: index, person: person, score: score)
+        let scores: [[Float]] = speakers.map { labeled in
+            prints.map { VoiceMatcher.similarity(labeled.speaker.embedding, $0.embedding) }
         }
-        for match in ranked.sorted(by: { $0.score > $1.score }) where !taken.contains(match.person) {
-            taken.insert(match.person)
-            speakers[match.index].speaker.personID = match.person
-            speakers[match.index].speaker.name = people.first { $0.id == match.person }?.name
-            speakers[match.index].speaker.isSuggested = true
+        var pairs: [Candidate] = []
+        for index in speakers.indices {
+            for (column, print) in prints.enumerated() where scores[index][column] >= VoiceMatcher.suggestThreshold {
+                pairs.append(Candidate(index: index, person: print.personID, score: scores[index][column]))
+            }
+        }
+        var namedSpeakers: Set<Int> = []
+        var taken: Set<UUID> = []
+        for pair in pairs.sorted(by: Candidate.isCloser) {
+            guard !namedSpeakers.contains(pair.index), !taken.contains(pair.person) else { continue }
+            // The lead is measured against people still free: someone already given to a closer voice is no rival.
+            let rival = prints.indices
+                .filter { prints[$0].personID != pair.person && !taken.contains(prints[$0].personID) }
+                .map { scores[pair.index][$0] }
+                .max() ?? -1
+            guard pair.score - rival >= VoiceMatcher.minimumMargin else { continue }
+            namedSpeakers.insert(pair.index)
+            taken.insert(pair.person)
+            speakers[pair.index].speaker.personID = pair.person
+            speakers[pair.index].speaker.name = people.first { $0.id == pair.person }?.name
+            speakers[pair.index].speaker.isSuggested = true
         }
     }
 
@@ -269,6 +233,17 @@ public struct SpeakerPipeline: Sendable {
         let index: Int
         let person: UUID
         let score: Float
+
+        /// Highest score first, then a fixed order, so that the same meeting always gets the same names.
+        static func isCloser(_ lhs: Self, _ rhs: Self) -> Bool {
+            if lhs.score != rhs.score {
+                return lhs.score > rhs.score
+            }
+            if lhs.index != rhs.index {
+                return lhs.index < rhs.index
+            }
+            return lhs.person.uuidString < rhs.person.uuidString
+        }
     }
 }
 

@@ -37,8 +37,11 @@ public actor WhisperKitEngine: TranscriptionEngine {
         loadedModelID = model.id
     }
 
-    public func transcribe(_ window: AudioWindow, language: String?) async throws -> WindowResult {
+    public func transcribe(_ window: AudioWindow, language: String?, hints: [String]) async throws -> WindowResult {
         guard let whisper else { throw TranscriptionError.modelNotInstalled }
+        // Whisper reads a prompt only with the prefill, which needs a language. With "detect", the first window
+        // finds it, and every window after that gets the hints.
+        let prompt = language == nil ? nil : Self.promptTokens(hints, tokenizer: whisper.tokenizer)
         let options = DecodingOptions(
             verbose: false,
             task: .transcribe,
@@ -47,13 +50,27 @@ public actor WhisperKitEngine: TranscriptionEngine {
             detectLanguage: language == nil,
             skipSpecialTokens: true,
             wordTimestamps: false,
-            chunkingStrategy: ChunkingStrategy.none,
+            promptTokens: prompt,
+            // Pieces run side by side. Two keeps memory and heat close to one piece at a time, which this app must
+            // hold for hours; the default of four is meant for short clips.
+            concurrentWorkerCount: 2,
+            // Cuts each window at its pauses into pieces of up to 30 seconds, the length Whisper was trained on.
+            // One long piece makes it seek through silence, which is where it invents text and repeats itself.
+            chunkingStrategy: .vad,
         )
         let results = try await whisper.transcribe(audioArray: window.samples, decodeOptions: options)
         let segments = results.flatMap(\.segments).map { segment in
             SpeechSegment(start: Double(segment.start), end: Double(segment.end), text: segment.text)
         }
         return WindowResult(segments: segments, language: results.first?.language)
+    }
+
+    /// The terms as a comma-separated list, the way Whisper was shown spellings in training.
+    private static func promptTokens(_ hints: [String], tokenizer: (any WhisperTokenizer)?) -> [Int]? {
+        guard !hints.isEmpty, let tokenizer else { return nil }
+        let tokens = tokenizer.encode(text: " " + hints.joined(separator: ", "))
+            .filter { $0 < tokenizer.specialTokens.specialTokenBegin }
+        return tokens.isEmpty ? nil : tokens
     }
 
     public func unload() async {

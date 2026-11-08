@@ -148,6 +148,7 @@ meetlaud://settings/models
 - Tapping a name offers: rename, pick a saved person, apply to all lines or just this one.
 - Long press on a phrase: edit, copy, mark, ask about this.
 - `+` creates another summary in a new tab.
+- **Speakers** sits at the top of the Summary tab once two or more speakers are found. Closed, it is one line: "Ana 62% · Bruno 38%". Open, each person has a row with their share, a bar, time spoken, turns, and longest turn. Tapping a row opens the same sheet as a name in the transcript, to rename or confirm. It stays closed or open as the person left it. Numbers follow the transcript, so corrections count (D-074).
 - `⋯`: Name speakers, Find & Replace, Rename, Move, Merge, Export, Trash.
 
 ### Model missing?
@@ -186,7 +187,7 @@ Help        Help center · Share ideas · About Meetlaud · Licenses
 
 - **AI models** is the new centerpiece. It shows the device status and one model per function (Transcription, Speaker separation, Voice print, Chat & summary, Search), with speed test, download, pause, delete, storage, and continuous recommendations. See [Model management](model-management.md).
 - **Storage & backup** replaces Private Cloud Sync: usage by type, clear cache, iOS backup (off by default, with an explanation), encrypted export.
-- **Network activity** lists each download, with date and destination. It proves the promise.
+- **Network activity** lists each download and each delivery to a paired computer, with date and destination. It proves the promise. "Clear History" empties it after a confirmation, and the empty screen then says the history was cleared.
 
 ## Onboarding
 

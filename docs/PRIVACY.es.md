@@ -10,7 +10,7 @@ Nada de lo que grabas, escribes o preguntas. La grabación, la transcripción, l
 
 La app hace dos tipos de conexión. La segunda es opcional y está apagada hasta que la configures.
 
-1. **Descargas de modelos de IA que tú inicias.** Vienen de Hugging Face, en versiones fijas y con hash verificado. Ajustes > Actividad de red muestra cada una, con la fecha, el servidor y el tamaño.
+1. **Descargas de modelos de IA que tú inicias.** Vienen de Hugging Face, en versiones fijas y con hash verificado. Ajustes > Actividad de red muestra cada una, con la fecha, el servidor y el tamaño. Puedes borrar esa lista; después, la pantalla indica que el historial se borró, en lugar de decir que nada salió.
 
 iOS puede descargar sus propios modelos de idioma para Apple Speech y para la búsqueda. Eso lo hace iOS, no la app, y no incluye nada de tus reuniones.
 

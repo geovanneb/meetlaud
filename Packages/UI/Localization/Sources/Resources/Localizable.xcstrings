@@ -2553,6 +2553,64 @@
         }
       }
     },
+    "detail.speaker_detail" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ spoken · turns: %2$d · longest: %3$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ hablando · intervenciones: %2$d · la más larga: %3$@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "発言 %1$@ · 発言回数: %2$d · 最長: %3$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ de fala · intervenções: %2$d · mais longa: %3$@"
+          }
+        }
+      }
+    },
+    "detail.speakers" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speakers"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Participantes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "話者"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Participantes"
+          }
+        }
+      }
+    },
     "detail.speed" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5105,6 +5163,93 @@
         }
       }
     },
+    "models.network_clear" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear History"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Borrar historial"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "履歴を消去"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Limpar histórico"
+          }
+        }
+      }
+    },
+    "models.network_clear_confirm" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This removes the list of past connections from this device. It does not affect your models or recordings."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esto borra de este dispositivo la lista de conexiones anteriores. No afecta a tus modelos ni a tus grabaciones."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このデバイスから過去の接続の一覧を削除します。モデルや録音には影響しません。"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Isso apaga deste aparelho a lista de conexões anteriores. Seus modelos e gravações não são afetados."
+          }
+        }
+      }
+    },
+    "models.network_cleared_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No connections since you cleared the history"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ninguna conexión desde que borraste el historial"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "履歴を消去してから接続はありません"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenhuma conexão desde que você limpou o histórico"
+          }
+        }
+      }
+    },
     "models.network_empty_title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5140,25 +5285,25 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The app only connects to download models you asked for. Your recordings are never sent."
+            "value" : "The app connects only to download the models you ask for and, if you use a connector such as Get Things Done, to the computer you paired on your local network. Your recordings never go to the internet."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La app solo se conecta para descargar los modelos que pediste. Tus grabaciones nunca se envían."
+            "value" : "La app solo se conecta para descargar los modelos que pidas y, si usas un conector como Get Things Done, al ordenador que vinculaste en tu red local. Tus grabaciones nunca van a internet."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "アプリは、要求されたモデルのダウンロード時のみ接続します。録音が送信されることはありません。"
+            "value" : "アプリが接続するのは、要求したモデルをダウンロードするときと、Get Things Done などのコネクタを使う場合に、ローカルネットワーク上でペアリングしたコンピュータへ送るときだけです。録音がインターネットに送られることはありません。"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O app só se conecta para baixar os modelos que você pediu. Suas gravações nunca são enviadas."
+            "value" : "O app só se conecta para baixar os modelos que você pedir e, se você usa um conector como o Get Things Done, ao computador que você pareou na sua rede local. Suas gravações nunca vão para a internet."
           }
         }
       }

@@ -49,6 +49,17 @@ Meetings run 1 to 3 hours. Every engine processes overlapping chunks, cut at sil
 
 We found no long-audio benchmark for any engine. **Measuring this is one of the goals of SP-2.**
 
+## Before the model hears the audio
+
+Each transcription window is cleaned in memory first (`SpeechConditioner`, D-076). The file on disk stays as recorded.
+
+- **High-pass at 80 Hz.** Removes rumble from air conditioning, traffic, and the phone touching the table.
+- **Speech leveling.** Raises quiet speech toward -23 dBFS, by up to 18 dB, and leaves silence alone. A phone on a table hears the near person much louder than the far one, and Whisper scales each 30 seconds by its loudest moment, so the far voice gets lost.
+- **Splitting at pauses.** WhisperKit cuts each window at silences into pieces of up to 30 seconds (VAD), two at a time. Long pieces with silence are where Whisper invents or repeats text.
+- **Hints.** Vocabulary spellings go to the engine as a Whisper prompt or Apple contextual strings, up to 40 terms, and are still corrected afterwards.
+
+Next, with its own decision: a neural noise suppressor (such as DeepFilterNet or RNNoise) as a downloadable model, for loud rooms.
+
 ## Diarization and voice prints
 
 Pipeline: VAD, segmentation, embeddings, clustering, speech assignment.

@@ -120,6 +120,10 @@ public actor FakeTranscriptStore: TranscriptStore, ModelUsageStore {
     public func networkLog() -> [NetworkLogEntry] {
         log
     }
+
+    public func clearNetworkLog() {
+        log.removeAll()
+    }
 }
 
 public final class FakeWindowSource: AudioWindowSource, @unchecked Sendable {
@@ -159,6 +163,7 @@ public final class FakeWindowSource: AudioWindowSource, @unchecked Sendable {
 public actor FakeTranscriptionEngine: TranscriptionEngine {
     public private(set) var prepared: [String] = []
     public private(set) var windows: [TimeInterval] = []
+    public private(set) var hints: [[String]] = []
     public private(set) var unloads = 0
     public var prepareError: (any Error)?
     /// Fails from this window on.
@@ -177,11 +182,12 @@ public actor FakeTranscriptionEngine: TranscriptionEngine {
         prepared.append(model.id)
     }
 
-    public func transcribe(_ window: AudioWindow, language: String?) async throws -> WindowResult {
+    public func transcribe(_ window: AudioWindow, language: String?, hints: [String]) async throws -> WindowResult {
         if let failAfter, windows.count >= failAfter {
             throw CancellationError()
         }
         windows.append(window.start)
+        self.hints.append(hints)
         return WindowResult(
             segments: [
                 SpeechSegment(start: 1, end: 2, text: "  Text at \(Int(window.start))  "),

@@ -8,13 +8,20 @@ public struct SpeechWindowReader: AudioWindowSource {
     public static let sampleRate = 16000.0
     private let windowDuration: TimeInterval
     private let searchDuration: TimeInterval
+    private let conditioner: SpeechConditioner?
 
     /// - Parameters:
     ///   - windowDuration: Also the most work a crash or a pause can lose.
     ///   - searchDuration: How far before the boundary to look for silence.
-    public init(windowDuration: TimeInterval = 180, searchDuration: TimeInterval = 10) {
+    ///   - conditioner: Cleans each window for the model. Nil hands over the audio exactly as recorded.
+    public init(
+        windowDuration: TimeInterval = 180,
+        searchDuration: TimeInterval = 10,
+        conditioner: SpeechConditioner? = SpeechConditioner(sampleRate: sampleRate),
+    ) {
         self.windowDuration = windowDuration
         self.searchDuration = searchDuration
+        self.conditioner = conditioner
     }
 
     public func duration(of file: URL) async throws -> TimeInterval {
@@ -25,13 +32,20 @@ public struct SpeechWindowReader: AudioWindowSource {
     public func windows(of file: URL, from start: TimeInterval) -> AsyncThrowingStream<AudioWindow, any Error> {
         let windowDuration = windowDuration
         let searchDuration = searchDuration
+        let conditioner = conditioner
         return AsyncThrowingStream(bufferingPolicy: .bufferingOldest(1)) { continuation in
             let task = Task.detached(priority: .utility) {
                 do {
                     var reader = try Reader(file: file, start: start)
                     while let window = try reader.next(window: windowDuration, search: searchDuration) {
                         try Task.checkCancellation()
-                        continuation.yield(window)
+                        guard let conditioner else {
+                            continuation.yield(window)
+                            continue
+                        }
+                        continuation.yield(AudioWindow(
+                            start: window.start, end: window.end, samples: conditioner.process(window.samples),
+                        ))
                     }
                     continuation.finish()
                 } catch {

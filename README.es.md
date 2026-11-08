@@ -69,7 +69,7 @@ Los teléfonos ya son lo bastante rápidos para hacer este trabajo por sí solos
 - Carpetas, búsqueda en todas las transcripciones y un calendario con reuniones y grabaciones.
 - Bloqueo con Face ID y exportación de toda tu biblioteca protegida con contraseña.
 - **Pantalla de modelos de IA:** elige el modelo para cada tarea, mira cuál le va bien a tu dispositivo y haz una prueba de velocidad con tu propio audio.
-- **Pantalla de actividad de red:** muestra cada conexión que la app ha hecho. En una instalación nueva dice "Nada ha salido de este dispositivo".
+- **Pantalla de actividad de red:** muestra cada conexión que hace la app, para descargar modelos o hacia el ordenador que vinculaste. En una instalación nueva dice "Nada ha salido de este dispositivo". Puedes borrar el historial.
 - Interfaz en inglés, japonés, portugués y español, con VoiceOver y tipo de letra dinámico.
 
 <p align="center">

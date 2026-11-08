@@ -69,7 +69,7 @@ Os celulares já são rápidos o bastante para fazer esse trabalho sozinhos. O M
 - Pastas, busca em todas as transcrições e um calendário com reuniões e gravações.
 - Bloqueio com Face ID e exportação de toda a biblioteca protegida por senha.
 - **Tela de modelos de IA:** escolha o modelo de cada tarefa, veja o que cabe no seu aparelho e faça um teste de velocidade com o seu próprio áudio.
-- **Tela de atividade de rede:** lista toda conexão que o app já fez. Numa instalação nova, ela diz "Nada saiu deste aparelho".
+- **Tela de atividade de rede:** lista toda conexão que o app faz, para baixar modelos ou para o computador que você pareou. Numa instalação nova, ela diz "Nada saiu deste aparelho". Você pode limpar o histórico.
 - Interface em inglês, japonês, português e espanhol, com VoiceOver e Tipo Dinâmico.
 
 <p align="center">

@@ -226,10 +226,11 @@ public actor TranscriptionCoordinator {
         let id = job.recordingID
         let folder = try await recordings.recording(id)?.folderID
         let vocabulary = vocabulary().applying(to: folder)
+        let hints = TranscriptionHints.from(vocabulary)
         for try await window in source.windows(of: file, from: job.checkpoint) {
             try Task.checkCancellation()
             guard try await store.job(for: id) != nil else { return nil }
-            let result = try await engine.transcribe(window, language: job.language)
+            let result = try await engine.transcribe(window, language: job.language, hints: hints)
 
             job.checkpoint = window.end
             job.language = job.language ?? result.language

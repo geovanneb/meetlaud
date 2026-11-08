@@ -26,3 +26,10 @@ The first public version. Everything below runs on the device.
 - Network activity screen listing every connection the app makes.
 - Optional, encrypted delivery of new meetings to Get Things Done on your own computer, over your local network.
 - Interface in English, Japanese, Portuguese, and Spanish.
+
+### Fixed and improved since the first build
+- Home: "No recordings yet" no longer covers the upcoming meetings. It now sits under Meeting notes.
+- Speakers: two saved people in the same meeting are both recognized. Matching scores every voice against every person, and voice prints no longer depend on how long or loud each stretch was.
+- Speakers: a "Speakers" section at the top of the Summary shows how much each person spoke, their turns, and their longest turn.
+- Transcription: each window is cleaned before the model hears it (rumble filter and leveling of quiet voices), Whisper splits audio at pauses, and vocabulary spellings are given to the engine as hints. The recording itself is never changed.
+- Network activity: the note now mentions the computer you paired, and the history can be cleared.

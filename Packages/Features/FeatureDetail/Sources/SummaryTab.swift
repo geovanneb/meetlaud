@@ -18,6 +18,13 @@ struct SummaryTab: View {
     @Namespace private var selectionShape
 
     var body: some View {
+        VStack(spacing: 0) {
+            SpeakerShareSection(model: model)
+            content
+        }
+    }
+
+    private var content: some View {
         Group {
             if model.segments.isEmpty {
                 prompt(message: L10n.Summary.needsTranscript) {

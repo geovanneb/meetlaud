@@ -78,7 +78,7 @@ struct VoiceMatcherTests {
     }
 
     @Test func `a middling voice is not named`() {
-        guard case .uncertain = VoiceMatcher.match([1, 1], against: prints([1, 0])) else {
+        guard case .uncertain = VoiceMatcher.match([1, 1.5], against: prints([1, 0])) else {
             Issue.record("Expected uncertainty")
             return
         }
@@ -92,8 +92,19 @@ struct VoiceMatcherTests {
         #expect(VoiceMatcher.match([1, 0], against: []) == .unknown)
     }
 
-    @Test func `blending weighs by speech time`() {
-        #expect(VoiceMatcher.blend([0, 0], weight: 30, [4, 4], weight: 10) == [1, 1])
+    @Test func `two saved people almost equally close leave the voice unnamed`() {
+        let ana = VoicePrint(personID: UUID(), modelID: "m", embedding: [1, 0.1], talkTime: 60)
+        let bia = VoicePrint(personID: UUID(), modelID: "m", embedding: [1, -0.1], talkTime: 60)
+        guard case .uncertain = VoiceMatcher.match([1, 0], against: [ana, bia]) else {
+            Issue.record("Expected uncertainty")
+            return
+        }
+    }
+
+    @Test func `blending weighs by speech time, not by vector length`() {
+        let blended = VoiceMatcher.blend([100, 0], weight: 30, [0, 1], weight: 10)
+        #expect(abs(blended[0] / blended[1] - 3) < 0.0001)
+        #expect(abs(VoiceMatcher.similarity(blended, VoiceMatcher.normalized(blended)) - 1) < 0.0001)
     }
 }
 
@@ -162,6 +173,29 @@ struct SpeakerPipelineTests {
         #expect(named.count == 1)
     }
 
+    @Test func `a voice that is close to two people goes to the one still free`() async throws {
+        // B is a little closer to Geovanne, but A is Geovanne beyond doubt, so B is Karen.
+        let harness = PipelineHarness(turns: [turn("A", 0, 30, [1, 0]), turn("B", 30, 60, [0.8, 0.6])])
+        let geovanne = Person(name: "Geovanne", createdAt: .now)
+        let karen = Person(name: "Karen", createdAt: .now)
+        await harness.store.insert(geovanne)
+        await harness.store.insert(karen)
+        await harness.store.save(VoicePrint(personID: geovanne.id, modelID: "voices", embedding: [1, 0], talkTime: 60))
+        await harness.store.save(VoicePrint(
+            personID: karen.id, modelID: "voices", embedding: [0.1316, 0.9913], talkTime: 60,
+        ))
+
+        try await harness.run([segment(harness.id, 0, 10), segment(harness.id, 40, 50)])
+
+        let speakers = await harness.store.speakers(for: harness.id)
+        #expect(speakers.map(\.name) == ["Geovanne", "Karen"])
+    }
+
+    @Test func `a loud stretch does not outweigh the rest of a voice`() {
+        let centroid = SpeakerPipeline.centroid([turn("A", 0, 1, [100, 0]), turn("A", 1, 4, [0, 1])])
+        #expect(VoiceMatcher.similarity(centroid, [0, 1]) > VoiceMatcher.similarity(centroid, [1, 0]))
+    }
+
     @Test func `voice prints from another model are ignored`() async throws {
         let harness = PipelineHarness(turns: [turn("A", 0, 30, [1, 0])])
         let ana = Person(name: "Ana", createdAt: .now)
@@ -226,7 +260,7 @@ struct SpeakerServiceTests {
         try await harness.service.confirm(speaker)
 
         let print = await harness.store.prints.first
-        #expect(print?.embedding == [1, 1])
+        #expect(abs(VoiceMatcher.similarity(print?.embedding ?? [], [1, 1]) - 1) < 0.0001)
         #expect(print?.talkTime == 40)
     }
 

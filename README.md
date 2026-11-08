@@ -69,7 +69,7 @@ Phones are now fast enough to do this work themselves. Meetlaud uses open AI mod
 - Folders, search across every transcript, a calendar view of meetings and recordings.
 - App lock with Face ID, and password-protected export of your whole library.
 - **AI models screen:** choose the model for each job, see what fits your device, and run a speed test on your own audio.
-- **Network activity screen:** lists every connection the app has ever made. On a fresh install it says "Nothing has left this device".
+- **Network activity screen:** lists every connection the app makes, to download models or to the computer you paired. On a fresh install it says "Nothing has left this device". You can clear the history.
 - Interface in English, Japanese, Portuguese, and Spanish, with VoiceOver and Dynamic Type.
 
 <p align="center">

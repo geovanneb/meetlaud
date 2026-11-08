@@ -10,7 +10,7 @@ Nothing you record, type, or ask. Recording, transcription, speaker separation, 
 
 The app makes two kinds of connection. The second is optional and off until you set it up.
 
-1. **AI model downloads you start.** They go to Hugging Face, at pinned versions with checked hashes. Settings > Network activity lists every one, with the date, the host, and the size.
+1. **AI model downloads you start.** They go to Hugging Face, at pinned versions with checked hashes. Settings > Network activity lists every one, with the date, the host, and the size. You can clear that list; after that, the screen says so instead of claiming nothing ever left.
 
 iOS can fetch its own language models for Apple Speech and for search. iOS does that, not this app, and no meeting content is involved.
 
