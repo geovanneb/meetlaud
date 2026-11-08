@@ -47,7 +47,7 @@ final class AskTests: XCTestCase {
 
     func testASkillStartsAChatThatFollowsIt() {
         app.buttons["drawer.toggle"].tap()
-        app.buttons["drawer.item.tools"].tap()
+        app.buttons["drawer.item.tools"].tapWhenReady()
         let use = app.buttons["skill.use"].firstMatch
         XCTAssertTrue(use.waitForExistence(timeout: 3))
         use.tap()
@@ -93,7 +93,7 @@ final class AskTests: XCTestCase {
 
     func testMemoryCanBeAddedAndDeleted() {
         app.buttons["drawer.toggle"].tap()
-        app.buttons["drawer.item.settings"].tap()
+        app.buttons["drawer.item.settings"].tapWhenReady()
         app.buttons["settings.preferences"].tap()
         let open = app.buttons["preferences.memory"]
         for _ in 0 ..< 4 where !open.isHittable {

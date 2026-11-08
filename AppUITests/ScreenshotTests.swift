@@ -70,7 +70,7 @@ final class ScreenshotTests: XCTestCase {
         app.terminate()
         app.launch()
         app.buttons["drawer.toggle"].tap()
-        app.buttons["drawer.item.settings"].tap()
+        app.buttons["drawer.item.settings"].tapWhenReady()
         let network = app.buttons["settings.network"]
         app.reveal(network)
         network.tap()

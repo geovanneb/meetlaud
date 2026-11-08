@@ -13,7 +13,7 @@ final class LibraryTests: XCTestCase {
 
     private func openLibrary() {
         app.buttons["drawer.toggle"].tap()
-        app.buttons["drawer.item.library"].tap()
+        app.buttons["drawer.item.library"].tapWhenReady()
         XCTAssertTrue(app.descendants(matching: .any)["screen.library"].waitForExistence(timeout: 3))
     }
 
@@ -75,7 +75,7 @@ final class LibraryTests: XCTestCase {
 
     func testDrawerSearchOpensSearch() {
         app.buttons["drawer.toggle"].tap()
-        app.buttons["drawer.search"].tap()
+        app.buttons["drawer.search"].tapWhenReady()
         XCTAssertTrue(app.descendants(matching: .any)["screen.search"].waitForExistence(timeout: 3))
     }
 
@@ -121,7 +121,7 @@ final class LibraryTests: XCTestCase {
 
     private func openLibraryForMove() {
         app.buttons["drawer.toggle"].tap()
-        app.buttons["drawer.item.library"].tap()
+        app.buttons["drawer.item.library"].tapWhenReady()
     }
 
     func testTheCalendarOpensOnTheWeekAndExpandsToTheMonth() throws {

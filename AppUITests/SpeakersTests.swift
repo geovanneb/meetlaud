@@ -60,14 +60,14 @@ final class SpeakersTests: XCTestCase {
 
         app.navigationBars.buttons.firstMatch.tap()
         app.buttons["drawer.toggle"].tap()
-        app.buttons["drawer.item.settings"].tap()
+        app.buttons["drawer.item.settings"].tapWhenReady()
         app.buttons["settings.people"].tap()
         XCTAssertTrue(app.staticTexts["Ana"].waitForExistence(timeout: 3))
     }
 
     func testPeopleStartsEmpty() {
         app.buttons["drawer.toggle"].tap()
-        app.buttons["drawer.item.settings"].tap()
+        app.buttons["drawer.item.settings"].tapWhenReady()
         app.buttons["settings.people"].tap()
         XCTAssertTrue(app.staticTexts["No saved voices"].waitForExistence(timeout: 3))
     }

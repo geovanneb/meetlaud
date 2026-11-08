@@ -31,7 +31,7 @@ final class RecorderTests: XCTestCase {
         let pill = app.buttons["recorder.pill"]
         XCTAssertTrue(pill.waitForExistence(timeout: 2))
         app.buttons["drawer.toggle"].tap()
-        app.buttons["drawer.item.library"].tap()
+        app.buttons["drawer.item.library"].tapWhenReady()
         XCTAssertTrue(pill.waitForExistence(timeout: 2), "The pill must stay on every screen")
         pill.tap()
         XCTAssertTrue(app.buttons["recorder.stop"].waitForExistence(timeout: 2))

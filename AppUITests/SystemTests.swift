@@ -13,7 +13,7 @@ final class SystemTests: XCTestCase {
     private func openSettings() {
         app.launch()
         app.buttons["drawer.toggle"].tap()
-        app.buttons["drawer.item.settings"].tap()
+        app.buttons["drawer.item.settings"].tapWhenReady()
         XCTAssertTrue(app.descendants(matching: .any)["screen.settings"].waitForExistence(timeout: 3))
     }
 

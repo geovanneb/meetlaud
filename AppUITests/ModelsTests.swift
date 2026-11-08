@@ -13,7 +13,7 @@ final class ModelsTests: XCTestCase {
 
     private func openModels() {
         app.buttons["drawer.toggle"].tap()
-        app.buttons["drawer.item.settings"].tap()
+        app.buttons["drawer.item.settings"].tapWhenReady()
         app.buttons["settings.models"].tap()
         XCTAssertTrue(app.descendants(matching: .any)["screen.models"].waitForExistence(timeout: 3))
     }
@@ -64,7 +64,7 @@ final class ModelsTests: XCTestCase {
     func testNetworkActivityStartsEmpty() {
         launch()
         app.buttons["drawer.toggle"].tap()
-        app.buttons["drawer.item.settings"].tap()
+        app.buttons["drawer.item.settings"].tapWhenReady()
         let row = app.buttons["settings.network"]
         app.reveal(row)
         row.tap()
@@ -74,7 +74,7 @@ final class ModelsTests: XCTestCase {
     func testPreferencesOpen() {
         launch()
         app.buttons["drawer.toggle"].tap()
-        app.buttons["drawer.item.settings"].tap()
+        app.buttons["drawer.item.settings"].tapWhenReady()
         app.buttons["settings.preferences"].tap()
         XCTAssertTrue(app.descendants(matching: .any)["screen.preferences"].waitForExistence(timeout: 3))
     }
@@ -107,7 +107,7 @@ final class ModelsTests: XCTestCase {
     func testVocabularyCanBelongToOneFolder() {
         launch(["-transcript.vocabulary", "[]"])
         app.buttons["drawer.toggle"].tap()
-        app.buttons["drawer.item.settings"].tap()
+        app.buttons["drawer.item.settings"].tapWhenReady()
         app.buttons["settings.preferences"].tap()
         let row = app.buttons["preferences.vocabulary"]
         app.reveal(row)
@@ -149,7 +149,7 @@ final class ModelsTests: XCTestCase {
             app.navigationBars.buttons["BackButton"].firstMatch.tap()
         }
         app.buttons["drawer.toggle"].tap()
-        app.buttons["drawer.item.home"].tap()
+        app.buttons["drawer.item.home"].tapWhenReady()
         let row = app.buttons.matching(NSPredicate(format: "label CONTAINS 'Sales meeting'")).firstMatch
         XCTAssertTrue(row.waitForExistence(timeout: 5))
         row.tap()
@@ -157,7 +157,7 @@ final class ModelsTests: XCTestCase {
         XCTAssertTrue(more.waitForExistence(timeout: 5))
         more.tap()
         app.buttons["Transcribe again"].tap()
-        app.buttons["English"].tap()
+        app.buttons["English"].tapWhenReady()
         let wait = app.buttons["transcript.startWhenCharging"].firstMatch
         XCTAssertTrue(wait.waitForExistence(timeout: 3), "A low battery is worth a word before a job")
         XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS 'Battery is low'")).firstMatch
@@ -175,7 +175,7 @@ final class ModelsTests: XCTestCase {
             app.navigationBars.buttons["BackButton"].firstMatch.tap()
         }
         app.buttons["drawer.toggle"].tap()
-        app.buttons["drawer.item.home"].tap()
+        app.buttons["drawer.item.home"].tapWhenReady()
         let row = app.buttons.matching(NSPredicate(format: "label CONTAINS 'Sales meeting'")).firstMatch
         XCTAssertTrue(row.waitForExistence(timeout: 5))
         row.tap()
@@ -183,7 +183,7 @@ final class ModelsTests: XCTestCase {
         XCTAssertTrue(more.waitForExistence(timeout: 5))
         more.tap()
         app.buttons["Transcribe again"].tap()
-        app.buttons["English"].tap()
+        app.buttons["English"].tapWhenReady()
         let start = app.buttons["transcript.startNow"].firstMatch
         if start.waitForExistence(timeout: 2) {
             start.tap()
