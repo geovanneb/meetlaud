@@ -141,6 +141,24 @@ struct SpeakerPipelineTests {
         #expect(speakers.first?.talkTime == 30)
     }
 
+    @Test func `a voice heard for a moment does not become a speaker`() async throws {
+        let harness = PipelineHarness(turns: [turn("A", 0, 30), turn("B", 30, 31), turn("A", 31, 60)])
+        try await harness.run([segment(harness.id, 0, 10), segment(harness.id, 29, 32)])
+        let speakers = await harness.store.speakers(for: harness.id)
+        #expect(speakers.count == 1)
+        #expect(await harness.store.assignments.count == 2, "The short sound's phrase goes to the voice around it")
+    }
+
+    @Test func `a count the person chose reaches the engine and keeps every voice`() async throws {
+        let harness = PipelineHarness(turns: [turn("A", 0, 30), turn("B", 30, 31, [0, 1])])
+        try await harness.transcripts.append(
+            [segment(harness.id, 0, 10)], job: TranscriptionJob(recordingID: harness.id, modelID: "m", language: nil),
+        )
+        try await harness.pipeline.run(id: harness.id, file: URL(fileURLWithPath: "/tmp/a.m4a"), speakers: .exactly(2))
+        #expect(await harness.engine.requested == [.exactly(2)])
+        #expect(await harness.store.speakers(for: harness.id).count == 2)
+    }
+
     @Test func `the engine is released afterwards`() async throws {
         let harness = PipelineHarness(turns: [turn("A", 0, 5)])
         try await harness.run([segment(harness.id, 0, 5)])
@@ -290,5 +308,21 @@ struct SpeakerServiceTests {
         try await harness.service.delete(person)
         #expect(await harness.store.prints.isEmpty)
         #expect(await harness.store.everyone.isEmpty)
+    }
+}
+
+struct VoiceSeparationTests {
+    @Test func `voices far apart are distinct people`() {
+        let turns = [turn("A", 0, 10, [1, 0]), turn("B", 10, 20, [0, 1]), turn("C", 20, 30, [-1, 0.1])]
+        #expect(VoiceSeparation.areDistinct(turns))
+    }
+
+    @Test func `two close voices might be one person`() {
+        let turns = [turn("A", 0, 10, [1, 0]), turn("B", 10, 20, [0.9, 0.3]), turn("C", 20, 30, [0, 1])]
+        #expect(!VoiceSeparation.areDistinct(turns))
+    }
+
+    @Test func `one voice has no pair to compare`() {
+        #expect(VoiceSeparation.closestPair([turn("A", 0, 10)]) == nil)
     }
 }

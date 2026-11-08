@@ -28,6 +28,13 @@ The first public version. Everything below runs on the device.
 - Interface in English, Japanese, Portuguese, and Spanish.
 
 ### Fixed and improved since the first build
+- Work in progress is always visible: after recording, the Summary and Transcript tabs show the steps of the transcription, a bar that keeps moving while the model loads, elapsed time, and time left once it can be measured. Home and Library rows show the same state as a badge.
+- Speakers: when the app finds too few voices, "Detect again" lets you say how many people spoke. A voice heard for less than 2 seconds no longer becomes a speaker.
+- Speakers: the automatic count now finds people whose voices are clearly different even when the model first merges them. Four people at a table were found as one before.
+- The recording pill reacts to the finger and can be tapped anywhere on it, not only on its text line.
+- Transcripts: a phrase the model repeats over and over is folded into one copy with "[×N]", and pieces with only punctuation are dropped.
+- Storage & backup and AI model storage show space as one bar, next to what is free on the device. Model downloads show progress for every step, not only the download.
+- Folders and the Speakers section open and close with motion, and with a fade when Reduce Motion is on.
 - Home: "No recordings yet" no longer covers the upcoming meetings. It now sits under Meeting notes.
 - Speakers: two saved people in the same meeting are both recognized. Matching scores every voice against every person, and voice prints no longer depend on how long or loud each stretch was.
 - Speakers: a "Speakers" section at the top of the Summary shows how much each person spoke, their turns, and their longest turn.

@@ -2,12 +2,6 @@ import Domain
 import Foundation
 import Localization
 
-extension Int64 {
-    var fileSize: String {
-        formatted(.byteCount(style: .file))
-    }
-}
-
 extension ModelRole {
     var title: String {
         switch self {

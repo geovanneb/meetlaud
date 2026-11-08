@@ -8,6 +8,14 @@ import SwiftUI
 public struct LibraryView: View {
     @Bindable private var library: LibraryController
     @Environment(AppRouter.self) private var router
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// Shows each meeting's transcription where it is listed, as Home does.
+    private let center: TranscriptionCenter?
+
+    public init(library: LibraryController, center: TranscriptionCenter? = nil) {
+        self.library = library
+        self.center = center
+    }
 
     @State private var isSelecting = false
     @State private var selection: Set<RecordingID> = []
@@ -18,10 +26,6 @@ public struct LibraryView: View {
     @State private var renamingRecording: Recording?
     @State private var movingRecording: Recording?
     @State private var name = ""
-
-    public init(library: LibraryController) {
-        self.library = library
-    }
 
     public var body: some View {
         content
@@ -89,7 +93,7 @@ public struct LibraryView: View {
     @ViewBuilder private var content: some View {
         if isSelecting {
             List(library.active, selection: $selection) { recording in
-                RecordingRow(recording: recording)
+                RecordingRow(recording: recording, progress: center?.progress[recording.id])
                     .listRowBackground(Color.clear)
                     .tag(recording.id)
             }
@@ -133,7 +137,7 @@ public struct LibraryView: View {
     }
 
     private var mainFolder: some View {
-        DisclosureGroup(isExpanded: $isMainExpanded) {
+        DisclosureGroup(isExpanded: $isMainExpanded.animation(disclosure)) {
             recordings(in: nil)
         } label: {
             folderLabel(name: L10n.Library.recordings, count: library.recordings(in: nil).count, symbol: "mic")
@@ -145,10 +149,12 @@ public struct LibraryView: View {
         DisclosureGroup(isExpanded: Binding(
             get: { expanded.contains(folder.id) },
             set: { isOn in
-                if isOn {
-                    expanded.insert(folder.id)
-                } else {
-                    expanded.remove(folder.id)
+                withAnimation(disclosure) {
+                    if isOn {
+                        expanded.insert(folder.id)
+                    } else {
+                        expanded.remove(folder.id)
+                    }
                 }
             },
         )) {
@@ -177,24 +183,12 @@ public struct LibraryView: View {
         }
     }
 
-    private func folderLabel(name: String, count: Int, symbol: String) -> some View {
-        HStack(spacing: Spacing.small) {
-            Image(systemName: symbol)
-                .foregroundStyle(Color.dsSecondaryText)
-                .frame(width: Spacing.large)
-                .accessibilityHidden(true)
-            RowLabel(name, detail: L10n.Library.itemCount(count))
-        }
-        .padding(.vertical, Spacing.xSmall)
-        .accessibilityElement(children: .combine)
-    }
-
     private func recordings(in folder: FolderID?) -> some View {
         ForEach(library.recordings(in: folder)) { recording in
             Button {
                 router.push(.recording(recording.id, at: nil))
             } label: {
-                RecordingRow(recording: recording)
+                RecordingRow(recording: recording, progress: center?.progress[recording.id])
             }
             .buttonStyle(.plain)
             .listRowBackground(Color.clear)
@@ -267,5 +261,25 @@ public struct LibraryView: View {
                 .accessibilityIdentifier("library.more")
             }
         }
+    }
+}
+
+private extension LibraryView {
+    func folderLabel(name: String, count: Int, symbol: String) -> some View {
+        HStack(spacing: Spacing.small) {
+            Image(systemName: symbol)
+                .foregroundStyle(Color.dsSecondaryText)
+                .frame(width: Spacing.large)
+                .accessibilityHidden(true)
+            RowLabel(name, detail: L10n.Library.itemCount(count))
+        }
+        .padding(.vertical, Spacing.xSmall)
+        .accessibilityElement(children: .combine)
+    }
+
+    /// Opening and closing a folder slides its rows in and out, so the person sees where they came from. The
+    /// change has to be animated where it happens: a list does not animate a disclosure by itself.
+    var disclosure: Animation {
+        reduceMotion ? Motion.reduced : Motion.standard
     }
 }

@@ -16,17 +16,17 @@ public struct StorageBackupView: View {
         List {
             Section(title: L10n.System.usage) {
                 if let usage = controller.usage {
-                    row(L10n.System.usageRecordings, usage.recordings)
-                    row(L10n.System.usageLibrary, usage.library)
-                    row(L10n.System.usageModels, usage.models)
-                    row(L10n.System.usageCache, usage.cache)
+                    usageSummary(usage)
                     Button(action: controller.clearCache) {
                         ActionRow(title: L10n.System.clearCache)
                     }
                     .buttonStyle(.plain)
                     .accessibilityIdentifier("storage.clearCache")
                 } else {
-                    ProgressView()
+                    // Measuring a large library takes a moment. The bar stays in place, moving, so the screen
+                    // does not jump when the numbers arrive.
+                    ActivityBar(fraction: nil)
+                        .padding(.vertical, Spacing.medium)
                 }
             }
             .listRowBackground(Color.clear)
@@ -85,8 +85,47 @@ public struct StorageBackupView: View {
         .accessibilityIdentifier("screen.storage")
     }
 
-    private func row(_ title: String, _ bytes: Int64) -> some View {
-        LabeledContent(title, value: bytes.formatted(.byteCount(style: .file)))
+    /// What the app takes, as parts of one bar, and what is still free on the device.
+    private func usageSummary(_ usage: StorageUsage) -> some View {
+        let parts = [
+            UsagePart(
+                id: "recordings",
+                title: L10n.System.usageRecordings,
+                value: usage.recordings,
+                formatted: usage.recordings.fileSize,
+            ),
+            UsagePart(
+                id: "models",
+                title: L10n.System.usageModels,
+                value: usage.models,
+                formatted: usage.models.fileSize,
+            ),
+            UsagePart(
+                id: "library",
+                title: L10n.System.usageLibrary,
+                value: usage.library,
+                formatted: usage.library.fileSize,
+            ),
+            UsagePart(id: "cache", title: L10n.System.usageCache, value: usage.cache, formatted: usage.cache.fileSize),
+        ]
+        return VStack(alignment: .leading, spacing: Spacing.compact) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(L10n.System.usageInUse(usage.total.fileSize))
+                    .font(.dsHeading)
+                    .foregroundStyle(Color.dsPrimaryText)
+                Spacer(minLength: Spacing.small)
+            }
+            // The whole bar is the app's share next to what is free, when iOS says, so "how full" is visible.
+            UsageBar(parts: parts, total: usage.available.map { usage.total + $0 })
+            if let available = usage.available {
+                LabeledContent(L10n.System.usageFree, value: available.fileSize)
+                    .font(.dsMeta)
+                    .foregroundStyle(Color.dsSecondaryText)
+            }
+        }
+        .padding(.vertical, Spacing.small)
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("storage.usage")
     }
 }
 
@@ -109,8 +148,15 @@ private struct ArchiveStatus: View {
     var body: some View {
         switch outcome {
         case let .working(fraction):
-            ProgressView(value: fraction)
-                .accessibilityIdentifier("archive.progress")
+            HStack(spacing: Spacing.compact) {
+                ActivityBar(fraction: fraction)
+                Text(fraction.formatted(.percent.precision(.fractionLength(0))))
+                    .font(.dsMeta.monospacedDigit())
+                    .foregroundStyle(Color.dsPrimaryText)
+                    .contentTransition(.numericText())
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityIdentifier("archive.progress")
         case let .failed(reason):
             Text(message(reason))
                 .foregroundStyle(Color.dsRecord)

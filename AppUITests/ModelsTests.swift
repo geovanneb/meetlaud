@@ -166,6 +166,48 @@ final class ModelsTests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Waits for a charger"].waitForExistence(timeout: 3))
     }
 
+    func testATranscriptionShowsItsStepsWhileItRuns() {
+        launch(["--slow-transcription", "-library.sort", "newest"])
+        openFastModel()
+        app.buttons["model.download"].tap()
+        XCTAssertTrue(app.buttons["model.delete"].waitForExistence(timeout: 5))
+        for _ in 0 ..< 4 where !app.buttons["drawer.toggle"].isHittable {
+            app.navigationBars.buttons["BackButton"].firstMatch.tap()
+        }
+        app.buttons["drawer.toggle"].tap()
+        app.buttons["drawer.item.home"].tap()
+        let row = app.buttons.matching(NSPredicate(format: "label CONTAINS 'Sales meeting'")).firstMatch
+        XCTAssertTrue(row.waitForExistence(timeout: 5))
+        row.tap()
+        let more = app.buttons["detail.more"]
+        XCTAssertTrue(more.waitForExistence(timeout: 5))
+        more.tap()
+        app.buttons["Transcribe again"].tap()
+        app.buttons["English"].tap()
+        let start = app.buttons["transcript.startNow"].firstMatch
+        if start.waitForExistence(timeout: 2) {
+            start.tap()
+        }
+        let card = app.descendants(matching: .any)["transcript.status"]
+        XCTAssertTrue(card.waitForExistence(timeout: 5), "Work in progress is shown, with its steps")
+        XCTAssertTrue(app.staticTexts["Preparing the model"].exists)
+        XCTAssertTrue(app.staticTexts["Turning speech into text"].exists)
+        keep("transcription-preparing")
+        XCTAssertTrue(
+            app.staticTexts.containing(NSPredicate(format: "label CONTAINS 'elapsed'")).firstMatch
+                .waitForExistence(timeout: 6),
+            "Time passing shows that the app is not stuck",
+        )
+        keep("transcription-running")
+    }
+
+    private func keep(_ name: String) {
+        let shot = XCTAttachment(screenshot: app.screenshot())
+        shot.name = name
+        shot.lifetime = .keepAlways
+        add(shot)
+    }
+
     func testModelsPassAccessibilityAudit() throws {
         launch()
         openModels()

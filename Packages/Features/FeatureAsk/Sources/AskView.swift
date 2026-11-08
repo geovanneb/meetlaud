@@ -131,7 +131,7 @@ struct IndexingRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.xSmall) {
-            ProgressView(value: progress.fraction)
+            ActivityBar(fraction: progress.fraction)
             Text(L10n.Ask.indexing(progress.done, progress.total))
                 .font(.dsNote)
                 .foregroundStyle(Color.dsSecondaryText)

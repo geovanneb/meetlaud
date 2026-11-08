@@ -46,17 +46,28 @@ struct SummaryDocument: View {
     }
 
     private func statusRow(_ progress: SummaryProgress) -> some View {
-        VStack(alignment: .leading, spacing: Spacing.small) {
-            ProgressView(value: progress.fraction)
-            Text(Self.status(progress))
-                .font(.dsMeta)
-                .foregroundStyle(Color.dsSecondaryText)
+        // Same vocabulary as a transcription: a waiting state is a badge, work is a bar that never stands still.
+        VStack(alignment: .leading, spacing: Spacing.compact) {
+            switch progress.phase {
+            case .queued, .waiting:
+                StatusBadge(
+                    Self.status(progress), tone: progress.phase == .waiting ? .attention : .waiting,
+                    symbol: progress.phase == .waiting ? "pause.circle" : "hourglass",
+                )
                 .accessibilityIdentifier("summary.status")
-            Button(L10n.Common.cancel) {
+            case .reading, .writing:
+                ActivityBar(fraction: progress.fraction > 0 ? progress.fraction : nil)
+                Text(Self.status(progress))
+                    .font(.dsMeta)
+                    .foregroundStyle(Color.dsSecondaryText)
+                    .accessibilityIdentifier("summary.status")
+            }
+            Button(L10n.Common.cancel, role: .cancel) {
                 Task { await model.cancel(summary) }
             }
-            .buttonStyle(.borderless)
+            .secondaryAction(.regular)
         }
+        .dsCard()
     }
 
     private static func status(_ progress: SummaryProgress) -> String {

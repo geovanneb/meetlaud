@@ -66,6 +66,15 @@ public final class TranscriptionCenter {
         )
     }
 
+    public func canSeparateSpeakers() async -> Bool {
+        await coordinator.canSeparateSpeakers()
+    }
+
+    /// Separates voices again, with the number of people the person knows spoke.
+    public func redetectSpeakers(_ id: RecordingID, count: SpeakerCount) async {
+        try? await coordinator.redetectSpeakers(id, count: count)
+    }
+
     public func cancel(_ id: RecordingID) async {
         try? await coordinator.cancel(id)
     }

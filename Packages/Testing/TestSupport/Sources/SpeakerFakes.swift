@@ -5,6 +5,8 @@ public actor FakeDiarizationEngine: DiarizationEngine {
     public var turns: [SpeakerTurn]
     public var error: (any Error)?
     public private(set) var unloads = 0
+    /// The count each run was asked for, in order.
+    public private(set) var requested: [SpeakerCount] = []
 
     public init(turns: [SpeakerTurn] = []) {
         self.turns = turns
@@ -16,7 +18,8 @@ public actor FakeDiarizationEngine: DiarizationEngine {
 
     public func prepare(model _: ModelDescriptor, folder _: URL?) async throws {}
 
-    public func diarize(file _: URL) async throws -> [SpeakerTurn] {
+    public func diarize(file _: URL, speakers: SpeakerCount) async throws -> [SpeakerTurn] {
+        requested.append(speakers)
         if let error {
             throw error
         }

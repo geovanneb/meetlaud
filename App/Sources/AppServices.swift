@@ -194,7 +194,9 @@ struct Services {
                 ? DeviceCondition(isCharging: false, batteryLevel: 0.15)
                 : DeviceCondition()),
             assets: FakeSpeechAssets(),
-            engines: [.whisperKit: FakeTranscriptionEngine()],
+            engines: [.whisperKit: FakeTranscriptionEngine(
+                delay: arguments.contains("--slow-transcription") ? .seconds(4) : .zero,
+            )],
             lease: FakeLease(),
             speakers: speakers,
             diarizer: FakeDiarizationEngine(),

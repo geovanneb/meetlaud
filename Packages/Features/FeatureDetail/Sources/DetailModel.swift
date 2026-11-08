@@ -179,6 +179,16 @@ public final class DetailModel {
         center.progress[id]
     }
 
+    /// Voices separated again on a finished transcript. The text is there, so only the speakers show work.
+    var isRedetectingSpeakers: Bool {
+        progress?.phase == .separatingSpeakers && transcript?.isComplete == true
+    }
+
+    /// A transcription at work, with its steps. Nil while only voices are separated again.
+    var transcriptionProgress: JobProgress? {
+        isRedetectingSpeakers ? nil : progress
+    }
+
     func transcribe(language: String?, whenCharging: Bool = false) async -> TranscribeOutcome {
         await center.transcribe(id, language: language, whenCharging: whenCharging)
     }
@@ -193,6 +203,15 @@ public final class DetailModel {
 
     func restore(_ version: TranscriptVersion) async {
         await center.restore(version)
+        await refreshTranscript()
+    }
+
+    func canSeparateSpeakers() async -> Bool {
+        await center.canSeparateSpeakers()
+    }
+
+    func redetectSpeakers(_ count: SpeakerCount) async {
+        await center.redetectSpeakers(id, count: count)
         await refreshTranscript()
     }
 

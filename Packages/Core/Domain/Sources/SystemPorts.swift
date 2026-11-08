@@ -92,12 +92,15 @@ public struct StorageUsage: Hashable, Sendable {
     public let library: Int64
     public let models: Int64
     public let cache: Int64
+    /// Space still free on the device, when iOS says. Nil in tests and when it cannot tell.
+    public let available: Int64?
 
-    public init(recordings: Int64, library: Int64, models: Int64, cache: Int64) {
+    public init(recordings: Int64, library: Int64, models: Int64, cache: Int64, available: Int64? = nil) {
         self.recordings = recordings
         self.library = library
         self.models = models
         self.cache = cache
+        self.available = available
     }
 
     public var total: Int64 {

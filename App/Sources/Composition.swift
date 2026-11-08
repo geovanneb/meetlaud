@@ -27,7 +27,7 @@ struct Composition {
                 onRecordEvent: record,
                 onImport: { container.library.presentFilePicker() },
             )
-        case .library: LibraryView(library: container.library)
+        case .library: LibraryView(library: container.library, center: container.transcription)
         case .ask: AskView(controller: container.ask)
         case .tools: ToolsView(
                 center: container.summaries,

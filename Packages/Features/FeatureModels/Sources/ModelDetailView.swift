@@ -92,11 +92,18 @@ struct ModelDetailView: View {
     @ViewBuilder
     private func actions(_ fit: ModelFit) -> some View {
         if let title = state.title {
-            Text(title)
-                .accessibilityIdentifier("model.state")
+            HStack(spacing: Spacing.small) {
+                if state.isWorking {
+                    ProgressRing(fraction: state.progress)
+                }
+                Text(title)
+                    .contentTransition(.numericText())
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityIdentifier("model.state")
         }
-        if let progress = state.progress {
-            ProgressView(value: progress)
+        if state.isWorking {
+            ActivityBar(fraction: state.progress)
         }
         switch state {
         case .notInstalled, .failed:

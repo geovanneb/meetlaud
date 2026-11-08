@@ -16,12 +16,19 @@ public struct RecordingRow: View {
     }
 
     public var body: some View {
-        RowLabel(recording.title, detail: detail)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.vertical, Spacing.xSmall)
-            .contentShape(.rect)
-            .accessibilityElement(children: .combine)
-            .accessibilityIdentifier("recording.row")
+        VStack(alignment: .leading, spacing: Spacing.xSmall) {
+            RowLabel(recording.title, detail: detail)
+            if let progress {
+                progress.badge
+                    .transition(.opacity)
+            }
+        }
+        .motion(Motion.standard, value: progress?.phase)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.vertical, Spacing.xSmall)
+        .contentShape(.rect)
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("recording.row")
     }
 
     private var detail: String {
@@ -29,9 +36,6 @@ public struct RecordingRow: View {
         parts.append(recording.status == .capturing ? L10n.Recorder.statusRecording : recording.duration.clock)
         if recording.wasRecovered {
             parts.append(L10n.Recorder.recovered)
-        }
-        if let progress {
-            parts.append(progress.statusText)
         }
         return parts.joined(separator: " · ")
     }

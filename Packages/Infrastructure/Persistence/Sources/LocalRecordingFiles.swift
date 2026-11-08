@@ -111,6 +111,8 @@ extension LocalRecordingFiles: StorageManaging {
             library: database,
             models: Self.size(of: root.appending(path: "models")),
             cache: Self.size(of: FileManager.default.temporaryDirectory),
+            available: (try? root.resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey]))?
+                .volumeAvailableCapacityForImportantUsage,
         )
     }
 

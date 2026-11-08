@@ -15,6 +15,21 @@ public extension Color {
     static let dsAction = Color(light: 0x2F6FD0, dark: 0x5E9BF0)
     /// Text and icons on top of `dsAction`. White fails contrast on the lighter blue of Dark Mode.
     static let dsOnAction = Color(light: 0xFFFFFF, dark: 0x0F0F0F)
+    /// Work that finished well: a step that is done. Never the only sign, a symbol always goes with it.
+    static let dsPositive = Color(light: 0x2E7D32, dark: 0x6CCB72)
+    /// Something that needs the person, without being an error: waiting for a charger, a hot device.
+    static let dsAttention = Color(light: 0x9A5B00, dark: 0xF2B04E)
+    /// The empty part of a bar or a ring.
+    static let dsTrack = Color(light: 0xE4E4E4, dark: 0x343437)
+    /// Parts of one whole, as in a storage bar. In order, and each one apart from the next in both themes.
+    /// Red stays out: it belongs to recording.
+    static let dsSeries: [Color] = [
+        dsAction,
+        Color(light: 0x1C8C84, dark: 0x4CC7BD),
+        Color(light: 0x8A5CC7, dark: 0xB494EE),
+        Color(light: 0xB36B00, dark: 0xF0A94A),
+        Color(light: 0x7A7A7A, dark: 0x9A9A9E),
+    ]
 
     private init(light: UInt32, dark: UInt32) {
         self.init(uiColor: UIColor { traits in

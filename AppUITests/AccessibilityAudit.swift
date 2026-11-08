@@ -25,8 +25,9 @@ extension XCUIApplication {
                 return true
             }
             // Text scrolled behind a bar exists but cannot be seen, so its contrast means nothing.
+            // So is text cut off by the bottom of the screen, a line that only shows its top few points.
             if issue.auditType == .contrast, let element = issue.element,
-               !element.isHittable || element.frame.intersects(barFrame)
+               !element.isHittable || element.frame.intersects(barFrame) || element.frame.maxY > self.frame.maxY
             {
                 return true
             }

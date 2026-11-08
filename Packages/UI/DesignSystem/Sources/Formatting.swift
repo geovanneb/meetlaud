@@ -8,3 +8,10 @@ public extension TimeInterval {
         return duration.formatted(.time(pattern: pattern))
     }
 }
+
+public extension Int64 {
+    /// `1.2 GB`. Used wherever a size on disk appears, so every screen counts bytes the same way.
+    var fileSize: String {
+        formatted(.byteCount(style: .file))
+    }
+}

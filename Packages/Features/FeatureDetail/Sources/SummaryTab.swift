@@ -19,14 +19,26 @@ struct SummaryTab: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            // Transcribing, or transcribing again: the work shows where the person lands, above what is there.
+            if let progress = model.transcriptionProgress {
+                TranscriptionStatusCard(progress: progress) {
+                    Task { await model.cancelTranscription() }
+                }
+                .padding(Spacing.medium)
+                .riseTransition()
+            }
             SpeakerShareSection(model: model)
             content
         }
+        .motion(Motion.standard, value: model.progress == nil)
     }
 
     private var content: some View {
         Group {
-            if model.segments.isEmpty {
+            if model.segments.isEmpty, model.transcriptionProgress != nil {
+                // The card above says what is happening. Asking for a transcript now would contradict it.
+                EmptyView()
+            } else if model.segments.isEmpty {
                 prompt(message: L10n.Summary.needsTranscript) {
                     Button(L10n.Summary.openTranscript, action: onOpenTranscript)
                         .primaryAction()

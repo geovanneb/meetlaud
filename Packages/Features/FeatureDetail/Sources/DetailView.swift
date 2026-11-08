@@ -235,18 +235,12 @@ public struct DetailView: View {
     }
 
     @ViewBuilder private func transcriptTab(_ proxy: ScrollViewProxy) -> some View {
-        if let progress = model.progress {
-            VStack(spacing: Spacing.small) {
-                ProgressView(value: progress.fraction)
-                Text(progress.statusText)
-                    .font(.dsMeta)
-                    .foregroundStyle(Color.dsSecondaryText)
-                    .accessibilityIdentifier("transcript.status")
-                Button(L10n.Common.cancel) {
-                    Task { await model.cancelTranscription() }
-                }
+        if let progress = model.transcriptionProgress {
+            TranscriptionStatusCard(progress: progress) {
+                Task { await model.cancelTranscription() }
             }
             .padding(Spacing.medium)
+            .riseTransition()
         }
         if model.segments.isEmpty, model.progress == nil {
             VStack(spacing: Spacing.medium) {
