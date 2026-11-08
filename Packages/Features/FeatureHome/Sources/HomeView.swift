@@ -194,18 +194,19 @@ public struct HomeView: View {
                 .foregroundStyle(Color.dsSecondaryText)
                 .padding(.bottom, Spacing.small)
                 .accessibilityHidden(true)
+            // Two texts, not one combined element: the accessibility audit cannot tell that a combined node follows
+            // Dynamic Type, and fails it. VoiceOver reads them one after the other, as in `EmptyState`.
             Text(L10n.Home.emptyTitle)
                 .font(.dsSectionTitle)
+                .accessibilityAddTraits(.isHeader)
+                .accessibilityIdentifier("home.empty")
             Text(L10n.Home.emptyMessage)
                 .font(.dsMeta)
                 .foregroundStyle(Color.dsSecondaryText)
         }
         .multilineTextAlignment(.center)
-        .fixedSize(horizontal: false, vertical: true)
         .frame(maxWidth: .infinity)
         .padding(.vertical, Spacing.large)
-        .accessibilityElement(children: .combine)
-        .accessibilityIdentifier("home.empty")
         .listRowBackground(Color.clear)
         .listRowSeparator(.hidden)
     }

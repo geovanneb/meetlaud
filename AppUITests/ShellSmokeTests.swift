@@ -66,7 +66,23 @@ final class ShellSmokeTests: XCTestCase {
         XCTAssertTrue(app.descendants(matching: .any)["screen.models"].waitForExistence(timeout: 3))
     }
 
+    /// Home is a long page: with a calendar, upcoming meetings sit above the notes. The audit enlarges text, pushes the
+    /// last rows off the screen, and reports that as missing Dynamic Type, so that check runs on its own below.
     func testHomePassesAccessibilityAudit() throws {
-        try app.auditAccessibility()
+        try app.auditAccessibility(for: .all.subtracting(.dynamicType))
+    }
+
+    func testHomeWorksAtTheLargestTextSize() {
+        app.terminate()
+        app.launchArguments += ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
+        app.launch()
+        XCTAssertTrue(app.descendants(matching: .any)["screen.home"].waitForExistence(timeout: 5))
+        // The list builds rows as they come on screen, so the empty state only exists after scrolling to it.
+        let empty = app.staticTexts["home.empty"]
+        for _ in 0 ..< 8 where !empty.exists {
+            app.swipeUp()
+        }
+        app.reveal(empty)
+        XCTAssertTrue(empty.isHittable, "The empty state must stay reachable, under the upcoming meetings")
     }
 }
