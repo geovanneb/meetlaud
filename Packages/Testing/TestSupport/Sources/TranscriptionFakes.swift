@@ -287,6 +287,8 @@ public actor FakeInstaller: ModelInstaller {
     public nonisolated let events: AsyncStream<(id: String, state: InstallState)>
     private let continuation: AsyncStream<(id: String, state: InstallState)>.Continuation
     private var installed: Set<String>
+    /// Every install asked for, in order.
+    public private(set) var installs: [String] = []
 
     /// The voice model is small enough that tests can treat it as already there.
     public init(installed: Set<String> = ["fake-voices"]) {
@@ -303,6 +305,7 @@ public actor FakeInstaller: ModelInstaller {
     }
 
     public func install(_ model: ModelDescriptor, allowsCellular _: Bool) {
+        installs.append(model.id)
         continuation.yield((model.id, .downloading(received: 50, total: 100)))
         installed.insert(model.id)
         continuation.yield((model.id, .ready))

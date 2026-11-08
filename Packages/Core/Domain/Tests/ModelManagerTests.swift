@@ -125,6 +125,42 @@ struct ModelManagerTests {
         #expect(await harness.usage.selection(for: .transcription) == .automatic)
     }
 
+    /// Waits up to two seconds for the manager to hear an installer event.
+    private func waitFor(_ harness: Harness, _ id: String, until match: (InstallState) -> Bool) async -> Bool {
+        let deadline = ContinuousClock.now + .seconds(2)
+        while ContinuousClock.now < deadline {
+            if await match(harness.manager.makeSnapshot().state(of: id)) {
+                return true
+            }
+            try? await Task.sleep(for: .milliseconds(10))
+        }
+        return false
+    }
+
+    @Test func `resuming the setup resumes only what was paused, and download all skips it`() async throws {
+        let harness = Harness()
+        await harness.manager.start()
+        let setup = await harness.manager.makeSnapshot().missingFromSetup.map(\.id)
+        let paused = try #require(setup.first)
+        await harness.manager.pause(paused)
+        let didPause = await waitFor(harness, paused) {
+            if case .paused = $0 {
+                true
+            } else {
+                false
+            }
+        }
+        try #require(didPause, "The manager never heard the pause")
+
+        await harness.manager.installRecommended()
+        #expect(await !harness.installer.installs.contains(paused), "A model on its way is left alone")
+        #expect(await Set(harness.installer.installs) == Set(setup.dropFirst()))
+
+        let before = await harness.installer.installs.count
+        await harness.manager.resumeSetup()
+        #expect(await Array(harness.installer.installs.dropFirst(before)) == [paused])
+    }
+
     @Test func `with no installed model there is nothing to use`() async {
         let harness = Harness()
         #expect(await harness.manager.model(for: .transcription, language: "en") == nil)
