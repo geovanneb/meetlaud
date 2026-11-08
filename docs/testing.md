@@ -115,12 +115,13 @@ GitHub Actions with macOS runners. Every pull request and every push to `main` r
 
 ```
 gates (Linux, seconds) ─┬─► lint + unit tests                        ─┐
-                        ├─► UI tests: Summary, System                 ├─► "Build and test (iOS)"
+                        ├─► UI tests: Summary                         ├─► "Build and test (iOS)"
+                        ├─► UI tests: System                          │
                         ├─► UI tests: Models, Library                 │
                         └─► UI tests: every other class               ─┘
 ```
 
-- **Why split.** In one job, CI took about 43 minutes, 28 of them UI tests launching the app one after another. The UI tests now run in three groups on three machines at once. The last group skips the classes named in the others, so a new test class runs without touching the workflow. When a group grows much slower than the others, move a class out of it.
+- **Why split.** In one job, CI took about 43 minutes, 28 of them UI tests launching the app one after another. The UI tests now run in four groups on four machines at once. The last group skips the classes named in the others, so a new test class runs without touching the workflow. When a group grows much slower than the others, move a class out of it.
 - **Caches.** Packages (`build/spm`) and build products are cached, so MLX, WhisperKit, and FluidAudio are not compiled again on every run. Only `main` saves caches, and pull requests start from them. A change to `Package.resolved` or to Xcode starts a fresh cache.
 - **No separate build step.** The UI tests build the app, so a compile error still fails CI.
 - **Required check.** The `main` ruleset requires "Build and test (iOS)". It is a small final job that passes only when the unit job and all UI groups pass, so splitting jobs never needs a ruleset change.

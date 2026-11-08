@@ -34,4 +34,4 @@ The first public version. Everything below runs on the device.
 - Transcription: each window is cleaned before the model hears it (rumble filter and leveling of quiet voices), Whisper splits audio at pauses, and vocabulary spellings are given to the engine as hints. The recording itself is never changed.
 - Network activity: the note now mentions the computer you paired, and the history can be cleared.
 - AI models: a model with several files could report a failed install while it was actually fine, when two downloads finished at the same moment.
-- CI: unit tests and UI tests run side by side, UI tests in three groups, with packages and build products cached. A failed job keeps its test results for a week.
+- CI: unit tests and UI tests run side by side, UI tests in four groups, with packages and build products cached. A failed job keeps its test results for a week.

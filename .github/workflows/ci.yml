@@ -14,8 +14,8 @@ concurrency:
   cancel-in-progress: true
 
 # Where the time goes, and why the jobs look like this:
-# - The UI tests were 28 of 43 minutes, one app launch after another on one simulator. They run in three groups,
-#   on three machines at once. The last group is "everything not named above", so a new test class always runs.
+# - The UI tests were 28 of 43 minutes, one app launch after another on one simulator. They run in four groups,
+#   on four machines at once. The last group is "everything not named above", so a new test class always runs.
 # - MLX, WhisperKit, and FluidAudio took most of each build. Packages and build products are cached, so a pull
 #   request recompiles only what changed. Only main saves caches, so every branch starts from main's.
 # - Unit tests and UI tests run side by side, and the UI tests build the app, so there is no separate build step.
@@ -89,9 +89,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: summary and system
-            tests: -only-testing:MeetlaudUITests/SummaryTests -only-testing:MeetlaudUITests/SystemTests
+          - name: summary
+            tests: -only-testing:MeetlaudUITests/SummaryTests
             saves: true
+          - name: system
+            tests: -only-testing:MeetlaudUITests/SystemTests
+            saves: false
           - name: models and library
             tests: -only-testing:MeetlaudUITests/ModelsTests -only-testing:MeetlaudUITests/LibraryTests
             saves: false
