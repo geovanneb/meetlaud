@@ -122,6 +122,8 @@ public protocol ModelUsageStore: Sendable {
     func stats() async throws -> [ModelRunStat]
     func logNetwork(_ entry: NetworkLogEntry) async throws
     func networkLog() async throws -> [NetworkLogEntry]
+    /// Only the person can do this, from Network activity. The app never trims the log by itself.
+    func clearNetworkLog() async throws
 }
 
 public struct NetworkLogEntry: Identifiable, Hashable, Sendable {

@@ -75,6 +75,12 @@ public enum L10n {
 
     public enum Detail {
         public static var export: String { text("detail.export") }
+        public static var speakers: String { text("detail.speakers") }
+        /// "12:04 spoken · turns: 8 · longest: 3:10"
+        public static func speakerDetail(time: String, turns: Int, longest: String) -> String {
+            String(format: text("detail.speaker_detail"), time, turns, longest)
+        }
+
         public static var exportWhat: String { text("detail.export_what") }
         public static var exportSpeakers: String { text("detail.export_speakers") }
         public static var exportTimestamps: String { text("detail.export_timestamps") }
@@ -204,6 +210,9 @@ public enum L10n {
         public static var networkActivity: String { text("models.network_activity") }
         public static var networkEmptyTitle: String { text("models.network_empty_title") }
         public static var networkNote: String { text("models.network_note") }
+        public static var clearNetworkLog: String { text("models.network_clear") }
+        public static var clearNetworkLogConfirm: String { text("models.network_clear_confirm") }
+        public static var networkClearedTitle: String { text("models.network_cleared_title") }
         public static var notInstalled: String { text("models.not_installed") }
         public static var mode: String { text("models.mode") }
         public static var automatic: String { text("models.automatic") }

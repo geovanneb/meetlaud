@@ -113,7 +113,30 @@ public enum TranscriptionError: Error, Equatable {
 
 /// Turns speech into text. Every engine in the app sits behind this, and passes the same contract tests.
 public protocol TranscriptionEngine: ModelRunner {
-    func transcribe(_ window: AudioWindow, language: String?) async throws -> WindowResult
+    /// - Parameter hints: Names and terms likely to be said, such as the person's vocabulary. Engines use them to
+    ///   lean toward the right spelling. They are a nudge, never inserted as text.
+    func transcribe(_ window: AudioWindow, language: String?, hints: [String]) async throws -> WindowResult
+}
+
+public extension TranscriptionEngine {
+    func transcribe(_ window: AudioWindow, language: String?) async throws -> WindowResult {
+        try await transcribe(window, language: language, hints: [])
+    }
+}
+
+/// What the engines are told to expect. Short on purpose: Whisper reads about 220 tokens of prompt at most, and a
+/// long prompt is more likely to be repeated back in a silent stretch.
+public enum TranscriptionHints {
+    public static let limit = 40
+
+    public static func from(_ vocabulary: [VocabularyEntry]) -> [String] {
+        var seen: Set<String> = []
+        return vocabulary
+            .map { $0.written.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty && seen.insert($0.lowercased()).inserted }
+            .prefix(limit)
+            .map(\.self)
+    }
 }
 
 /// Reads a file as a sequence of windows, so that memory stays flat however long the meeting is.

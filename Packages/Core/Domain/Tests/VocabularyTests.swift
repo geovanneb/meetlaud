@@ -79,3 +79,20 @@ struct FolderVocabularyTests {
         #expect(decoded.first?.written == "Anna")
     }
 }
+
+struct TranscriptionHintsTests {
+    @Test func `the engine is told the spellings, once each, with blanks left out`() {
+        let hints = TranscriptionHints.from([
+            VocabularyEntry(heard: "ana", written: "Anna"),
+            VocabularyEntry(heard: "anna", written: " anna "),
+            VocabularyEntry(heard: "x", written: "  "),
+            VocabularyEntry(heard: "meet laud", written: "Meetlaud"),
+        ])
+        #expect(hints == ["Anna", "Meetlaud"])
+    }
+
+    @Test func `the list stays short`() {
+        let many = (0 ..< 100).map { VocabularyEntry(heard: "w\($0)", written: "Word\($0)") }
+        #expect(TranscriptionHints.from(many).count == TranscriptionHints.limit)
+    }
+}

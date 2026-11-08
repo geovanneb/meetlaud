@@ -6,18 +6,24 @@ on:
   pull_request:
   workflow_dispatch:
 
-# Read-only by default. Pull requests from forks never get write access or secrets.
 permissions:
   contents: read
 
-# A newer push to the same branch or PR cancels the run that is still going.
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+# Where the time goes, and why the jobs look like this:
+# - The UI tests were 28 of 43 minutes, one app launch after another on one simulator. They run in four groups,
+#   on four machines at once. The last group is "everything not named above", so a new test class always runs.
+# - MLX, WhisperKit, and FluidAudio took most of each build. Packages and build products are cached, so a pull
+#   request recompiles only what changed. Only main saves caches, so every branch starts from main's.
+# - Unit tests and UI tests run side by side, and the UI tests build the app, so there is no separate build step.
+env:
+  SPM: ${{ github.workspace }}/build/spm
+
 jobs:
   gates:
-    # The rules that protect the promise (architecture, privacy, localization) need no Mac, so they fail fast.
     name: Privacy and architecture gates
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -28,15 +34,125 @@ jobs:
       - run: Tools/check-privacy
       - run: Tools/check-l10n
 
-  build-and-test:
-    name: Build and test (iOS)
+  unit:
+    name: Lint and unit tests
     needs: gates
     runs-on: macos-26
-    timeout-minutes: 90
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v7
+      - id: xcode
+        run: echo "version=$(xcodebuild -version | shasum | cut -c1-12)" >> "$GITHUB_OUTPUT"
+      - name: Restore packages
+        uses: actions/cache/restore@v4
+        with:
+          path: build/spm
+          key: spm-${{ steps.xcode.outputs.version }}-${{ hashFiles('Packages/Package.resolved') }}
+          restore-keys: spm-${{ steps.xcode.outputs.version }}-
+      - name: Restore build products
+        uses: actions/cache/restore@v4
+        with:
+          path: build/package
+          key: dd-unit-${{ steps.xcode.outputs.version }}-${{ hashFiles('Packages/Package.resolved') }}-${{ github.sha }}
+          restore-keys: dd-unit-${{ steps.xcode.outputs.version }}-${{ hashFiles('Packages/Package.resolved') }}-
       - run: brew bundle --file=Brewfile
       - run: make lint
-      - run: make build
-      - run: make test
-      - run: make test-ui
+      - run: >-
+          make test XCODEFLAGS="-clonedSourcePackagesDirPath $SPM
+          -resultBundlePath ${{ github.workspace }}/build/results/unit.xcresult"
+      - name: Upload results on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-results
+          path: build/results
+          retention-days: 7
+      - name: Save packages
+        if: github.ref == 'refs/heads/main'
+        uses: actions/cache/save@v4
+        with:
+          path: build/spm
+          key: spm-${{ steps.xcode.outputs.version }}-${{ hashFiles('Packages/Package.resolved') }}
+      - name: Save build products
+        if: github.ref == 'refs/heads/main'
+        uses: actions/cache/save@v4
+        with:
+          path: build/package
+          key: dd-unit-${{ steps.xcode.outputs.version }}-${{ hashFiles('Packages/Package.resolved') }}-${{ github.sha }}
+
+  ui:
+    name: UI tests (${{ matrix.name }})
+    needs: gates
+    runs-on: macos-26
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: summary
+            tests: -only-testing:MeetlaudUITests/SummaryTests
+            saves: true
+          - name: system
+            tests: -only-testing:MeetlaudUITests/SystemTests
+            saves: false
+          - name: models and library
+            tests: -only-testing:MeetlaudUITests/ModelsTests -only-testing:MeetlaudUITests/LibraryTests
+            saves: false
+          - name: everything else
+            tests: >-
+              -skip-testing:MeetlaudUITests/SummaryTests -skip-testing:MeetlaudUITests/SystemTests
+              -skip-testing:MeetlaudUITests/ModelsTests -skip-testing:MeetlaudUITests/LibraryTests
+            saves: false
+    steps:
+      - uses: actions/checkout@v7
+      - id: xcode
+        run: echo "version=$(xcodebuild -version | shasum | cut -c1-12)" >> "$GITHUB_OUTPUT"
+      - name: Restore packages
+        uses: actions/cache/restore@v4
+        with:
+          path: build/spm
+          key: spm-${{ steps.xcode.outputs.version }}-${{ hashFiles('Packages/Package.resolved') }}
+          restore-keys: spm-${{ steps.xcode.outputs.version }}-
+      - name: Restore build products
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            build/Build
+            build/ModuleCache.noindex
+            build/CompilationCache.noindex
+          key: dd-ui-${{ steps.xcode.outputs.version }}-${{ hashFiles('Packages/Package.resolved') }}-${{ github.sha }}
+          restore-keys: dd-ui-${{ steps.xcode.outputs.version }}-${{ hashFiles('Packages/Package.resolved') }}-
+      - run: brew bundle --file=Brewfile
+      - run: >-
+          make test-ui XCODEFLAGS="-clonedSourcePackagesDirPath $SPM
+          -resultBundlePath ${{ github.workspace }}/build/results/ui.xcresult
+          ${{ matrix.tests }}"
+      - name: Upload results on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-results-${{ strategy.job-index }}
+          path: build/results
+          retention-days: 7
+      - name: Save build products
+        if: github.ref == 'refs/heads/main' && matrix.saves
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            build/Build
+            build/ModuleCache.noindex
+            build/CompilationCache.noindex
+          key: dd-ui-${{ steps.xcode.outputs.version }}-${{ hashFiles('Packages/Package.resolved') }}-${{ github.sha }}
+
+  # The main ruleset requires a check with this name. It passes only when every job above passes, so the rule keeps
+  # working however the jobs are split.
+  result:
+    name: Build and test (iOS)
+    needs: [unit, ui]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - run: |
+          echo "unit: ${{ needs.unit.result }}, ui: ${{ needs.ui.result }}"
+          test "${{ needs.unit.result }}" = success && test "${{ needs.ui.result }}" = success

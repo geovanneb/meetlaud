@@ -73,6 +73,11 @@ public final class ModelsController {
         networkLog = await (try? usage.networkLog()) ?? []
     }
 
+    func clearNetworkLog() async {
+        try? await usage.clearNetworkLog()
+        await refreshNetworkLog()
+    }
+
     func installRecommended() {
         Task { await manager.installRecommended() }
     }

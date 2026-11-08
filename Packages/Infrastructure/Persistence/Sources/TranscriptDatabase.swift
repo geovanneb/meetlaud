@@ -308,6 +308,12 @@ extension DatabaseStore: TranscriptStore, ModelUsageStore {
         }
     }
 
+    public func clearNetworkLog() async throws {
+        try await database.write { db in
+            try db.execute(sql: "DELETE FROM networkLog")
+        }
+    }
+
     public func networkLog() async throws -> [NetworkLogEntry] {
         try await database.read { db in
             try Row.fetchAll(db, sql: "SELECT * FROM networkLog ORDER BY date DESC").compactMap { row in

@@ -10,7 +10,7 @@ Nada do que você grava, digita ou pergunta. Gravação, transcrição, identifi
 
 O app faz dois tipos de conexão. O segundo é opcional e fica desligado até você configurar.
 
-1. **Downloads de modelos de IA que você inicia.** Vêm do Hugging Face, em versões fixas e com hash verificado. Ajustes > Atividade de rede lista cada um, com data, endereço e tamanho.
+1. **Downloads de modelos de IA que você inicia.** Vêm do Hugging Face, em versões fixas e com hash verificado. Ajustes > Atividade de rede lista cada um, com data, endereço e tamanho. Você pode limpar essa lista; depois disso, a tela avisa que o histórico foi limpo, em vez de dizer que nada saiu.
 
 O iOS pode baixar os próprios modelos de idioma para o Apple Speech e para a busca. Quem faz isso é o iOS, não o app, e nenhum conteúdo de reunião está envolvido.
 

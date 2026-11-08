@@ -11,14 +11,16 @@ final class AskTests: XCTestCase {
         app.launch()
     }
 
+    /// Waits are generous: on a CI machine the first push into a meeting can take more than 3 seconds, and the test
+    /// failed there while still on Home. Locally each step takes well under a second.
     private func openMeetingChat() {
         let row = app.buttons.containing(NSPredicate(format: "label CONTAINS %@", "Sales meeting")).firstMatch
-        XCTAssertTrue(row.waitForExistence(timeout: 3))
+        XCTAssertTrue(row.waitForExistence(timeout: 10))
         row.tap()
         let ask = app.buttons["detail.ask"]
-        XCTAssertTrue(ask.waitForExistence(timeout: 3))
+        XCTAssertTrue(ask.waitForExistence(timeout: 10))
         ask.tap()
-        XCTAssertTrue(app.descendants(matching: .any)["ask.chat"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.descendants(matching: .any)["ask.chat"].waitForExistence(timeout: 10))
     }
 
     func testAMeetingAnswerOpensTheAudioAtItsSource() {

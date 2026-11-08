@@ -79,13 +79,30 @@ final class LibraryTests: XCTestCase {
         XCTAssertTrue(app.descendants(matching: .any)["screen.search"].waitForExistence(timeout: 3))
     }
 
+    /// A long page: the audit enlarges the text, pushes the folders at the bottom off the screen, and reports that as
+    /// missing Dynamic Type, depending on timing (it failed on CI and passed locally). That check runs on its own
+    /// below.
     func testLibraryPassesAccessibilityAudit() throws {
         openLibrary()
         let shot = XCTAttachment(screenshot: app.screenshot())
         shot.name = "library"
         shot.lifetime = .keepAlways
         add(shot)
-        try app.auditAccessibility()
+        try app.auditAccessibility(for: .all.subtracting(.dynamicType))
+    }
+
+    func testLibraryWorksAtTheLargestTextSize() {
+        app.terminate()
+        app.launchArguments += ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
+        app.launch()
+        openLibrary()
+        // The list builds rows as they come on screen, so the last folder only exists after scrolling to it.
+        let folder = app.buttons.containing(NSPredicate(format: "label CONTAINS %@", "Clients")).firstMatch
+        for _ in 0 ..< 8 where !folder.exists {
+            app.swipeUp()
+        }
+        app.reveal(folder)
+        XCTAssertTrue(folder.isHittable, "The last folder must stay reachable")
     }
 
     func testARecordingMovesToAFolderWithASwipe() {

@@ -34,16 +34,6 @@ public struct HomeView: View {
             meetingNotes
         }
         .screenList()
-        .overlay {
-            if model.recordings.isEmpty {
-                EmptyState(
-                    title: L10n.Home.emptyTitle,
-                    message: L10n.Home.emptyMessage,
-                    symbol: "doc.text.magnifyingglass",
-                )
-                .allowsHitTesting(false)
-            }
-        }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .screenBackground()
         .task { await model.refreshEvents() }
@@ -160,6 +150,11 @@ public struct HomeView: View {
 
     private var meetingNotes: some View {
         Section {
+            // Inside the section, not over the whole list: an overlay lands on top of the
+            // upcoming events once a calendar is connected.
+            if model.recordings.isEmpty {
+                emptyNotes
+            }
             ForEach(sort.sorted(model.recordings)) { recording in
                 Button {
                     router.push(.recording(recording.id, at: nil))
@@ -190,6 +185,30 @@ public struct HomeView: View {
             }
         }
         .listSectionSeparator(.hidden)
+    }
+
+    private var emptyNotes: some View {
+        VStack(spacing: Spacing.small) {
+            Image(systemName: "doc.text.magnifyingglass")
+                .font(.dsHero)
+                .foregroundStyle(Color.dsSecondaryText)
+                .padding(.bottom, Spacing.small)
+                .accessibilityHidden(true)
+            // Two texts, not one combined element: the accessibility audit cannot tell that a combined node follows
+            // Dynamic Type, and fails it. VoiceOver reads them one after the other, as in `EmptyState`.
+            Text(L10n.Home.emptyTitle)
+                .font(.dsSectionTitle)
+                .accessibilityAddTraits(.isHeader)
+                .accessibilityIdentifier("home.empty")
+            Text(L10n.Home.emptyMessage)
+                .font(.dsMeta)
+                .foregroundStyle(Color.dsSecondaryText)
+        }
+        .multilineTextAlignment(.center)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, Spacing.large)
+        .listRowBackground(Color.clear)
+        .listRowSeparator(.hidden)
     }
 }
 

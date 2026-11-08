@@ -23,7 +23,7 @@ public actor AppleSpeechEngine: TranscriptionEngine {
 
     public func unload() async {}
 
-    public func transcribe(_ window: AudioWindow, language: String?) async throws -> WindowResult {
+    public func transcribe(_ window: AudioWindow, language: String?, hints: [String]) async throws -> WindowResult {
         let locale = AppleLocale.locale(for: language)
         let transcriber = SpeechTranscriber(
             locale: locale,
@@ -49,6 +49,11 @@ public actor AppleSpeechEngine: TranscriptionEngine {
                 ))
             }
             return segments
+        }
+        if !hints.isEmpty {
+            let context = AnalysisContext()
+            context.contextualStrings[.general] = hints
+            try await analyzer.setContext(context)
         }
         try await analyzer.start(inputSequence: input)
         feed.yield(AnalyzerInput(buffer: buffer))

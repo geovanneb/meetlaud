@@ -1,6 +1,9 @@
 SIMULATOR ?= iPhone 17 Pro
 DESTINATION := platform=iOS Simulator,name=$(SIMULATOR)
 DERIVED := build
+## Extra xcodebuild flags, empty locally. CI uses them for a shared package folder, result bundles, and to split
+## the UI tests across machines, e.g. make test-ui XCODEFLAGS="-only-testing:MeetlaudUITests/SummaryTests".
+XCODEFLAGS ?=
 
 .PHONY: bootstrap generate format lint check test-tools test test-ui build ci screenshots
 
@@ -27,15 +30,15 @@ lint: check
 
 build: generate
 	xcodebuild -project Meetlaud.xcodeproj -scheme Meetlaud -destination '$(DESTINATION)' \
-		-derivedDataPath $(DERIVED) -quiet build
+		-derivedDataPath $(DERIVED) -quiet $(XCODEFLAGS) build
 
 test:
 	cd Packages && xcodebuild -scheme MeetlaudKit-Package -destination '$(DESTINATION)' \
-		-derivedDataPath ../$(DERIVED)/package -quiet test
+		-derivedDataPath ../$(DERIVED)/package -quiet $(XCODEFLAGS) test
 
 test-ui: generate
 	xcodebuild -project Meetlaud.xcodeproj -scheme Meetlaud -destination '$(DESTINATION)' \
-		-derivedDataPath $(DERIVED) -quiet test
+		-derivedDataPath $(DERIVED) -quiet $(XCODEFLAGS) test
 
 ci: lint build test test-ui
 

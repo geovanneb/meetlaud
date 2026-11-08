@@ -55,6 +55,9 @@ struct StorageView: View {
 
 public struct NetworkActivityView: View {
     private let controller: ModelsController
+    @State private var isConfirmingClear = false
+    /// After a clear, "nothing has left this device" would no longer be true.
+    @AppStorage("network.clearedAt") private var clearedAt: Double = 0
 
     public init(controller: ModelsController) {
         self.controller = controller
@@ -64,7 +67,7 @@ public struct NetworkActivityView: View {
         Group {
             if controller.networkLog.isEmpty {
                 EmptyState(
-                    title: L10n.Models.networkEmptyTitle,
+                    title: clearedAt > 0 ? L10n.Models.networkClearedTitle : L10n.Models.networkEmptyTitle,
                     message: L10n.Models.networkNote,
                     symbol: "checkmark.shield",
                 )
@@ -92,6 +95,25 @@ public struct NetworkActivityView: View {
         .screenBackground()
         .navigationTitle(L10n.Models.networkActivity)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if !controller.networkLog.isEmpty {
+                ToolbarItem(placement: .primaryAction) {
+                    Button(L10n.Models.clearNetworkLog) { isConfirmingClear = true }
+                        .accessibilityIdentifier("network.clear")
+                }
+            }
+        }
+        .confirmationDialog(
+            L10n.Models.clearNetworkLogConfirm,
+            isPresented: $isConfirmingClear,
+            titleVisibility: .visible,
+        ) {
+            Button(L10n.Models.clearNetworkLog, role: .destructive) {
+                clearedAt = Date().timeIntervalSince1970
+                Task { await controller.clearNetworkLog() }
+            }
+            Button(L10n.Common.cancel, role: .cancel) {}
+        }
         .task { await controller.refreshNetworkLog() }
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("screen.network")
