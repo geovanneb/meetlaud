@@ -111,16 +111,26 @@ A Mac CLI using the same domain logic, plus a benchmark app for real devices.
 
 ## CI/CD
 
-GitHub Actions with macOS runners. Every pull request and every push to `main` runs:
+GitHub Actions with macOS runners, in two tiers. A pull request should get an answer in about 10 minutes, and `main` still runs every test.
 
 ```
 gates (Linux, seconds) ─┬─► lint + unit tests                        ─┐
-                        ├─► UI tests: Summary                         ├─► "Build and test (iOS)"
-                        ├─► UI tests: System                          │
-                        ├─► UI tests: Models, Library                 │
-                        └─► UI tests: every other class               ─┘
+   decides the tier     ├─► UI tests: smoke          (pull requests)  ├─► "Build and test (iOS)"
+                        └─► UI tests: four groups    (main, nightly)  ─┘
 ```
 
+| Event | What runs |
+|---|---|
+| Pull request that only changes documentation (`*.md`, `docs/`, issue templates) | The gates only, about 1 minute |
+| Pull request that changes code | Lint, unit tests, and the UI smoke set: two macOS machines |
+| Pull request that changes `AppUITests/`, `.github/workflows/`, `project.yml`, `Makefile`, `Brewfile`, or `Package.resolved` | Every UI test, in four groups |
+| Push to `main`, every night at 03:00 JST, and a manual run | Every UI test, in four groups |
+
+- **The tier.** `Tools/ci-scope` reads the changed files and decides. An empty or unreadable diff runs everything.
+- **The smoke set.** `Tools/ui-smoke-tests.txt` lists about one UI test per area: navigation, recording, summary, Ask, search, models, network activity, speakers, settings, and the lock. Run it locally with `make test-ui-smoke`. Keep it under about 15 tests; a test listed there must exist (`Tools/tests/test_ci.py` checks).
+- **Why not every UI test on every pull request.** They are about 60 minutes of machine time on GitHub's 3-core Macs, and GitHub often queues macOS jobs. With six macOS jobs per run, a pull request waited about 30 minutes, even for a typo. A UI regression that the smoke set misses fails on `main` or overnight, and is fixed there.
+- **The simulator.** `Tools/ci-simulator` picks the iPhone 17 Pro, or any iPhone the runner image has, and boots it while the caches restore. A missing simulator once failed a whole job.
+- **Audits look twice.** When Apple's audit reports a problem, `auditAccessibility` waits a second and audits again, and only the second pass fails the test. A summary still sliding into place was once reported as clipped text; a real problem is still there a second later.
 - **Why split.** In one job, CI took about 43 minutes, 28 of them UI tests launching the app one after another. The UI tests now run in four groups on four machines at once. The last group skips the classes named in the others, so a new test class runs without touching the workflow. When a group grows much slower than the others, move a class out of it.
 - **Caches.** Packages (`build/spm`) and build products are cached, so MLX, WhisperKit, and FluidAudio are not compiled again on every run. Only `main` saves caches, and pull requests start from them. A change to `Package.resolved` or to Xcode starts a fresh cache.
 - **No separate build step.** The UI tests build the app, so a compile error still fails CI.

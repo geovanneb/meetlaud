@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+"""Decides how much of CI a pull request needs, from the files it changes.
+
+Usage: git diff --name-only BASE HEAD | ci-scope
+
+Prints two lines for $GITHUB_OUTPUT:
+  ios=true|false   false when every file is documentation, so the macOS jobs can be skipped
+  full=true|false  true when the change can break UI tests broadly, so every UI test runs, not only the smoke set
+"""
+import re
+import sys
+
+# Files that never reach the app or the tests.
+DOCS = re.compile(
+    r"""(
+        .*\.md
+      | docs/.*
+      | LICENSE
+      | \.github/ISSUE_TEMPLATE/.*
+      | \.github/pull_request_template\.md
+      | \.github/CODEOWNERS
+      | \.github/release\.yml
+      | \.github/dependabot\.yml
+    )$""",
+    re.VERBOSE,
+)
+
+# Changes to the UI tests themselves, to CI, to the build, or to resolved dependencies.
+FULL = re.compile(
+    r"""(
+        AppUITests/.*
+      | \.github/workflows/.*
+      | project\.yml
+      | Makefile
+      | Brewfile
+      | Packages/Package\.resolved
+    )$""",
+    re.VERBOSE,
+)
+
+
+def scope(files):
+    files = [name.strip() for name in files if name.strip()]
+    if not files:
+        # An empty diff means we could not tell. Run everything rather than skip something.
+        return True, True
+    ios = any(not DOCS.match(name) for name in files)
+    full = ios and any(FULL.match(name) for name in files)
+    return ios, full
+
+
+def main():
+    ios, full = scope(sys.stdin.read().splitlines())
+    print(f"ios={str(ios).lower()}")
+    print(f"full={str(full).lower()}")
+
+
+if __name__ == "__main__":
+    main()

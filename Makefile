@@ -1,11 +1,14 @@
 SIMULATOR ?= iPhone 17 Pro
-DESTINATION := platform=iOS Simulator,name=$(SIMULATOR)
+## CI sets DESTINATION to a simulator id from Tools/ci-simulator.
+DESTINATION ?= platform=iOS Simulator,name=$(SIMULATOR)
 DERIVED := build
 ## Extra xcodebuild flags, empty locally. CI uses them for a shared package folder, result bundles, and to split
 ## the UI tests across machines, e.g. make test-ui XCODEFLAGS="-only-testing:MeetlaudUITests/SummaryTests".
 XCODEFLAGS ?=
+## A few UI tests per area, listed in Tools/ui-smoke-tests.txt. Pull requests run these; main runs every UI test.
+SMOKE_TESTS := $(addprefix -only-testing:MeetlaudUITests/,$(shell cat Tools/ui-smoke-tests.txt))
 
-.PHONY: bootstrap generate format lint check test-tools test test-ui build ci screenshots
+.PHONY: bootstrap generate format lint check test-tools test test-ui test-ui-smoke build ci screenshots
 
 bootstrap:
 	brew bundle --file=Brewfile
@@ -39,6 +42,10 @@ test:
 test-ui: generate
 	xcodebuild -project Meetlaud.xcodeproj -scheme Meetlaud -destination '$(DESTINATION)' \
 		-derivedDataPath $(DERIVED) -quiet $(XCODEFLAGS) test
+
+test-ui-smoke: generate
+	xcodebuild -project Meetlaud.xcodeproj -scheme Meetlaud -destination '$(DESTINATION)' \
+		-derivedDataPath $(DERIVED) -quiet $(XCODEFLAGS) $(SMOKE_TESTS) test
 
 ci: lint build test test-ui
 

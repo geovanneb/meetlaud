@@ -42,3 +42,4 @@ The first public version. Everything below runs on the device.
 - Network activity: the note now mentions the computer you paired, and the history can be cleared.
 - AI models: a model with several files could report a failed install while it was actually fine, when two downloads finished at the same moment.
 - CI: unit tests and UI tests run side by side, UI tests in four groups, with packages and build products cached. A failed job keeps its test results for a week.
+- CI: pull requests answer in about 10 minutes. They run lint, unit tests, and a UI smoke set; documentation-only ones skip the macOS jobs. Every UI test still runs on `main` and every night. CI picks a simulator the machine has, and the accessibility audit looks twice before it fails.
