@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or idea
+    url: https://github.com/geovanneb/meetlaud/discussions
+    about: Ask and discuss in any of the four languages
+  - name: Security or privacy problem
+    url: https://github.com/geovanneb/meetlaud/security/advisories/new
+    about: Report it privately, not in a public issue

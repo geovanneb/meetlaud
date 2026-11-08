@@ -1,0 +1,169 @@
+name: Meetlaud
+options:
+  bundleIdPrefix: com.meetlaud
+  deploymentTarget:
+    iOS: "26.0"
+  createIntermediateGroups: true
+  generateEmptyDirectories: false
+configFiles:
+  Debug: Config/App.xcconfig
+  Release: Config/App.xcconfig
+packages:
+  MeetlaudKit:
+    path: Packages
+targets:
+  Meetlaud:
+    type: application
+    platform: iOS
+    settings:
+      ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+      ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+      ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS: YES
+    sources:
+      - App/Sources
+      - App/Resources
+      - Extensions/Shared
+      - path: THIRD_PARTY_NOTICES.md
+        buildPhase: resources
+    dependencies:
+      - package: MeetlaudKit
+        products:
+          - AppRouting
+          - AppShell
+          - Localization
+          - FeatureHome
+          - FeatureLibrary
+          - FeatureAsk
+          - FeatureTools
+          - Connectors
+          - ConnectorGTD
+          - FeatureSettings
+          - FeatureRecording
+          - FeatureDetail
+          - FeatureModels
+          - FeaturePeople
+          - FeatureShared
+          - ModelDelivery
+          - DeviceMonitoring
+          - ASRApple
+          - ASRWhisperKit
+          - DiarizationFluid
+          - LLMMLX
+          - Embeddings
+          - Archive
+          - AudioCapture
+          - AudioPlayback
+          - Persistence
+          - Domain
+          - TestSupport
+          - AudioEditing
+          - SystemBridges
+      - target: MeetlaudWidgets
+        embed: true
+        codeSign: true
+    entitlements:
+      path: App/Meetlaud.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.meetlaud.app
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: $(PRODUCT_DISPLAY_NAME)
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        CFBundleDevelopmentRegion: en
+        CFBundleLocalizations:
+          - en
+          - ja
+          - pt-BR
+          - es
+        UILaunchScreen:
+          UIImageName: LaunchMark
+          UIImageRespectsSafeAreaInsets: true
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: true
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        CFBundleURLTypes:
+          - CFBundleURLName: $(PRODUCT_BUNDLE_IDENTIFIER)
+            CFBundleURLSchemes:
+              - meetlaud
+        ITSAppUsesNonExemptEncryption: false
+        NSMicrophoneUsageDescription: Meetlaud records your meetings. Audio stays on this device.
+        NSCameraUsageDescription: Add photos of slides and whiteboards to your meetings, and scan a pairing code.
+        NSLocalNetworkUsageDescription: Meetlaud sends your meetings to a computer you paired, on your own network.
+        NSBonjourServices:
+          - _gtd-inbox._tcp
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
+        NSCalendarsFullAccessUsageDescription: Show your upcoming meetings. Your calendar stays on this device.
+        NSRemindersFullAccessUsageDescription: Add tasks from your meetings to Reminders, when you ask.
+        NSSupportsLiveActivities: true
+        LSSupportsOpeningDocumentsInPlace: false
+        CFBundleDocumentTypes:
+          - CFBundleTypeName: Audio
+            CFBundleTypeRole: Viewer
+            LSHandlerRank: Alternate
+            LSItemContentTypes:
+              - public.audio
+              - public.movie
+        UIBackgroundModes:
+          - audio
+          - processing
+        BGTaskSchedulerPermittedIdentifiers:
+          - com.meetlaud.app.transcribe.*
+  MeetlaudWidgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      - Extensions/Widgets
+      - Extensions/Shared
+    dependencies:
+      - package: MeetlaudKit
+        products:
+          - Localization
+      - sdk: WidgetKit.framework
+      - sdk: SwiftUI.framework
+    settings:
+      PRODUCT_NAME: MeetlaudWidgets
+      PRODUCT_BUNDLE_IDENTIFIER: com.meetlaud.app.widgets
+      SKIP_INSTALL: YES
+      LD_RUNPATH_SEARCH_PATHS: $(inherited) @executable_path/Frameworks @executable_path/../../Frameworks
+    entitlements:
+      path: Extensions/Widgets/MeetlaudWidgets.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.meetlaud.app
+    info:
+      path: Extensions/Widgets/Info.plist
+      properties:
+        CFBundleDisplayName: $(PRODUCT_DISPLAY_NAME)
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+  MeetlaudUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - AppUITests
+    dependencies:
+      - target: Meetlaud
+    settings:
+      GENERATE_INFOPLIST_FILE: YES
+      PRODUCT_NAME: MeetlaudUITests
+      PRODUCT_BUNDLE_IDENTIFIER: com.meetlaud.app.uitests
+schemes:
+  Meetlaud:
+    build:
+      targets:
+        Meetlaud: all
+    test:
+      targets:
+        - MeetlaudUITests

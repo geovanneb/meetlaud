@@ -1,0 +1,18 @@
+.DS_Store
+*.xcodeproj
+*.xcworkspace
+App/Info.plist
+.build/
+.swiftpm/
+build/
+DerivedData/
+xcuserdata/
+Config/Local.xcconfig
+__pycache__/
+
+# Screenshots of other products, for local reference only
+references/
+Extensions/Widgets/Info.plist
+
+# Local agent settings
+.claude/

@@ -1,0 +1,235 @@
+{
+  "_comment": "Allowed imports per target. Anything not listed fails. See docs/testing.md.",
+  "groups": {
+    "ui": [
+      "Foundation",
+      "Observation",
+      "SwiftUI"
+    ],
+    "feature": [
+      "Foundation",
+      "Observation",
+      "SwiftUI",
+      "Domain",
+      "AppRouting",
+      "DesignSystem",
+      "Localization",
+      "FeatureShared"
+    ]
+  },
+  "targets": {
+    "Packages/Core/Domain/Sources": [
+      "Foundation"
+    ],
+    "Packages/Core/AppRouting/Sources": [
+      "Foundation",
+      "Observation",
+      "Domain"
+    ],
+    "Packages/UI/Localization/Sources": [
+      "Foundation"
+    ],
+    "Packages/UI/DesignSystem/Sources": [
+      "@ui",
+      "UIKit"
+    ],
+    "Packages/UI/AppShell/Sources": [
+      "@ui",
+      "AppRouting",
+      "DesignSystem",
+      "Localization"
+    ],
+    "Packages/Features/FeatureHome/Sources": [
+      "@feature"
+    ],
+    "Packages/Features/FeatureLibrary/Sources": [
+      "@feature",
+      "UniformTypeIdentifiers"
+    ],
+    "Packages/Features/FeatureAsk/Sources": [
+      "@feature"
+    ],
+    "Packages/Features/FeatureTools/Sources": [
+      "@feature",
+      "UniformTypeIdentifiers",
+      "Connectors",
+      "ConnectorsUI"
+    ],
+    "Packages/Features/FeatureSettings/Sources": [
+      "@feature"
+    ],
+    "App/Sources": [
+      "@ui",
+      "ActivityKit",
+      "AppRouting",
+      "AppShell",
+      "AudioCapture",
+      "AudioPlayback",
+      "Domain",
+      "Persistence",
+      "TestSupport",
+      "FeatureHome",
+      "FeatureLibrary",
+      "FeatureAsk",
+      "FeatureTools",
+      "FeatureSettings",
+      "FeatureRecording",
+      "FeatureDetail",
+      "AudioEditing",
+      "SystemBridges",
+      "ASRApple",
+      "ASRWhisperKit",
+      "BackgroundTasks",
+      "DeviceMonitoring",
+      "FeatureModels",
+      "ModelDelivery",
+      "FeatureShared",
+      "UIKit",
+      "DiarizationFluid",
+      "FeaturePeople",
+      "LLMMLX",
+      "Embeddings",
+      "WidgetKit",
+      "Archive",
+      "AppIntents",
+      "Localization",
+      "Connectors",
+      "ConnectorGTD"
+    ],
+    "Packages/Features/FeatureRecording/Sources": [
+      "@feature",
+      "UIKit"
+    ],
+    "Packages/Features/FeatureDetail/Sources": [
+      "@feature",
+      "UIKit"
+    ],
+    "Packages/Infrastructure/AudioCapture/Sources": [
+      "Foundation",
+      "Domain",
+      "AVFAudio"
+    ],
+    "Packages/Infrastructure/AudioPlayback/Sources": [
+      "Foundation",
+      "Domain",
+      "AVFAudio",
+      "MediaPlayer"
+    ],
+    "Packages/Infrastructure/Persistence/Sources": [
+      "Foundation",
+      "Accelerate",
+      "Domain",
+      "GRDB"
+    ],
+    "Packages/Infrastructure/Archive/Sources": [
+      "Foundation",
+      "CommonCrypto",
+      "CryptoKit",
+      "Domain"
+    ],
+    "Packages/Infrastructure/Embeddings/Sources": [
+      "Foundation",
+      "Accelerate",
+      "Domain",
+      "NaturalLanguage"
+    ],
+    "Packages/Testing/TestSupport/Sources": [
+      "Foundation",
+      "Domain"
+    ],
+    "Extensions/Shared": [
+      "Foundation",
+      "ActivityKit",
+      "AppIntents"
+    ],
+    "Extensions/Widgets": [
+      "ActivityKit",
+      "AppIntents",
+      "Foundation",
+      "Localization",
+      "SwiftUI",
+      "WidgetKit"
+    ],
+    "Packages/Features/FeatureShared/Sources": [
+      "@ui",
+      "Domain",
+      "DesignSystem",
+      "Localization"
+    ],
+    "Packages/Infrastructure/AudioEditing/Sources": [
+      "Foundation",
+      "Domain",
+      "AVFoundation"
+    ],
+    "Packages/Infrastructure/SystemBridges/Sources": [
+      "LocalAuthentication",
+      "UserNotifications",
+      "Foundation",
+      "Domain",
+      "EventKit",
+      "CoreSpotlight"
+    ],
+    "Packages/Features/FeatureModels/Sources": [
+      "@feature"
+    ],
+    "Packages/Infrastructure/ModelDelivery/Sources": [
+      "Foundation",
+      "Domain",
+      "CryptoKit",
+      "UIKit"
+    ],
+    "Packages/Infrastructure/DeviceMonitoring/Sources": [
+      "Foundation",
+      "Domain",
+      "UIKit",
+      "os"
+    ],
+    "Packages/Infrastructure/ASRApple/Sources": [
+      "Foundation",
+      "Domain",
+      "AVFoundation",
+      "CoreMedia",
+      "Speech"
+    ],
+    "Packages/Infrastructure/ASRWhisperKit/Sources": [
+      "Foundation",
+      "Domain",
+      "WhisperKit"
+    ],
+    "Packages/Infrastructure/DiarizationFluid/Sources": [
+      "Foundation",
+      "Domain",
+      "FluidAudio"
+    ],
+    "Packages/Features/FeaturePeople/Sources": [
+      "@feature"
+    ],
+    "Packages/Infrastructure/LLMMLX/Sources": [
+      "Foundation",
+      "Domain",
+      "MLX",
+      "MLXLLM",
+      "MLXLMCommon",
+      "Tokenizers"
+    ],
+    "Packages/Core/Connectors/Sources": [
+      "Foundation"
+    ],
+    "Packages/Connectors/ConnectorGTD/Sources": [
+      "Foundation",
+      "Connectors",
+      "ConnectorsUI",
+      "CryptoKit",
+      "DesignSystem",
+      "Network",
+      "Security",
+      "SwiftUI",
+      "UIKit",
+      "VisionKit"
+    ],
+    "Packages/Connectors/ConnectorsUI/Sources": [
+      "Connectors",
+      "SwiftUI"
+    ]
+  }
+}

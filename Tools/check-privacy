@@ -1,0 +1,103 @@
+#!/usr/bin/env python3
+"""Turns the privacy promise into a build failure.
+
+Network use is allowed only in the modules listed in Tools/privacy-allowlist.json.
+Usage: check-privacy [repo-root]
+"""
+import json
+import plistlib
+import re
+import sys
+from pathlib import Path
+
+NETWORK = [
+    "URLSession", "URLRequest", "NSURLConnection", "NWConnection", "NWListener", "NWBrowser",
+    "CFNetwork", "CFStream", "WKWebView", "SFSafariViewController", "ASWebAuthenticationSession",
+    "CKContainer", "NSUbiquitousKeyValueStore", "UIApplication.shared.open",
+    "Data(contentsOf: URL(string", "String(contentsOf: URL(string",
+]
+NETWORK_IMPORTS = ["Network", "WebKit", "SafariServices", "CloudKit", "MultipeerConnectivity"]
+ALWAYS_FORBIDDEN = ["PrivateCloudComputeLanguageModel"]
+ANALYTICS = [
+    "Firebase", "Crashlytics", "Sentry", "Mixpanel", "Amplitude", "PostHog", "Bugsnag",
+    "Datadog", "AppsFlyer", "Segment", "TelemetryDeck", "MetricKit",
+]
+DEPENDENCY = re.compile(r'\.package\(\s*url:\s*"([^"]+)"')
+SKIPPED_DIRS = {".build", "build", "DerivedData", ".git"}
+
+
+def code_only(text):
+    """Removes comments so that a mention in a comment does not fail."""
+    text = re.sub(r"/\*.*?\*/", "", text, flags=re.DOTALL)
+    return re.sub(r"(?<!:)//.*", "", text)
+
+
+def swift_files(root):
+    for base in ("App", "AppUITests", "Packages", "Extensions", "Evals"):
+        for file in (root / base).rglob("*.swift"):
+            parts = set(file.relative_to(root).parts)
+            if not parts & SKIPPED_DIRS and file.name != "Package.swift":
+                yield file
+
+
+def main(root):
+    config = json.loads((root / "Tools/privacy-allowlist.json").read_text())
+    errors = []
+
+    for file in swift_files(root):
+        relative = file.relative_to(root).as_posix()
+        code = code_only(file.read_text())
+        may_use_network = any(relative.startswith(prefix) for prefix in config["networkModules"])
+
+        if not may_use_network:
+            for token in NETWORK:
+                if token in code:
+                    errors.append(f"{relative}: network API '{token}' outside the allowed modules")
+            for module in NETWORK_IMPORTS:
+                if re.search(rf"^\s*import\s+{module}\b", code, re.MULTILINE):
+                    errors.append(f"{relative}: network module '{module}' outside the allowed modules")
+        for token in ALWAYS_FORBIDDEN:
+            if token in code:
+                errors.append(f"{relative}: '{token}' sends content off the device, and is forbidden")
+        for sdk in ANALYTICS:
+            if re.search(rf"^\s*import\s+{sdk}\w*", code, re.MULTILINE):
+                errors.append(f"{relative}: analytics or crash SDK '{sdk}' is forbidden")
+
+    manifest = root / "Packages/Package.swift"
+    if manifest.exists():
+        for url in DEPENDENCY.findall(code_only(manifest.read_text())):
+            if url not in config["dependencies"]:
+                errors.append(f"Packages/Package.swift: dependency '{url}' is not in the allowlist")
+
+    for file in root.rglob("*.entitlements"):
+        if set(file.relative_to(root).parts) & SKIPPED_DIRS:
+            continue
+        for key in plistlib.loads(file.read_bytes()):
+            if key not in config["entitlements"]:
+                errors.append(f"{file.relative_to(root)}: entitlement '{key}' is not in the allowlist")
+
+    project = root / "project.yml"
+    if project.exists():
+        for mode in re.findall(r"UIBackgroundModes:\s*\n((?:\s+-\s*\w+\n?)+)", project.read_text()):
+            for name in re.findall(r"-\s*(\w+)", mode):
+                if name not in config["backgroundModes"]:
+                    errors.append(f"project.yml: background mode '{name}' is not in the allowlist")
+
+    privacy = root / "App/Resources/PrivacyInfo.xcprivacy"
+    if not privacy.exists():
+        errors.append("App/Resources/PrivacyInfo.xcprivacy is missing")
+    else:
+        manifest_data = plistlib.loads(privacy.read_bytes())
+        if manifest_data.get("NSPrivacyTracking") is not False:
+            errors.append("PrivacyInfo.xcprivacy: tracking must be false")
+        if manifest_data.get("NSPrivacyCollectedDataTypes"):
+            errors.append("PrivacyInfo.xcprivacy: the app must declare no collected data")
+
+    for error in errors:
+        print(f"error: {error}")
+    print(f"check-privacy: {len(errors)} problem(s)")
+    return 1 if errors else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(Path(sys.argv[1] if len(sys.argv) > 1 else ".").resolve()))

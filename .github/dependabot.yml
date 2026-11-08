@@ -1,0 +1,12 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+  - package-ecosystem: swift
+    directory: /Packages
+    schedule:
+      interval: weekly
+    # Every new version needs a license and privacy check, so updates arrive as pull requests to review.
+    open-pull-requests-limit: 5

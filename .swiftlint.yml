@@ -1,0 +1,27 @@
+included:
+  - App
+  - AppUITests
+  - Packages
+excluded:
+  - Packages/.build
+disabled_rules:
+  - trailing_comma
+  - opening_brace
+  - todo
+  - multiple_closures_with_trailing_closure
+line_length: 120
+identifier_name:
+  excluded: [id, x, y, t, at, db, ok]
+
+# The design system owns type and buttons, so that each level looks the same on every screen.
+custom_rules:
+  design_system_font:
+    included: "Packages/(Features|UI/AppShell)/.*/Sources/.*\\.swift$"
+    regex: '\.font\(\.(largeTitle|title|title2|title3|headline|subheadline|body|callout|caption|caption2|footnote|system)\b'
+    message: "Use a type token from DesignSystem, such as .dsMeta or .dsNote."
+    severity: error
+  design_system_button:
+    included: "Packages/(Features|UI/AppShell)/.*/Sources/.*\\.swift$"
+    regex: '\.buttonStyle\(\.(bordered|borderedProminent)\)'
+    message: "Use .primaryAction() or .secondaryAction() from DesignSystem."
+    severity: error

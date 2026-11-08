@@ -1,0 +1,10 @@
+# Default reviewer for everything
+* @geovanneb
+
+# Pipeline, privacy rules, and dependencies always need the maintainer
+/.github/ @geovanneb
+/Tools/ @geovanneb
+/project.yml @geovanneb
+/Packages/Package.swift @geovanneb
+/Packages/Package.resolved @geovanneb
+/THIRD_PARTY_NOTICES.md @geovanneb

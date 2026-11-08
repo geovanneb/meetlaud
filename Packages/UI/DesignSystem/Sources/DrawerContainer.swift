@@ -1,0 +1,210 @@
+import SwiftUI
+
+/// Side menu for compact widths. iOS has no native drawer for iPhone (D-001).
+///
+/// The content slides aside, and the menu settles into place behind it, growing slightly and fading in. Measured from
+/// a reference recording of a side menu that felt right. With Reduce Motion, the menu fades in on top.
+public struct DrawerContainer<Menu: View, Content: View>: View {
+    @Binding private var isOpen: Bool
+    private let isEdgeGestureEnabled: Bool
+    private let closeLabel: String
+    private let menu: Menu
+    private let content: Content
+
+    /// What the drawer shows. It opens at once, under the finger. It closes a beat after `isOpen`, because choosing a
+    /// destination builds a whole screen on the main thread. If the slide started at the same moment, its clock would
+    /// run during that work and the first frames would never be seen.
+    @State private var isShown: Bool
+    @State private var translation: CGFloat = 0
+    @State private var isDragging = false
+    /// Where the finger was when the drag was recognized, so the content does not jump by the recognition distance.
+    @State private var dragOrigin: CGFloat = 0
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    public init(
+        isOpen: Binding<Bool>,
+        isEdgeGestureEnabled: Bool,
+        closeLabel: String,
+        @ViewBuilder menu: () -> Menu,
+        @ViewBuilder content: () -> Content,
+    ) {
+        _isOpen = isOpen
+        _isShown = State(initialValue: isOpen.wrappedValue)
+        self.isEdgeGestureEnabled = isEdgeGestureEnabled
+        self.closeLabel = closeLabel
+        self.menu = menu()
+        self.content = content()
+    }
+
+    public var body: some View {
+        GeometryReader { proxy in
+            let width = DrawerGeometry.menuWidth(forContainer: proxy.size.width)
+            let progress = DrawerGeometry.progress(isOpen: isShown, translation: translation, menuWidth: width)
+
+            ZStack(alignment: .leading) {
+                menuLayer(width: width, progress: progress)
+                contentLayer(width: width, progress: progress)
+            }
+            .animation(settling, value: progress)
+            .contentShape(.rect)
+            .simultaneousGesture(dragGesture(menuWidth: width))
+            .onChange(of: isOpen) { _, open in follow(open) }
+        }
+        .background(Color.dsBackground.ignoresSafeArea())
+    }
+
+    private func follow(_ open: Bool) {
+        guard open != isShown else { return }
+        guard !open else {
+            isShown = true
+            return
+        }
+        Task {
+            // Runs once the main thread is free, which is after the new screen is built.
+            try? await Task.sleep(for: .milliseconds(16))
+            isShown = isOpen
+        }
+    }
+
+    /// How the drawer moves. Under a finger it does not animate at all: it follows the finger exactly.
+    private var settling: Animation? {
+        guard !isDragging else { return nil }
+        return reduceMotion ? Motion.reduced : Motion.drawer
+    }
+
+    /// The drawer animates its own shell and nothing inside it. A screen that opens from the menu must not inherit the
+    /// slide, or its bars and rows fly in from nowhere: `transaction` stops the animation at the content's edge.
+    private func menuLayer(width: CGFloat, progress: CGFloat) -> some View {
+        menu
+            .frame(width: width)
+            .frame(maxHeight: .infinity, alignment: .top)
+            .background(Color.dsBackground)
+            .transaction { $0.animation = nil }
+            .scaleEffect(reduceMotion ? 1 : DrawerGeometry.menuScale(progress: progress))
+            .opacity(reduceMotion ? progress : DrawerGeometry.menuOpacity(progress: progress))
+            .zIndex(reduceMotion ? 1 : 0)
+            .allowsHitTesting(isOpen)
+            .accessibilityHidden(!isOpen)
+            .accessibilityAddTraits(isOpen ? .isModal : [])
+            .accessibilityAction(.escape) { isOpen = false }
+    }
+
+    private func contentLayer(width: CGFloat, progress: CGFloat) -> some View {
+        let radius = reduceMotion ? 0 : Radius.drawer * progress
+        return content
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .allowsHitTesting(!isOpen)
+            .accessibilityHidden(isOpen)
+            // Opaque, so that the menu never shows through while two screens cross-fade.
+            .background(Color.dsBackground.ignoresSafeArea())
+            // The page fades back as the menu comes forward, the way the reference does.
+            .overlay {
+                Color.dsBackground
+                    .opacity(DrawerGeometry.contentFade * progress)
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
+            }
+            .transaction { $0.animation = nil }
+            // A mask and not a clip: the shape reaches past the safe area, while the content stays inside it, so that
+            // the screen's bottom bars keep their real space above the home indicator.
+            .mask { RoundedRectangle(cornerRadius: radius).ignoresSafeArea() }
+            // A shadow on a plain shape: on the content itself it would redraw the whole screen on every frame.
+            .background {
+                RoundedRectangle(cornerRadius: radius)
+                    .fill(Color.dsBackground)
+                    .shadow(color: .black.opacity(0.12 * progress), radius: 16, x: -4)
+                    .ignoresSafeArea()
+            }
+            .offset(x: reduceMotion ? 0 : width * progress)
+            .overlay {
+                if isOpen {
+                    Color.clear
+                        .contentShape(.rect)
+                        .offset(x: reduceMotion ? 0 : width)
+                        .onTapGesture { isOpen = false }
+                        .accessibilityLabel(closeLabel)
+                        .accessibilityAddTraits(.isButton)
+                        .accessibilityAction { isOpen = false }
+                }
+            }
+    }
+
+    private func dragGesture(menuWidth: CGFloat) -> some Gesture {
+        DragGesture(minimumDistance: 12, coordinateSpace: .global)
+            .onChanged { value in
+                guard isDragging || canBeginDrag(from: value) else { return }
+                if !isDragging {
+                    dragOrigin = value.translation.width
+                    isDragging = true
+                }
+                translation = value.translation.width - dragOrigin
+            }
+            .onEnded { value in
+                defer {
+                    translation = 0
+                    isDragging = false
+                }
+                guard isDragging else { return }
+                let settled = DrawerGeometry.settles(
+                    openFrom: isOpen,
+                    translation: value.translation.width,
+                    predictedTranslation: value.predictedEndTranslation.width,
+                    menuWidth: menuWidth,
+                )
+                // Together, because the translation resets here: a finger leaves nothing to build first.
+                isShown = settled
+                isOpen = settled
+            }
+    }
+
+    private func canBeginDrag(from value: DragGesture.Value) -> Bool {
+        guard abs(value.translation.width) > abs(value.translation.height) else { return false }
+        if isOpen {
+            return value.translation.width < 0
+        }
+        return isEdgeGestureEnabled
+            && value.translation.width > 0
+            && value.startLocation.x <= DrawerGeometry.edgeActivationWidth
+    }
+}
+
+/// The drawer's math, kept pure so it can be tested without a UI.
+enum DrawerGeometry {
+    static let edgeActivationWidth: CGFloat = 24
+    private static let widthFraction: CGFloat = 0.76
+    private static let maximumWidth: CGFloat = 340
+    /// How much the page fades back with the menu open.
+    static let contentFade = 0.43
+
+    static func menuWidth(forContainer width: CGFloat) -> CGFloat {
+        min(width * widthFraction, maximumWidth)
+    }
+
+    /// The menu stays in place and grows into it.
+    static func menuScale(progress: CGFloat) -> CGFloat {
+        0.97 + 0.03 * progress
+    }
+
+    static func menuOpacity(progress: CGFloat) -> CGFloat {
+        0.6 + 0.4 * progress
+    }
+
+    /// How open the drawer is, from 0 to 1.
+    static func progress(isOpen: Bool, translation: CGFloat, menuWidth: CGFloat) -> CGFloat {
+        guard menuWidth > 0 else { return isOpen ? 1 : 0 }
+        let start: CGFloat = isOpen ? 1 : 0
+        return min(max(start + translation / menuWidth, 0), 1)
+    }
+
+    /// Where the drawer rests after a drag, using the predicted end so a quick flick counts.
+    static func settles(
+        openFrom isOpen: Bool,
+        translation: CGFloat,
+        predictedTranslation: CGFloat,
+        menuWidth: CGFloat,
+    ) -> Bool {
+        let predicted = max(abs(predictedTranslation), abs(translation)) * (predictedTranslation < 0 ? -1 : 1)
+        return progress(isOpen: isOpen, translation: predicted, menuWidth: menuWidth) > 0.5
+    }
+}

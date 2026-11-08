@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Read-only by default. Pull requests from forks never get write access or secrets.
+permissions:
+  contents: read
+
+# A newer push to the same branch or PR cancels the run that is still going.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gates:
+    # The rules that protect the promise (architecture, privacy, localization) need no Mac, so they fail fast.
+    name: Privacy and architecture gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - run: python3 -m unittest discover -s Tools/tests -q
+      - run: Tools/check-architecture
+      - run: Tools/check-privacy
+      - run: Tools/check-l10n
+
+  build-and-test:
+    name: Build and test (iOS)
+    needs: gates
+    runs-on: macos-26
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+      - run: brew bundle --file=Brewfile
+      - run: make lint
+      - run: make build
+      - run: make test
+      - run: make test-ui

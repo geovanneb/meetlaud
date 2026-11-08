@@ -1,0 +1,21 @@
+{
+  "_comment": "Changes to this file are changes to the privacy promise, and need a reviewer's approval.",
+  "networkModules": [
+    "Packages/Infrastructure/ModelDelivery/",
+    "Packages/Connectors/ConnectorGTD/"
+  ],
+  "dependencies": [
+    "https://github.com/groue/GRDB.swift",
+    "https://github.com/argmaxinc/argmax-oss-swift",
+    "https://github.com/FluidInference/FluidAudio",
+    "https://github.com/ml-explore/mlx-swift-lm",
+    "https://github.com/huggingface/swift-transformers"
+  ],
+  "entitlements": [
+    "com.apple.security.application-groups"
+  ],
+  "backgroundModes": [
+    "audio",
+    "processing"
+  ]
+}

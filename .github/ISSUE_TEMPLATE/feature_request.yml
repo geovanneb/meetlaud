@@ -1,0 +1,25 @@
+name: Feature request
+description: An idea to make Meetlaud better
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Meetlaud stays offline, free, and account-free. Ideas that need a server, an account, or analytics are out of scope (see ROADMAP.md).
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What are you trying to do, and what gets in the way?
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Your idea
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What you do today instead

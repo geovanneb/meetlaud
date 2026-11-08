@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+"""Fails when a target imports something its layer does not allow.
+
+Usage: check-architecture [repo-root]
+"""
+import json
+import re
+import sys
+from pathlib import Path
+
+IMPORT = re.compile(r"^[ \t]*(?:@\w+(?:\([^)]*\))?[ \t]+)*import[ \t]+(?:\w+[ \t]+)?(\w+)", re.MULTILINE)
+
+
+def expand(entries, groups):
+    allowed = set()
+    for entry in entries:
+        allowed |= set(groups[entry[1:]]) if entry.startswith("@") else {entry}
+    return allowed
+
+
+def main(root):
+    config = json.loads((root / "Tools/architecture.json").read_text())
+    errors = []
+
+    declared = set(config["targets"])
+    for manifest_dir in (root / "Packages").glob("*/*/Sources"):
+        relative = manifest_dir.relative_to(root).as_posix()
+        if relative not in declared:
+            errors.append(f"{relative}: target is missing from Tools/architecture.json")
+
+    for target, entries in config["targets"].items():
+        allowed = expand(entries, config["groups"])
+        for file in sorted((root / target).rglob("*.swift")):
+            for module in IMPORT.findall(file.read_text()):
+                if module not in allowed:
+                    errors.append(f"{file.relative_to(root)}: '{module}' is not allowed in {target}")
+
+    for error in errors:
+        print(f"error: {error}")
+    print(f"check-architecture: {len(errors)} problem(s)")
+    return 1 if errors else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(Path(sys.argv[1] if len(sys.argv) > 1 else ".").resolve()))

@@ -1,0 +1,111 @@
+import Foundation
+import NaturalLanguage
+import Accelerate
+
+let passages: [String: [String]] = [
+"en": ["We agreed to move the launch to the second week of March because the payment provider is not ready.",
+"Maria will send the updated budget to finance by Friday.",
+"The customer complained that the mobile app crashes when they upload large photos.",
+"Our hiring plan for next quarter includes two backend engineers and one designer.",
+"The server costs went up thirty percent after we enabled the new logging system.",
+"Legal needs another week to review the contract with the Japanese distributor.",
+"We decided to drop the free plan and keep only the paid subscription.",
+"The office will close during the holidays and everyone should work from home.",
+"Sales in Brazil grew faster than expected thanks to the new partner.",
+"The security audit found that old passwords were still stored without encryption.",
+"Tom is worried that the team is burned out after three months of overtime.",
+"We will run a user test with ten people before changing the checkout screen.",
+"The warehouse in Osaka ran out of stock last week and shipments were delayed.",
+"Marketing wants a new video for the conference in June.",
+"The database migration failed twice during the night and we rolled back.",
+"Next year's travel budget was cut in half."],
+"pt": ["Combinamos adiar o lançamento para a segunda semana de março porque o provedor de pagamentos não está pronto.",
+"A Maria vai enviar o orçamento atualizado para o financeiro até sexta-feira.",
+"O cliente reclamou que o aplicativo trava quando ele envia fotos grandes.",
+"Nosso plano de contratação para o próximo trimestre inclui dois engenheiros de backend e um designer.",
+"Os custos de servidor subiram trinta por cento depois que ligamos o novo sistema de logs.",
+"O jurídico precisa de mais uma semana para revisar o contrato com o distribuidor japonês.",
+"Decidimos acabar com o plano gratuito e manter apenas a assinatura paga.",
+"O escritório vai fechar durante as festas e todos devem trabalhar de casa.",
+"As vendas no Brasil cresceram mais do que o esperado graças ao novo parceiro.",
+"A auditoria de segurança descobriu que senhas antigas ainda estavam guardadas sem criptografia.",
+"O Tom está preocupado porque o time está esgotado depois de três meses de hora extra.",
+"Vamos fazer um teste com dez usuários antes de mudar a tela de pagamento.",
+"O armazém de Osaka ficou sem estoque na semana passada e as entregas atrasaram.",
+"O marketing quer um vídeo novo para a conferência de junho.",
+"A migração do banco de dados falhou duas vezes durante a noite e voltamos atrás.",
+"O orçamento de viagens do ano que vem foi cortado pela metade."],
+"es": ["Acordamos retrasar el lanzamiento a la segunda semana de marzo porque el proveedor de pagos no está listo.",
+"María enviará el presupuesto actualizado a finanzas antes del viernes.",
+"El cliente se quejó de que la aplicación se cierra al subir fotos grandes.",
+"Nuestro plan de contratación del próximo trimestre incluye dos ingenieros de backend y un diseñador.",
+"Los costos del servidor subieron un treinta por ciento después de activar el nuevo sistema de registros.",
+"El departamento legal necesita otra semana para revisar el contrato con el distribuidor japonés.",
+"Decidimos eliminar el plan gratuito y mantener solo la suscripción de pago.",
+"La oficina cerrará durante las fiestas y todos deben trabajar desde casa.",
+"Las ventas en Brasil crecieron más de lo esperado gracias al nuevo socio.",
+"La auditoría de seguridad descubrió que las contraseñas antiguas seguían guardadas sin cifrar.",
+"A Tom le preocupa que el equipo esté agotado tras tres meses de horas extra.",
+"Haremos una prueba con diez usuarios antes de cambiar la pantalla de pago.",
+"El almacén de Osaka se quedó sin existencias la semana pasada y los envíos se retrasaron.",
+"Marketing quiere un vídeo nuevo para la conferencia de junio.",
+"La migración de la base de datos falló dos veces durante la noche y revertimos.",
+"El presupuesto de viajes del próximo año se redujo a la mitad."],
+"ja": ["決済プロバイダーの準備ができていないため、リリースを3月の第2週に延期することにしました。",
+"マリアさんが金曜日までに更新した予算を経理に送ります。",
+"お客様から、大きな写真をアップロードするとアプリが落ちるという苦情がありました。",
+"来四半期の採用計画には、バックエンドエンジニア2名とデザイナー1名が含まれています。",
+"新しいログシステムを有効にしてから、サーバー費用が3割増えました。",
+"法務は日本の販売代理店との契約を確認するのに、もう1週間必要です。",
+"無料プランを廃止して、有料サブスクリプションだけを残すことに決めました。",
+"年末年始はオフィスが閉まるので、全員在宅勤務になります。",
+"新しいパートナーのおかげで、ブラジルの売上は予想以上に伸びました。",
+"セキュリティ監査で、古いパスワードが暗号化されずに保存されていることが分かりました。",
+"トムさんは、3か月の残業でチームが疲れ切っていることを心配しています。",
+"チェックアウト画面を変更する前に、10人でユーザーテストを行います。",
+"先週、大阪の倉庫で在庫が切れて、出荷が遅れました。",
+"マーケティングは6月のカンファレンス用に新しい動画を求めています。",
+"データベースの移行が夜間に2回失敗し、元に戻しました。",
+"来年の出張予算は半分に削減されました。"]]
+
+// Paraphrases: (query, passage index). Deliberately avoid the passage's words.
+let queries: [String: [(String, Int)]] = [
+"en": [("When is the release date now?",0),("Why are we spending more on infrastructure?",4),("Which people are we going to recruit?",3),("Is the staff exhausted?",10),("What went wrong with the data move?",14),("Did anything leak from the safety review?",9),("What happened to the no-cost tier?",6),("Why did deliveries arrive late?",12)],
+"pt": [("Quando sai a nova versão?",0),("Por que estamos gastando mais com infraestrutura?",4),("Quem vamos contratar?",3),("A equipe está cansada?",10),("O que deu errado ao mover os dados?",14),("O que a revisão de segurança encontrou?",9),("O que aconteceu com a opção sem custo?",6),("Por que os pedidos chegaram tarde?",12)],
+"es": [("¿Cuándo sale la nueva versión?",0),("¿Por qué gastamos más en infraestructura?",4),("¿A quién vamos a incorporar?",3),("¿Está cansada la gente?",10),("¿Qué salió mal al mover los datos?",14),("¿Qué encontró la revisión de seguridad?",9),("¿Qué pasó con la opción sin costo?",6),("¿Por qué llegaron tarde los pedidos?",12)],
+"ja": [("公開日はいつになりましたか",0),("インフラの出費が増えた理由は",4),("誰を雇う予定ですか",3),("メンバーは疲弊していますか",10),("データの移し替えで何が起きましたか",14),("安全性の確認で何が見つかりましたか",9),("タダのプランはどうなりましたか",6),("配送が遅れた原因は",12)]]
+
+let langs: [String: NLLanguage] = ["en": .english, "pt": .portuguese, "es": .spanish, "ja": .japanese]
+
+func embedder(_ l: String) -> NLContextualEmbedding {
+    let e = NLContextualEmbedding(language: langs[l]!)!
+    try! e.load(); return e
+}
+func vec(_ e: NLContextualEmbedding, _ t: String, _ l: String) -> [Float] {
+    let r = try! e.embeddingResult(for: t, language: langs[l]!)
+    var s = [Float](repeating: 0, count: e.dimension); var n: Float = 0
+    r.enumerateTokenVectors(in: t.startIndex..<t.endIndex) { v, _ in
+        for i in 0..<v.count { s[i] += Float(v[i]) }; n += 1; return true }
+    var norm: Float = 0; vDSP_svesq(s, 1, &norm, vDSP_Length(s.count)); norm = sqrt(norm)
+    return s.map { $0 / max(norm, 1e-6) }
+}
+func dot(_ a: [Float], _ b: [Float]) -> Float { var r: Float = 0; vDSP_dotpr(a,1,b,1,&r,vDSP_Length(a.count)); return r }
+
+func run(q ql: String, p pl: String) {
+    let e = embedder(ql), f = embedder(pl)
+    let ps = passages[pl]!.map { vec(f, $0, pl) }
+    var r1 = 0, r3 = 0, r5 = 0; var mrr: Float = 0
+    for (q, want) in queries[ql]! {
+        let v = vec(e, q, ql)
+        let order = ps.indices.sorted { dot(v, ps[$0]) > dot(v, ps[$1]) }
+        let rank = order.firstIndex(of: want)!
+        if rank < 1 {r1 += 1}; if rank < 3 {r3 += 1}; if rank < 5 {r5 += 1}; mrr += 1/Float(rank+1)
+    }
+    print("query=\(ql) passages=\(pl) same-model=\(e.modelIdentifier == f.modelIdentifier)  r@1 \(r1)/8  r@3 \(r3)/8  r@5 \(r5)/8  mrr \(String(format:"%.2f", mrr/8))")
+}
+for l in ["en","pt","es","ja"] { run(q: l, p: l) }
+run(q:"pt", p:"en"); run(q:"en", p:"pt"); run(q:"es", p:"en"); run(q:"pt", p:"es")
+// throughput
+let e = embedder("en"); let t0 = Date()
+for _ in 0..<5 { for p in passages["en"]! { _ = vec(e, p, "en") } }
+let dt = Date().timeIntervalSince(t0); print("en passages/sec:", Int(80/dt))
