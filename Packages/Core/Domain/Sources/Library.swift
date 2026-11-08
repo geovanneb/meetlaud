@@ -63,13 +63,16 @@ public struct CalendarEvent: Identifiable, Hashable, Sendable {
     public let start: Date
     public let end: Date
     public let attendees: [String]
+    /// The calendar it comes from, so that the person can leave a calendar out.
+    public let calendarID: String
 
-    public init(id: String, title: String, start: Date, end: Date, attendees: [String]) {
+    public init(id: String, title: String, start: Date, end: Date, attendees: [String], calendarID: String = "") {
         self.id = id
         self.title = title
         self.start = start
         self.end = end
         self.attendees = attendees
+        self.calendarID = calendarID
     }
 }
 

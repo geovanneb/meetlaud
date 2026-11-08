@@ -1625,6 +1625,267 @@
         }
       }
     },
+    "calendars.add_help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add the account in the Settings app, under Apps > Calendar > Calendar Accounts, for example Microsoft Exchange or Outlook.com. In the Outlook app, you can also turn on syncing its calendars to this device, if your company allows it. The calendar then appears here."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añade la cuenta en la app Ajustes, en Apps > Calendario > Cuentas de calendario, por ejemplo Microsoft Exchange u Outlook.com. En la app Outlook también puedes activar la sincronización de sus calendarios con este dispositivo, si tu empresa lo permite. El calendario aparecerá aquí."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「設定」アプリの「アプリ」>「カレンダー」>「カレンダーアカウント」で、Microsoft Exchange や Outlook.com などのアカウントを追加します。会社が許可していれば、Outlook アプリでカレンダーをこのデバイスに同期することもできます。追加したカレンダーはここに表示されます。"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adicione a conta no app Ajustes, em Apps > Calendário > Contas de Calendário, por exemplo Microsoft Exchange ou Outlook.com. No app Outlook, você também pode ativar a sincronização dos calendários com este aparelho, se sua empresa permitir. O calendário então aparece aqui."
+          }
+        }
+      }
+    },
+    "calendars.add_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a work calendar"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadir un calendario de trabajo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仕事用カレンダーを追加"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adicionar um calendário de trabalho"
+          }
+        }
+      }
+    },
+    "calendars.denied" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calendar access is off for this app. You can allow it in the Settings app."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El acceso al calendario está desactivado para esta app. Puedes permitirlo en la app Ajustes."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このアプリのカレンダーへのアクセスはオフです。「設定」アプリで許可できます。"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O acesso ao calendário está desativado para este app. Você pode permitir no app Ajustes."
+          }
+        }
+      }
+    },
+    "calendars.none" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No calendars on this device."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay calendarios en este dispositivo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このデバイスにカレンダーがありません。"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não há calendários neste aparelho."
+          }
+        }
+      }
+    },
+    "calendars.open_settings" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Settings"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir Ajustes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定を開く"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir Ajustes"
+          }
+        }
+      }
+    },
+    "calendars.revoke" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turning this off stops the app from reading your calendars. To take back access completely, turn it off in the Settings app."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al desactivarlo, la app deja de leer tus calendarios. Para retirar el acceso por completo, desactívalo en la app Ajustes."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "オフにすると、アプリはカレンダーを読み取りません。アクセスを完全に取り消すには、「設定」アプリでオフにしてください。"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desativar isto faz o app parar de ler seus calendários. Para retirar o acesso por completo, desative no app Ajustes."
+          }
+        }
+      }
+    },
+    "calendars.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calendars"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calendarios"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カレンダー"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calendários"
+          }
+        }
+      }
+    },
+    "calendars.use" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use calendars"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usar calendarios"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カレンダーを使う"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usar calendários"
+          }
+        }
+      }
+    },
+    "calendars.use_note" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upcoming, Calendar view, widgets, and reminders before a meeting use only the calendars that are on. Your calendars stay on this device."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Próximas, Ver calendario, los widgets y los avisos antes de una reunión usan solo los calendarios activados. Tus calendarios se quedan en este dispositivo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「今後の予定」、カレンダー表示、ウィジェット、会議前の通知には、オンにしたカレンダーだけが使われます。カレンダーはこのデバイスから出ません。"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Próximas, Ver calendário, os widgets e os avisos antes de uma reunião usam só os calendários ativados. Seus calendários ficam neste aparelho."
+          }
+        }
+      }
+    },
     "common.cancel" : {
       "extractionState" : "manual",
       "localizations" : {

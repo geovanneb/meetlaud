@@ -57,6 +57,7 @@ struct Composition {
         case .licenses: LicensesView(text: container.licensesText)
         case .storage: StorageBackupView(controller: container.system)
         case .notifications: NotificationsView(controller: container.system)
+        case .calendars: CalendarsView(model: container.calendars)
         case .vocabulary: VocabularyView(folders: container.library.folders)
         case .privacy: PrivacySecurityView(controller: container.system, lock: container.lock)
         case .about: AboutView(version: container.versionText)
