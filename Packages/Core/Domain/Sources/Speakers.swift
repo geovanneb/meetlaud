@@ -84,9 +84,27 @@ public protocol ModelRunner: Sendable {
     func unload() async
 }
 
+/// How many voices a recording holds, when the person knows it.
+public enum SpeakerCount: Hashable, Sendable {
+    /// The model decides. Right most of the time, but a short recording from a phone on a table can merge
+    /// everyone into one voice.
+    case automatic
+    /// The person said how many people spoke.
+    case exactly(Int)
+
+    /// The counts a person can pick. One voice needs no separating, and more than this is rare in a meeting.
+    public static let choices = Array(2 ... 10)
+}
+
 public protocol DiarizationEngine: ModelRunner {
     /// Reads the file by streaming, so that memory stays flat however long the meeting is.
-    func diarize(file: URL) async throws -> [SpeakerTurn]
+    func diarize(file: URL, speakers: SpeakerCount) async throws -> [SpeakerTurn]
+}
+
+public extension DiarizationEngine {
+    func diarize(file: URL) async throws -> [SpeakerTurn] {
+        try await diarize(file: file, speakers: .automatic)
+    }
 }
 
 public protocol SpeakerStore: Sendable {
@@ -136,17 +154,19 @@ public struct SpeakerPipeline: Sendable {
         await model() != nil
     }
 
-    public func run(id: RecordingID, file: URL) async throws {
+    public func run(id: RecordingID, file: URL, speakers count: SpeakerCount = .automatic) async throws {
         guard let resolved = await model() else { return }
         try await engine.prepare(model: resolved.model, folder: resolved.folder)
-        let turns: [SpeakerTurn]
+        let raw: [SpeakerTurn]
         do {
-            turns = try await engine.diarize(file: file)
+            raw = try await engine.diarize(file: file, speakers: count)
         } catch {
             await engine.unload()
             throw error
         }
         await engine.unload()
+        // A count the person chose is kept whole. Otherwise a "voice" heard for a moment is a cough or a click.
+        let turns = count == .automatic ? Self.withoutPassingSounds(raw) : raw
 
         let segments = try await transcripts.segments(for: id)
         let assignment = SpeakerAlignment.assign(segments: segments, turns: turns)
@@ -160,6 +180,21 @@ public struct SpeakerPipeline: Sendable {
             assignments[segmentID] = byLabel[label]?.id
         }
         try await store.saveSpeakers(speakers.map(\.speaker), assignments: assignments, for: id)
+    }
+
+    /// A voice heard for less than this in a whole recording does not become a speaker.
+    static let leastSpeech: TimeInterval = 2
+
+    /// Drops voices heard too little to be a person. Their moments go to whoever else was speaking then, so no
+    /// phrase ends up under a speaker nobody can name.
+    static func withoutPassingSounds(_ turns: [SpeakerTurn]) -> [SpeakerTurn] {
+        var talk: [String: TimeInterval] = [:]
+        for turn in turns {
+            talk[turn.speaker, default: 0] += turn.end - turn.start
+        }
+        let kept = turns.filter { talk[$0.speaker, default: 0] >= leastSpeech }
+        // With nothing left, the short sounds are all there is, and some speaker beats none.
+        return kept.isEmpty ? turns : kept
     }
 
     private typealias Labeled = (label: String, speaker: Speaker)

@@ -151,7 +151,9 @@ final class AppContainer {
             usage: services.usage,
             recordings: services.store,
             files: services.files,
-            source: SpeechWindowReader(),
+            // UI tests have no audio on disk. A slow fake lets them see work in progress.
+            source: Self.usesFakes && arguments.contains("--slow-transcription")
+                ? FakeWindowSource(duration: 600) : SpeechWindowReader(),
             device: services.device,
             lease: services.lease,
             arbiter: arbiter,

@@ -205,6 +205,24 @@ Each spike produces a report in `docs/research/` and updates this document.
 | SP-7 | Does App Review accept the audio background mode and downloaded models? | TestFlight evidence and a question to Apple |
 | SP-8 | Do a short test and a device probe predict a real 1-hour job? | Quick and sustained tests compared with full jobs, estimates within ±30% |
 
+## Lessons from Get Things Done's transcription
+
+Get Things Done (the owner's desktop app, built on sherpa-onnx) transcribes real meetings well. Its pipeline was compared with this one in November 2026.
+
+Already here, or taken over then:
+
+- Voice detection splits speech before Whisper, and windows are cleaned (D-076).
+- A model stuck in a loop is folded to one copy with a count, and punctuation alone is dropped (D-080).
+- A voice heard for less than 2 seconds is a sound, not a speaker (D-078).
+
+Worth doing next, in order of expected gain:
+
+1. **Speakers first, then text, cut at every change of voice.** Get Things Done separates voices before transcribing and ends each piece of speech where the voice changes, so every phrase has one speaker. Here, Whisper writes 3-minute windows first and each phrase goes to the voice that overlaps it most, so a phrase that spans two people goes to one of them. The diarizer reads the file by streaming, so running it first costs no extra memory, only a model swap under the arbiter.
+2. **Leave a phrase without a speaker when it is not clear.** Get Things Done names a voice only when it holds at least 60% of the speech in the phrase and no other voice holds more than 25%. "A wrong name is worse than no name" (D-041) applies to speakers as much as to people. This only makes sense after step 1, or most long phrases would end up unnamed.
+3. **Voice prints from clean speech only.** It builds a voice print from stretches where only that voice speaks, trimmed by 0.2 s at each end, cut into pieces of 1.5 to 10 seconds, at most 60 seconds per person. Here, every turn counts, including overlaps.
+4. **A little audio around each piece.** It gives the model 0.3 s before and 0.4 s after each piece of speech, without reaching into the next piece, since voice detection clips the first and last sounds of a word.
+5. **Language changes inside a meeting.** It ends a piece where the language changes, so the speech after a switch is not read in the language before it. Useful for meetings that mix Japanese and English.
+
 ## Sources
 
 - [FluidAudio](https://github.com/FluidInference/FluidAudio) and [benchmarks](https://docs.fluidinference.com/reference/benchmarks.md)

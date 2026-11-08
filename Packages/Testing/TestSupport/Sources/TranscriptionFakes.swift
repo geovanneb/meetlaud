@@ -168,8 +168,12 @@ public actor FakeTranscriptionEngine: TranscriptionEngine {
     public var prepareError: (any Error)?
     /// Fails from this window on.
     public var failAfter: Int?
+    /// How long loading and each window take, so a screen can be seen while work runs.
+    private let delay: Duration
 
-    public init() {}
+    public init(delay: Duration = .zero) {
+        self.delay = delay
+    }
 
     public func setFailAfter(_ value: Int?) {
         failAfter = value
@@ -179,6 +183,7 @@ public actor FakeTranscriptionEngine: TranscriptionEngine {
         if let prepareError {
             throw prepareError
         }
+        try await Task.sleep(for: delay)
         prepared.append(model.id)
     }
 
@@ -186,6 +191,7 @@ public actor FakeTranscriptionEngine: TranscriptionEngine {
         if let failAfter, windows.count >= failAfter {
             throw CancellationError()
         }
+        try await Task.sleep(for: delay)
         windows.append(window.start)
         self.hints.append(hints)
         return WindowResult(

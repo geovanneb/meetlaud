@@ -47,7 +47,10 @@ public final class FakeStorage: StorageManaging, @unchecked Sendable {
     }
 
     public func usage() -> StorageUsage {
-        StorageUsage(recordings: 120_000_000, library: 4_000_000, models: 1_500_000_000, cache: 2_000_000)
+        StorageUsage(
+            recordings: 120_000_000, library: 4_000_000, models: 1_500_000_000, cache: 2_000_000,
+            available: 6_000_000_000,
+        )
     }
 
     public func clearCache() {}

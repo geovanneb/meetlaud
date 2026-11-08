@@ -211,9 +211,40 @@ public struct JobProgress: Hashable, Sendable {
     public let phase: Phase
     /// From 0 to 1.
     public let fraction: Double
+    /// When this phase began, so a screen can show that time is passing even when the fraction cannot move.
+    public let phaseStartedAt: Date?
+    /// The fraction when this phase began. A resumed job starts partway, and only the work since then tells speed.
+    public let phaseStartFraction: Double
+    /// Whether voices are separated after the text, so a screen can show that step before it starts.
+    public let includesSpeakers: Bool
 
-    public init(phase: Phase, fraction: Double) {
+    public init(
+        phase: Phase,
+        fraction: Double,
+        phaseStartedAt: Date? = nil,
+        phaseStartFraction: Double? = nil,
+        includesSpeakers: Bool = false,
+    ) {
         self.phase = phase
         self.fraction = fraction
+        self.phaseStartedAt = phaseStartedAt
+        self.phaseStartFraction = phaseStartFraction ?? fraction
+        self.includesSpeakers = includesSpeakers
+    }
+
+    /// Whether the fraction says something now. Preparing a model and separating voices report no steps, so a
+    /// screen shows them as work in progress, never as a bar stuck at one value.
+    public var isMeasurable: Bool {
+        phase == .transcribing
+    }
+
+    /// Time left, from the speed of this run so far. Nil until there is enough to measure: a guess from the first
+    /// seconds would jump around, and a wrong promise is worse than none.
+    public func estimatedRemaining(at now: Date) -> TimeInterval? {
+        guard phase == .transcribing, let phaseStartedAt else { return nil }
+        let done = fraction - phaseStartFraction
+        let elapsed = now.timeIntervalSince(phaseStartedAt)
+        guard done >= 0.05, elapsed >= 5, fraction < 1 else { return nil }
+        return elapsed / done * (1 - fraction)
     }
 }

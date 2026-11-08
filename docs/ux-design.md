@@ -236,6 +236,10 @@ What matters: near-white background, strong typography, lots of space, discreet 
 - Light haptics on record, stop, and mark.
 - Every screen has states: empty, loading, error, no permission, no model.
 
+### Feedback
+
+Anything that takes longer than a moment uses the feedback components in `DesignSystem` (D-079): a bar that fills or keeps moving, named steps, elapsed time, and a badge in list rows. The research and the screen-by-screen review are in [UX-1](research/UX-1-feedback-review.md).
+
 ### Design tokens
 
 `DesignSystem` owns these, and `make lint` rejects anything else in a feature.

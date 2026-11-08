@@ -25,14 +25,24 @@ final class SystemTests: XCTestCase {
 
     private static let longPageAudit = XCUIAccessibilityAuditType.all.subtracting(.dynamicType)
 
+    func testStorageShowsWhatTakesSpaceAsOneBar() {
+        openSettings()
+        open("storage")
+        XCTAssertTrue(app.descendants(matching: .any)["storage.usage"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Free on this device"].exists, "The bar is the app's share of the device")
+        let shot = XCTAttachment(screenshot: app.screenshot())
+        shot.name = "storage"
+        shot.lifetime = .keepAlways
+        add(shot)
+    }
+
     func testLongPagesWorkAtTheLargestTextSize() {
         app.launchArguments += ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
         openSettings()
         open("storage")
         let export = app.buttons["storage.export"]
-        for _ in 0 ..< 8 where !export.isHittable {
-            app.swipeUp()
-        }
+        app.reveal(export)
+        app.reveal(export)
         XCTAssertTrue(export.isHittable, "The last rows must stay reachable")
         export.tap()
         XCTAssertTrue(app.secureTextFields["archive.password"].waitForExistence(timeout: 3))

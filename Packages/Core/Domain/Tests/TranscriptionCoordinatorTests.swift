@@ -90,6 +90,22 @@ struct SpeakerStepTests {
         #expect(await harness.store.segments(for: harness.id).count == 3)
     }
 
+    @Test func `voices can be separated again with the count the person knows`() async throws {
+        let engine = FakeDiarizationEngine(turns: [
+            SpeakerTurn(speaker: "A", start: 0, end: 250, embedding: [1, 0]),
+            SpeakerTurn(speaker: "B", start: 250, end: 500, embedding: [0, 1]),
+        ])
+        let speakers = FakeSpeakerStore()
+        let (harness, coordinator) = harness(engine: engine, store: speakers)
+        try await coordinator.enqueue(harness.id, modelID: "m", language: "en")
+        await harness.finished()
+        try await coordinator.redetectSpeakers(harness.id, count: .exactly(2))
+        #expect(await engine.requested == [.automatic, .exactly(2)])
+        #expect(await speakers.speakers(for: harness.id).count == 2)
+        #expect(await coordinator.currentProgress[harness.id] == nil)
+        #expect(await harness.arbiter.tryAcquire(), "The model is free again afterwards")
+    }
+
     @Test func `with no speaker model, the transcript finishes without speakers`() async throws {
         let speakers = FakeSpeakerStore()
         let (harness, coordinator) = harness(

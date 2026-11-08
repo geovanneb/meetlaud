@@ -8,6 +8,8 @@ import SwiftUI
 public struct RecordingPill: View {
     private let controller: RecordingController
     @Environment(AppRouter.self) private var router
+    /// Counts taps that open the recorder, so each one gets a light tap back.
+    @State private var opens = 0
 
     public init(controller: RecordingController) {
         self.controller = controller
@@ -34,9 +36,13 @@ public struct RecordingPill: View {
         .motion(Motion.standard, value: isVisible)
     }
 
+    /// Built like the prompt bar under it: the whole capsule is the button, at least as tall as the bar, and the
+    /// glass reacts under the finger. Before, only the text line could be tapped and nothing showed a press, so a
+    /// tap felt missed.
     private var pill: some View {
-        HStack(spacing: Spacing.small) {
+        HStack(spacing: 0) {
             Button {
+                opens += 1
                 router.isRecorderPresented = true
             } label: {
                 HStack(spacing: Spacing.small) {
@@ -51,6 +57,8 @@ public struct RecordingPill: View {
                         .foregroundStyle(Color.dsSecondaryText)
                     Spacer(minLength: 0)
                 }
+                .padding(.leading, PromptMetrics.textInset)
+                .frame(maxHeight: .infinity)
                 .contentShape(.rect)
             }
             .accessibilityElement(children: .combine)
@@ -63,13 +71,15 @@ public struct RecordingPill: View {
                 controller.togglePause()
             }
             .labelStyle(.iconOnly)
-            .frame(minWidth: 44, minHeight: 44)
+            .frame(minWidth: 44, maxHeight: .infinity)
+            .padding(.trailing, Spacing.compact)
+            .contentShape(.rect)
         }
         .buttonStyle(.plain)
-        .padding(.leading, PromptMetrics.textInset)
-        .padding(.trailing, Spacing.compact)
-        .padding(.vertical, Spacing.xSmall)
-        .glassEffect(.regular, in: .capsule)
+        .frame(minHeight: PromptMetrics.minimumHeight)
+        .fixedSize(horizontal: false, vertical: true)
+        .glassEffect(.regular.interactive(), in: .capsule)
+        .sensoryFeedback(.impact(weight: .light), trigger: opens)
         .promptPlacement()
     }
 }

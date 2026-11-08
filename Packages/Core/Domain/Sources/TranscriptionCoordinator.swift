@@ -6,7 +6,7 @@ public actor TranscriptionCoordinator {
     public typealias ModelResolver = @Sendable (String) -> (model: ModelDescriptor, folder: URL?)?
     public typealias EngineResolver = @Sendable (ModelRuntime) -> (any TranscriptionEngine)?
 
-    private let store: any TranscriptStore
+    let store: any TranscriptStore
     private let usage: any ModelUsageStore
     private let recordings: any RecordingStore
     private let files: any RecordingFiles
@@ -18,7 +18,7 @@ public actor TranscriptionCoordinator {
     private let onFinished: @Sendable (RecordingID) async -> Void
     private let models: ModelResolver
     private let engines: EngineResolver
-    private let now: @Sendable () -> Date
+    let now: @Sendable () -> Date
 
     private var progress: [RecordingID: JobProgress] = [:] {
         didSet { continuation.yield(progress) }
@@ -27,6 +27,8 @@ public actor TranscriptionCoordinator {
     private var worker: Task<Void, Never>?
     private var deviceWatcher: Task<Void, Never>?
     private var loaded: (runtime: ModelRuntime, modelID: String)?
+    /// Whether the current job ends by separating voices, so screens can show that step from the start.
+    private var includesSpeakers = false
 
     public nonisolated let updates: AsyncStream<[RecordingID: JobProgress]>
     private let continuation: AsyncStream<[RecordingID: JobProgress]>.Continuation
@@ -85,7 +87,7 @@ public actor TranscriptionCoordinator {
         )
         try await store.save(job)
         try await store.save(Transcript(recordingID: id, modelID: modelID, language: language, isComplete: false))
-        progress[id] = JobProgress(phase: whenCharging ? .waitingForPower : .queued, fraction: 0)
+        report(id, whenCharging ? .waitingForPower : .queued, 0)
         if whenCharging {
             await resumePausedIfPossible()
         } else {
@@ -111,9 +113,10 @@ public actor TranscriptionCoordinator {
                 try await store.save(job)
             }
             let duration = await (try? source.duration(of: files.audioFile(for: job.recordingID))) ?? 0
-            progress[job.recordingID] = JobProgress(
-                phase: job.state == .waitingForPower ? .waitingForPower : .queued,
-                fraction: duration > 0 ? min(job.checkpoint / duration, 1) : 0,
+            report(
+                job.recordingID,
+                job.state == .waitingForPower ? .waitingForPower : .queued,
+                duration > 0 ? min(job.checkpoint / duration, 1) : 0,
             )
         }
         await resumePausedIfPossible()
@@ -172,7 +175,8 @@ public actor TranscriptionCoordinator {
         try await store.save(job)
         try await lease.begin(title: recordings.recording(id)?.title ?? "")
 
-        progress[id] = JobProgress(phase: .preparing, fraction: fraction(job, duration))
+        includesSpeakers = await speakers?.isAvailable() ?? false
+        report(id, .preparing, fraction(job, duration))
         if loaded?.modelID != job.modelID {
             await unloadEngine()
             try await engine.prepare(model: resolved.model, folder: resolved.folder)
@@ -205,7 +209,7 @@ public actor TranscriptionCoordinator {
         guard let speakers, await speakers.isAvailable() else { return }
         // Two heavy models at once is how iOS ends up killing the app.
         await unloadEngine()
-        progress[id] = JobProgress(phase: .separatingSpeakers, fraction: 1)
+        report(id, .separatingSpeakers, 1)
         do {
             try await speakers.run(id: id, file: file)
         } catch is CancellationError {
@@ -237,7 +241,7 @@ public actor TranscriptionCoordinator {
             try await store.append(result.segments(in: window, id: id, vocabulary: vocabulary), job: job)
 
             let value = fraction(job, duration)
-            progress[id] = JobProgress(phase: .transcribing, fraction: value)
+            report(id, .transcribing, value)
             await lease.update(progress: value)
 
             // Stopping between windows loses nothing, since each one is already saved.
@@ -247,6 +251,20 @@ public actor TranscriptionCoordinator {
             }
         }
         return job
+    }
+
+    /// The one place progress changes. A phase keeps its start time while it lasts, so screens can show elapsed
+    /// time and, once there is enough to measure, the time left.
+    private func report(_ id: RecordingID, _ phase: JobProgress.Phase, _ value: Double) {
+        let previous = progress[id]
+        let continues = previous?.phase == phase
+        progress[id] = JobProgress(
+            phase: phase,
+            fraction: value,
+            phaseStartedAt: continues ? previous?.phaseStartedAt : now(),
+            phaseStartFraction: continues ? previous?.phaseStartFraction : value,
+            includesSpeakers: includesSpeakers || (previous?.includesSpeakers ?? false),
+        )
     }
 
     private func fraction(_ job: TranscriptionJob, _ duration: TimeInterval) -> Double {
@@ -283,7 +301,7 @@ extension TranscriptionCoordinator {
         var job = job
         job.state = .paused
         try await store.save(job)
-        progress[job.recordingID] = JobProgress(phase: .waitingForDevice, fraction: fraction(job, duration))
+        report(job.recordingID, .waitingForDevice, fraction(job, duration))
     }
 
     /// Jobs paused by heat come back by themselves when the device cools down.
@@ -312,10 +330,7 @@ extension TranscriptionCoordinator {
                 job.state = .queued
             case .waitingForPower where powered:
                 job.state = .queued
-                progress[job.recordingID] = JobProgress(
-                    phase: .queued,
-                    fraction: progress[job.recordingID]?.fraction ?? 0,
-                )
+                report(job.recordingID, .queued, progress[job.recordingID]?.fraction ?? 0)
             default:
                 continue
             }
@@ -325,46 +340,42 @@ extension TranscriptionCoordinator {
     }
 }
 
-// MARK: - Versions
+// MARK: - Speakers again
 
 public extension TranscriptionCoordinator {
-    /// Brings an earlier transcript back. The current one becomes a version, so that this can be undone.
-    func restore(_ version: TranscriptVersion) async throws {
-        let id = version.recordingID
-        guard try await store.job(for: id) == nil else { return }
-        try await keepCurrentTranscript(of: id)
-        try await store.deleteVersion(version.id)
-        try await store.deleteTranscript(for: id)
-        let job = TranscriptionJob(recordingID: id, modelID: version.modelID, language: version.language)
-        try await store.save(Transcript(
-            recordingID: id, modelID: version.modelID, language: version.language, isComplete: true,
-        ))
-        try await store.append(version.segments, job: job)
-        try await store.deleteJob(for: id)
+    /// Whether voices can be separated at all: a speaker model is installed.
+    func canSeparateSpeakers() async -> Bool {
+        await speakers?.isAvailable() ?? false
     }
-}
 
-private extension TranscriptionCoordinator {
-    func keepCurrentTranscript(of id: RecordingID) async throws {
-        let segments = try await store.segments(for: id)
-        guard !segments.isEmpty, let transcript = try await store.transcript(for: id) else { return }
-        try await store.save(TranscriptVersion(
-            recordingID: id,
-            modelID: transcript.modelID,
-            language: transcript.language,
-            savedAt: now(),
-            // Speakers belong to the transcript that replaces this one.
-            segments: segments.map {
-                TranscriptSegment(recordingID: id, start: $0.start, end: $0.end, text: $0.text)
-            },
-        ))
+    /// Separates voices again on a finished transcript, for example with the number of people the person knows
+    /// spoke. The text stays as it is. Names come back as suggestions from saved voices, since the old speakers no
+    /// longer line up with the new ones.
+    func redetectSpeakers(_ id: RecordingID, count: SpeakerCount) async throws {
+        guard let speakers, await speakers.isAvailable() else { return }
+        // A transcription still running for this meeting will separate voices itself.
+        guard try await store.job(for: id) == nil else { return }
+        // Waits for any other heavy model, so that two are never loaded at once.
+        await arbiter.acquire()
+        includesSpeakers = true
+        report(id, .separatingSpeakers, 1)
+        do {
+            try await speakers.run(id: id, file: files.audioFile(for: id), speakers: count)
+        } catch {
+            progress[id] = nil
+            await arbiter.release()
+            throw error
+        }
+        progress[id] = nil
+        await arbiter.release()
     }
 }
 
 private extension WindowResult {
     func segments(in window: AudioWindow, id: RecordingID, vocabulary: [VocabularyEntry]) -> [TranscriptSegment] {
         segments
-            .filter { !$0.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+            // Only punctuation is a model that heard no speech.
+            .filter { TranscriptCleanup.hasWords($0.text) }
             .map {
                 TranscriptSegment(
                     recordingID: id,
@@ -372,7 +383,7 @@ private extension WindowResult {
                     end: window.start + $0.end,
                     text: VocabularyCorrector.apply(
                         vocabulary,
-                        to: $0.text.trimmingCharacters(in: .whitespacesAndNewlines),
+                        to: TranscriptCleanup.markRepeats($0.text.trimmingCharacters(in: .whitespacesAndNewlines)),
                     ),
                 )
             }

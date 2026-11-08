@@ -25,8 +25,27 @@ struct StorageView: View {
             } else {
                 List {
                     Section {
-                        ForEach(installed) { model in
-                            HStack {
+                        // Which model takes the most, at a glance, before reading the rows.
+                        VStack(alignment: .leading, spacing: Spacing.compact) {
+                            Text(L10n.Models.storageTotal(installed.reduce(Int64(0)) { $0 + $1.totalBytes }.fileSize))
+                                .font(.dsHeading)
+                                .foregroundStyle(Color.dsPrimaryText)
+                            UsageBar(parts: installed.map {
+                                UsagePart(
+                                    id: $0.id, title: $0.displayName, value: $0.totalBytes,
+                                    formatted: $0.totalBytes.fileSize,
+                                )
+                            }, showsLegend: false)
+                        }
+                        .padding(.vertical, Spacing.small)
+                        .accessibilityElement(children: .contain)
+                        .accessibilityIdentifier("models.storageUsage")
+                    }
+                    .listRowBackground(Color.clear)
+                    Section {
+                        ForEach(Array(installed.enumerated()), id: \.element.id) { index, model in
+                            HStack(spacing: Spacing.small) {
+                                UsageDot(index: index)
                                 Text(model.displayName)
                                 Spacer()
                                 Text(model.totalBytes.fileSize)

@@ -194,10 +194,12 @@ struct ModelRow: View {
             Text(detail)
                 .font(.dsMeta)
                 .foregroundStyle(Color.dsSecondaryText)
-            if let progress = state.progress {
-                ProgressView(value: progress)
+            if state.isWorking {
+                ActivityBar(fraction: state.progress)
+                    .padding(.top, Spacing.xSmall)
             }
         }
+        .motion(Motion.standard, value: state.isWorking)
         .accessibilityElement(children: .combine)
     }
 
@@ -214,6 +216,14 @@ struct ModelRow: View {
 }
 
 extension InstallState {
+    /// Anything between asking for a model and having it. Steps with no fraction still move on screen.
+    var isWorking: Bool {
+        switch self {
+        case .queued, .downloading, .verifying, .preparing, .selfTest: true
+        default: false
+        }
+    }
+
     var progress: Double? {
         switch self {
         case let .downloading(received, total), let .paused(received, total):
