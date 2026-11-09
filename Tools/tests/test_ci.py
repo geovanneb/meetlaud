@@ -24,20 +24,19 @@ class ScopeTests(unittest.TestCase):
         files = ["Packages/UI/Localization/Sources/Resources/Localizable.xcstrings"]
         self.assertEqual(ci_scope.scope(files), (True, False))
 
-    def test_ui_tests_ci_and_build_changes_run_everything(self):
+    def test_a_pull_request_never_runs_every_ui_test(self):
         for name in (
             "AppUITests/SummaryTests.swift",
-            "AppUITests/AccessibilityAudit.swift",
             ".github/workflows/ci.yml",
             "project.yml",
             "Makefile",
             "Packages/Package.resolved",
         ):
             with self.subTest(name):
-                self.assertEqual(ci_scope.scope([name]), (True, True))
+                self.assertEqual(ci_scope.scope([name]), (True, False))
 
-    def test_an_unknown_diff_runs_everything(self):
-        self.assertEqual(ci_scope.scope([]), (True, True))
+    def test_an_unknown_diff_runs_the_macos_jobs(self):
+        self.assertEqual(ci_scope.scope([]), (True, False))
 
 
 _sim_loader = importlib.machinery.SourceFileLoader("ci_simulator", str(REPO / "Tools/ci-simulator"))

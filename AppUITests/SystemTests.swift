@@ -12,8 +12,8 @@ final class SystemTests: XCTestCase {
 
     private func openSettings() {
         app.launch()
-        app.buttons["drawer.toggle"].tap()
-        app.buttons["drawer.item.settings"].tap()
+        app.buttons["drawer.toggle"].tapWhenReady()
+        app.buttons["drawer.item.settings"].tapWhenReady()
         XCTAssertTrue(app.descendants(matching: .any)["screen.settings"].waitForExistence(timeout: 3))
     }
 
@@ -80,7 +80,7 @@ final class SystemTests: XCTestCase {
             if !screen.isEmpty {
                 XCTAssertTrue(app.descendants(matching: .any)[screen].waitForExistence(timeout: 3), row)
             }
-            app.navigationBars.buttons.element(boundBy: 0).tap()
+            app.navigationBars.buttons.element(boundBy: 0).tapWhenReady()
             XCTAssertTrue(app.descendants(matching: .any)["screen.settings"].waitForExistence(timeout: 3))
         }
     }
@@ -92,7 +92,7 @@ final class SystemTests: XCTestCase {
             open(row)
             XCTAssertTrue(app.navigationBars.firstMatch.waitForExistence(timeout: 3))
             try app.auditAccessibility(for: ["storage", "privacy"].contains(row) ? Self.longPageAudit : .all)
-            app.navigationBars.buttons.element(boundBy: 0).tap()
+            app.navigationBars.buttons.element(boundBy: 0).tapWhenReady()
         }
     }
 
@@ -127,7 +127,7 @@ final class SystemTests: XCTestCase {
         XCTAssertFalse(run.isEnabled, "Nothing may erase on a single tap")
 
         let field = app.textFields["erase.confirm"]
-        field.tap()
+        field.tapWhenReady()
         field.typeText("NOPE")
         XCTAssertFalse(run.isEnabled)
         field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: 4))
@@ -157,7 +157,7 @@ final class SystemTests: XCTestCase {
         let more = app.buttons["detail.more"]
         XCTAssertTrue(more.waitForExistence(timeout: 3))
         more.tap()
-        app.buttons["detail.export"].tap()
+        app.buttons["detail.export"].tapWhenReady()
         XCTAssertTrue(app.buttons["export.share"].waitForExistence(timeout: 3), "A file must be ready to share")
         try app.auditAccessibility(for: Self.longPageAudit)
     }
@@ -172,10 +172,10 @@ final class SystemTests: XCTestCase {
         XCTAssertTrue(create.waitForExistence(timeout: 3))
         XCTAssertFalse(create.isEnabled)
         let first = app.secureTextFields["archive.password"]
-        first.tap()
+        first.tapWhenReady()
         first.typeText("correct horse")
         let second = app.secureTextFields["archive.passwordRepeat"]
-        second.tap()
+        second.tapWhenReady()
         second.typeText("correct horse")
         XCTAssertTrue(create.isEnabled)
         create.tap()

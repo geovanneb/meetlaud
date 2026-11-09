@@ -44,33 +44,33 @@ final class ScreenshotTests: XCTestCase {
         try shoot("01-home")
 
         openMeeting()
-        app.buttons["Summary"].firstMatch.tap()
+        app.buttons["Summary"].firstMatch.tapWhenReady()
         try shoot("03-summary")
 
-        app.buttons["Transcript"].firstMatch.tap()
+        app.buttons["Transcript"].firstMatch.tapWhenReady()
         XCTAssertTrue(app.buttons["speaker.chip"].firstMatch.waitForExistence(timeout: 5))
         try shoot("02-transcript")
 
-        app.buttons["detail.ask"].tap()
+        app.buttons["detail.ask"].tapWhenReady()
         let suggestion = app.buttons["ask.suggestion"].firstMatch
         XCTAssertTrue(suggestion.waitForExistence(timeout: 5))
         suggestion.tap()
         _ = app.buttons["ask.citation"].firstMatch.waitForExistence(timeout: 10)
         try shoot("04-ask")
-        app.navigationBars.buttons["BackButton"].firstMatch.tap()
-        app.navigationBars.buttons["BackButton"].firstMatch.tap()
+        app.navigationBars.buttons["BackButton"].firstMatch.tapWhenReady()
+        app.navigationBars.buttons["BackButton"].firstMatch.tapWhenReady()
 
-        app.buttons["home.record"].tap()
+        app.buttons["home.record"].tapWhenReady()
         XCTAssertTrue(app.buttons["recorder.stop"].waitForExistence(timeout: 5))
         sleep(3)
         try shoot("05-recording")
-        app.buttons["recorder.stop"].tap()
+        app.buttons["recorder.stop"].tapWhenReady()
         sleep(2)
 
         app.terminate()
         app.launch()
-        app.buttons["drawer.toggle"].tap()
-        app.buttons["drawer.item.settings"].tap()
+        app.buttons["drawer.toggle"].tapWhenReady()
+        app.buttons["drawer.item.settings"].tapWhenReady()
         let network = app.buttons["settings.network"]
         app.reveal(network)
         network.tap()

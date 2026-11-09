@@ -123,14 +123,14 @@ gates (Linux, seconds) ─┬─► lint + unit tests                        ─
 |---|---|
 | Pull request that only changes documentation (`*.md`, `docs/`, issue templates) | The gates only, about 1 minute |
 | Pull request that changes code | Lint, unit tests, and the UI smoke set: two macOS machines |
-| Pull request that changes `AppUITests/`, `.github/workflows/`, `project.yml`, `Makefile`, `Brewfile`, or `Package.resolved` | Every UI test, in four groups |
 | Push to `main`, every night at 03:00 JST, and a manual run | Every UI test, in four groups |
 
-- **The tier.** `Tools/ci-scope` reads the changed files and decides. An empty or unreadable diff runs everything.
+- **The tier.** `Tools/ci-scope` reads the changed files and decides. An empty or unreadable diff runs the macOS jobs. A pull request never runs every UI test, even when it changes the UI tests or the build: that took over 30 minutes. To run a class before you push, use `make test-ui XCODEFLAGS="-only-testing:MeetlaudUITests/<Class>"`.
 - **The smoke set.** `Tools/ui-smoke-tests.txt` lists about one UI test per area: navigation, recording, summary, Ask, search, models, network activity, speakers, settings, and the lock. Run it locally with `make test-ui-smoke`. Keep it under about 15 tests; a test listed there must exist (`Tools/tests/test_ci.py` checks).
 - **Why not every UI test on every pull request.** They are about 60 minutes of machine time on GitHub's 3-core Macs, and GitHub often queues macOS jobs. With six macOS jobs per run, a pull request waited about 30 minutes, even for a typo. A UI regression that the smoke set misses fails on `main` or overnight, and is fixed there.
 - **The simulator.** `Tools/ci-simulator` picks the iPhone 17 Pro, or any iPhone the runner image has, and boots it while the caches restore. A missing simulator once failed a whole job.
 - **Audits look twice.** When Apple's audit reports a problem, `auditAccessibility` waits a second and audits again, and only the second pass fails the test. A summary still sliding into place was once reported as clipped text; a real problem is still there a second later.
+- **Taps wait.** A drawer or menu that just opened can still be moving in on a CI machine. Tap with `tapWhenReady()`, not `tap()`: it waits for the element, and costs nothing when it is already there.
 - **Why split.** In one job, CI took about 43 minutes, 28 of them UI tests launching the app one after another. The UI tests now run in four groups on four machines at once. The last group skips the classes named in the others, so a new test class runs without touching the workflow. When a group grows much slower than the others, move a class out of it.
 - **Caches.** Packages (`build/spm`) and build products are cached, so MLX, WhisperKit, and FluidAudio are not compiled again on every run. Only `main` saves caches, and pull requests start from them. A change to `Package.resolved` or to Xcode starts a fresh cache.
 - **No separate build step.** The UI tests build the app, so a compile error still fails CI.

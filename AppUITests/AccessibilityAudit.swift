@@ -1,5 +1,14 @@
 import XCTest
 
+extension XCUIElement {
+    /// Taps once the element is there. A drawer or menu that just opened can still be moving in on a slow CI
+    /// machine, and a plain `tap()` then fails with "No matches found".
+    func tapWhenReady(timeout: TimeInterval = 5, file: StaticString = #filePath, line: UInt = #line) {
+        XCTAssertTrue(waitForExistence(timeout: timeout), "\(self) did not appear", file: file, line: line)
+        tap()
+    }
+}
+
 extension XCUIApplication {
     /// Scrolls until the element sits fully on screen. `isHittable` alone is not enough: a row showing a few points
     /// at the bottom edge counts as hittable, and a tap on its center lands off the screen.

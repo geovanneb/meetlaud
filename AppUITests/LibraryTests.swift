@@ -12,8 +12,8 @@ final class LibraryTests: XCTestCase {
     }
 
     private func openLibrary() {
-        app.buttons["drawer.toggle"].tap()
-        app.buttons["drawer.item.library"].tap()
+        app.buttons["drawer.toggle"].tapWhenReady()
+        app.buttons["drawer.item.library"].tapWhenReady()
         XCTAssertTrue(app.descendants(matching: .any)["screen.library"].waitForExistence(timeout: 3))
     }
 
@@ -28,25 +28,25 @@ final class LibraryTests: XCTestCase {
     }
 
     func testRecordingFromAnEventUsesItsTitle() {
-        app.buttons["home.connect"].tap()
+        app.buttons["home.connect"].tapWhenReady()
         XCTAssertTrue(text("Quarterly review"))
-        app.buttons["event.record"].firstMatch.tap()
+        app.buttons["event.record"].firstMatch.tapWhenReady()
         XCTAssertTrue(app.navigationBars["Quarterly review"].waitForExistence(timeout: 3))
     }
 
     func testFolderCreation() {
         openLibrary()
-        app.buttons["library.newFolder"].tap()
+        app.buttons["library.newFolder"].tapWhenReady()
         let field = app.alerts.textFields.firstMatch
         XCTAssertTrue(field.waitForExistence(timeout: 2))
         field.typeText("Research")
-        app.alerts.buttons["Save"].tap()
+        app.alerts.buttons["Save"].tapWhenReady()
         XCTAssertTrue(text("Research"))
     }
 
     func testSearchFindsANoteAndOpensTheRecording() {
         openLibrary()
-        app.buttons["library.search"].tap()
+        app.buttons["library.search"].tapWhenReady()
         let field = app.searchFields.firstMatch
         XCTAssertTrue(field.waitForExistence(timeout: 3))
         field.typeText("Pricing")
@@ -55,27 +55,27 @@ final class LibraryTests: XCTestCase {
 
     func testTrashListsDeletedRecordingsAndEmpties() {
         openLibrary()
-        app.buttons["library.more"].tap()
-        app.buttons["Trash"].tap()
+        app.buttons["library.more"].tapWhenReady()
+        app.buttons["Trash"].tapWhenReady()
         XCTAssertTrue(app.descendants(matching: .any)["screen.trash"].waitForExistence(timeout: 3))
         XCTAssertTrue(text("Old draft"))
-        app.buttons["trash.empty"].tap()
-        app.sheets.buttons["Empty Trash"].firstMatch.tap()
+        app.buttons["trash.empty"].tapWhenReady()
+        app.sheets.buttons["Empty Trash"].firstMatch.tapWhenReady()
         XCTAssertTrue(text("Trash is empty"))
     }
 
     func testSelectingAndMovingToTrash() {
         openLibrary()
-        app.buttons["library.more"].tap()
-        app.buttons["Select"].tap()
-        app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "Product memo")).firstMatch.tap()
-        app.buttons["library.trashSelected"].tap()
+        app.buttons["library.more"].tapWhenReady()
+        app.buttons["Select"].tapWhenReady()
+        app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "Product memo")).firstMatch.tapWhenReady()
+        app.buttons["library.trashSelected"].tapWhenReady()
         XCTAssertFalse(text("Product memo", timeout: 1))
     }
 
     func testDrawerSearchOpensSearch() {
-        app.buttons["drawer.toggle"].tap()
-        app.buttons["drawer.search"].tap()
+        app.buttons["drawer.toggle"].tapWhenReady()
+        app.buttons["drawer.search"].tapWhenReady()
         XCTAssertTrue(app.descendants(matching: .any)["screen.search"].waitForExistence(timeout: 3))
     }
 
@@ -120,8 +120,8 @@ final class LibraryTests: XCTestCase {
     }
 
     private func openLibraryForMove() {
-        app.buttons["drawer.toggle"].tap()
-        app.buttons["drawer.item.library"].tap()
+        app.buttons["drawer.toggle"].tapWhenReady()
+        app.buttons["drawer.item.library"].tapWhenReady()
     }
 
     func testTheCalendarOpensOnTheWeekAndExpandsToTheMonth() throws {
@@ -140,7 +140,7 @@ final class LibraryTests: XCTestCase {
             XCTAssertTrue(app.staticTexts["Quarterly review"].waitForExistence(timeout: 3), "Today's meeting is listed")
         }
 
-        app.buttons["calendar.title"].tap()
+        app.buttons["calendar.title"].tapWhenReady()
         let month = app.buttons["calendar.month"].firstMatch
         XCTAssertTrue(month.waitForExistence(timeout: 3))
         XCTAssertEqual(app.buttons.matching(identifier: "calendar.day").count, 42)
@@ -156,11 +156,11 @@ final class LibraryTests: XCTestCase {
             "Another day, its own list",
         )
 
-        app.buttons["calendar.today"].tap()
-        app.buttons[meetingDay].firstMatch.tap()
+        app.buttons["calendar.today"].tapWhenReady()
+        app.buttons[meetingDay].firstMatch.tapWhenReady()
         XCTAssertTrue(app.staticTexts["Quarterly review"].waitForExistence(timeout: 3), "A day lists its own meetings")
 
-        app.buttons["calendar.title"].tap()
+        app.buttons["calendar.title"].tapWhenReady()
         let closed = NSPredicate(format: "count == 7")
         let days = app.buttons.matching(identifier: "calendar.day")
         expectation(for: closed, evaluatedWith: days)

@@ -84,9 +84,10 @@ The maintainer **squash-merges**, so the original commits of a merged PR are not
 
 - `make ci` must pass. Without a Mac build, at least `make check` must pass, and say in
   the PR which steps you could not run.
-- CI on a pull request runs only the UI smoke set, unless the PR touches the UI tests, CI,
-  or the build (see `docs/testing.md`). When you change a screen, run its UI test class
+- CI on a pull request runs only the UI smoke set, never every UI test (D-082). When you change a screen, run its UI test class
   locally (`make test-ui XCODEFLAGS="-only-testing:MeetlaudUITests/<Class>"`).
+- In UI tests, tap with `tapWhenReady()`, not `tap()`. On a slow CI machine a drawer, menu,
+  or sheet that just opened is not there yet, and a plain tap fails.
 - Use fictional data only. Never put real recordings, real people, or company names into
   code, tests, screenshots, commits, or PR text.
 - Every new dependency needs its license, and its models' licenses, checked and recorded

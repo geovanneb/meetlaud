@@ -12,7 +12,7 @@ final class ShellSmokeTests: XCTestCase {
     }
 
     private func openDrawer() {
-        app.buttons["drawer.toggle"].tap()
+        app.buttons["drawer.toggle"].tapWhenReady()
     }
 
     func testDrawerNavigatesToEveryDestination() {

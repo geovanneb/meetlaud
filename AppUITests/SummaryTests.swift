@@ -58,11 +58,11 @@ final class SummaryTests: XCTestCase {
     func testAnotherSummaryOpensInItsOwnTab() {
         openSummaryTab()
         generate()
-        app.buttons["summary.add"].tap()
+        app.buttons["summary.add"].tapWhenReady()
         let template = app.buttons["Meeting minutes"]
         XCTAssertTrue(template.waitForExistence(timeout: 3))
         template.tap()
-        app.buttons["summary.sheet.generate"].tap()
+        app.buttons["summary.sheet.generate"].tapWhenReady()
         let tabs = app.buttons.matching(identifier: "summary.tab")
         XCTAssertTrue(tabs.element(boundBy: 1).waitForExistence(timeout: 5))
         XCTAssertTrue(app.staticTexts["Topics discussed"].waitForExistence(timeout: 5))
@@ -71,7 +71,7 @@ final class SummaryTests: XCTestCase {
     func testASummaryIsThereWhenYouComeBack() {
         openSummaryTab()
         generate()
-        app.navigationBars.buttons.firstMatch.tap()
+        app.navigationBars.buttons.firstMatch.tapWhenReady()
         let row = app.buttons.containing(NSPredicate(format: "label CONTAINS %@", "Sales meeting")).firstMatch
         XCTAssertTrue(row.waitForExistence(timeout: 3))
         row.tap()
@@ -83,7 +83,7 @@ final class SummaryTests: XCTestCase {
         app.launchArguments.append("--no-language-model")
         app.launch()
         openSummaryTab()
-        app.buttons["summary.generate"].tap()
+        app.buttons["summary.generate"].tapWhenReady()
         XCTAssertTrue(app.descendants(matching: .any)["screen.models"].waitForExistence(timeout: 3))
     }
 
@@ -96,7 +96,7 @@ final class SummaryTests: XCTestCase {
     }
 
     private func openTools() {
-        app.buttons["drawer.toggle"].tap()
+        app.buttons["drawer.toggle"].tapWhenReady()
         let item = app.buttons["drawer.item.tools"]
         XCTAssertTrue(item.waitForExistence(timeout: 2))
         item.tap()
@@ -130,10 +130,10 @@ final class SummaryTests: XCTestCase {
         """
         app.launch()
         openTools()
-        app.buttons["Connectors"].tap()
-        app.buttons["connector.gtd"].tap()
-        app.buttons["connector.connect"].tap()
-        app.buttons["gtd.scan"].tap()
+        app.buttons["Connectors"].tapWhenReady()
+        app.buttons["connector.gtd"].tapWhenReady()
+        app.buttons["connector.connect"].tapWhenReady()
+        app.buttons["gtd.scan"].tapWhenReady()
         XCTAssertTrue(app.staticTexts["gtd.failed"].waitForExistence(timeout: 10), "A failure must not end in silence")
         XCTAssertTrue(app.buttons["gtd.tryAgain"].exists)
         XCTAssertTrue(app.buttons["gtd.cancel"].exists)
@@ -152,32 +152,32 @@ final class SummaryTests: XCTestCase {
 
     func testATemplateCanBeWrittenByHand() {
         openTemplates()
-        app.buttons["templates.add"].tap()
-        app.buttons["templates.new"].tap()
+        app.buttons["templates.add"].tapWhenReady()
+        app.buttons["templates.new"].tapWhenReady()
         let name = app.textFields["template.name"]
         XCTAssertTrue(name.waitForExistence(timeout: 3))
         XCTAssertFalse(app.buttons["template.save"].isEnabled, "An empty template must not save")
         name.tap()
         name.typeText("Sprint review")
         let section = app.textFields["template.section"].firstMatch
-        section.tap()
+        section.tapWhenReady()
         section.typeText("Shipped")
-        app.buttons["template.save"].tap()
+        app.buttons["template.save"].tapWhenReady()
         XCTAssertTrue(app.staticTexts["Sprint review"].waitForExistence(timeout: 3))
         XCTAssertTrue(app.staticTexts["My templates"].exists)
     }
 
     func testAModelCanDraftATemplate() {
         openTemplates()
-        app.buttons["templates.add"].tap()
-        app.buttons["templates.ai"].tap()
+        app.buttons["templates.add"].tapWhenReady()
+        app.buttons["templates.ai"].tapWhenReady()
         let text = app.textViews["template.ai.description"].exists
             ? app.textViews["template.ai.description"]
             : app.textFields["template.ai.description"]
         XCTAssertTrue(text.waitForExistence(timeout: 3))
         text.tap()
         text.typeText("Sprint reviews")
-        app.buttons["template.ai.generate"].tap()
+        app.buttons["template.ai.generate"].tapWhenReady()
         let name = app.textFields["template.name"]
         XCTAssertTrue(name.waitForExistence(timeout: 5))
         XCTAssertEqual(name.value as? String, "Drafted")
@@ -186,7 +186,7 @@ final class SummaryTests: XCTestCase {
     func testAMindMapOpensFromTheSummary() throws {
         openSummaryTab()
         generate()
-        app.buttons["summary.more"].tap()
+        app.buttons["summary.more"].tapWhenReady()
         let open = app.buttons["summary.mindMap"]
         XCTAssertTrue(open.waitForExistence(timeout: 3))
         open.tap()
@@ -212,12 +212,12 @@ final class SummaryTests: XCTestCase {
 
     func testChoosingADefaultTemplate() {
         openTemplates()
-        app.staticTexts["Call notes"].tap()
+        app.staticTexts["Call notes"].tapWhenReady()
         let more = app.buttons["template.more"]
         XCTAssertTrue(more.waitForExistence(timeout: 3))
         more.tap()
-        app.buttons["template.default"].tap()
-        app.navigationBars.buttons.firstMatch.tap()
+        app.buttons["template.default"].tapWhenReady()
+        app.navigationBars.buttons.firstMatch.tapWhenReady()
         XCTAssertTrue(app.staticTexts["Default"].waitForExistence(timeout: 3))
     }
 }
