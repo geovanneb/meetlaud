@@ -44,3 +44,4 @@ The first public version. Everything below runs on the device.
 - AI models: a model with several files could report a failed install while it was actually fine, when two downloads finished at the same moment.
 - CI: unit tests and UI tests run side by side, UI tests in four groups, with packages and build products cached. A failed job keeps its test results for a week.
 - CI: pull requests answer in about 10 minutes. They run lint, unit tests, and a UI smoke set; documentation-only ones skip the macOS jobs. Every UI test still runs on `main` and every night. CI picks a simulator the machine has, the accessibility audit looks twice before it fails, and every UI test tap waits for its element. Pull requests never run every UI test.
+- Contributors: `Config/Local.xcconfig` can set `APP_BUNDLE_IDENTIFIER`, so a fork can run on its own iPhone. The widget, App Group, test, and background task identifiers follow it.

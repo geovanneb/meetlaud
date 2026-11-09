@@ -179,7 +179,8 @@ struct Services {
         Task {
             var recorded = 0.0
             while !Task.isCancelled {
-                try await Task.sleep(for: .milliseconds(100))
+                // Sleep throws only when cancelled, which ends the clock. The task cannot throw, so no error is lost.
+                do { try await Task.sleep(for: .milliseconds(100)) } catch { return }
                 recorded += 0.1
                 engine.send(.progress(recorded: recorded, level: 0.5))
             }
