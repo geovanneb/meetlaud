@@ -59,6 +59,7 @@ public struct AIModelsView: View {
         .screenList()
         .motion(Motion.standard, value: snapshot.suggestions.map(\.id))
         .motion(Motion.standard, value: snapshot.missingFromSetup.isEmpty)
+        .motion(Motion.standard, value: snapshot.setupProgress == nil)
     }
 
     @ViewBuilder
@@ -76,7 +77,19 @@ public struct AIModelsView: View {
             .listRowBackground(Color.clear)
             .listSectionSeparator(.hidden, edges: .top)
         }
-        if !snapshot.missingFromSetup.isEmpty {
+        // While the setup is on its way, its progress takes the place of the button that started it.
+        if let progress = snapshot.setupProgress {
+            Section {
+                SetupProgressRow(progress: progress)
+                if progress.phase == .paused {
+                    Button(L10n.Models.resumeAll) { controller.resumeSetup() }
+                        .foregroundStyle(Color.dsAction)
+                        .accessibilityIdentifier("models.resumeAll")
+                }
+            }
+            .listRowBackground(Color.clear)
+            .listSectionSeparator(.hidden, edges: .top)
+        } else if !snapshot.missingFromSetup.isEmpty {
             Section {
                 Button(L10n.Models.downloadAll) { controller.installRecommended() }
                     .foregroundStyle(Color.dsAction)
@@ -93,6 +106,41 @@ public struct AIModelsView: View {
         }
         .listRowBackground(Color.clear)
         .listSectionSeparator(.hidden, edges: .top)
+    }
+}
+
+/// The one-tap setup as one line, so a download in the background is never a silent one.
+private struct SetupProgressRow: View {
+    let progress: SetupProgress
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: Spacing.small) {
+            Text(title)
+                .font(.dsMeta)
+            // The shared bar, as on each model's row. Checking and preparing have no fraction, so it keeps moving.
+            ActivityBar(fraction: progress.phase == .finishing ? nil : progress.fraction)
+                .padding(.top, Spacing.xSmall)
+                .accessibilityHidden(true)
+            if progress.phase == .downloading {
+                Text(L10n.Models.setupBackground)
+                    .font(.dsMeta)
+                    .foregroundStyle(Color.dsSecondaryText)
+            }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityValue(progress.fraction.formatted(.percent.precision(.fractionLength(0))))
+        .accessibilityIdentifier("models.setupProgress")
+    }
+
+    private var title: String {
+        let received = progress.received.fileSize
+        let total = progress.total.fileSize
+        return switch progress.phase {
+        case .downloading: L10n.Models.setupDownloading(received, total)
+        case .paused: L10n.Models.setupPaused(received, total)
+        case .waitingForWiFi: L10n.Models.stateWaitingWiFi
+        case .finishing: L10n.Models.setupFinishing
+        }
     }
 }
 
@@ -189,9 +237,17 @@ private struct RoleRow: View {
 
     private var detail: String {
         if case let .pinned(id) = snapshot.selections[role], let fit = fits.first(where: { $0.model.id == id }) {
-            return fit.model.displayName
+            let state = snapshot.state(of: id)
+            guard state.isInFlight, let title = state.title else { return fit.model.displayName }
+            return [fit.model.displayName, title].joined(separator: " · ")
         }
         let installed = fits.first { snapshot.isInstalled($0.model.id) }
+        if installed == nil,
+           let coming = fits.first(where: { snapshot.state(of: $0.model.id).isInFlight }),
+           let state = snapshot.state(of: coming.model.id).title
+        {
+            return state
+        }
         return installed.map { L10n.Models.automaticUsing($0.model.displayName) } ?? L10n.Models.notInstalled
     }
 }

@@ -161,6 +161,42 @@ final class ModelDownloaderTests {
         #expect(!Stub.requests.contains(model.files[0].url.absoluteString))
     }
 
+    /// A task that never runs, carrying the description the downloader gives its own tasks.
+    private func task(for model: ModelDescriptor, in session: URLSession) -> URLSessionDownloadTask {
+        let file = model.files[0]
+        let task = session.downloadTask(with: file.url)
+        task.taskDescription = "\(model.id)\n\(file.path)"
+        return task
+    }
+
+    private func write(_ downloader: ModelDownloader, _ task: URLSessionDownloadTask, bytes: Int64, of total: Int64) {
+        downloader.urlSession(
+            URLSession.shared, downloadTask: task,
+            didWriteData: bytes, totalBytesWritten: bytes, totalBytesExpectedToWrite: total,
+        )
+    }
+
+    /// "Download all" runs several models at once. Each must count only its own bytes.
+    @Test func `progress counts only the model's own downloads`() async throws {
+        let first = model(files: [("a.bin", Data(count: 1000))])
+        let second = model(files: [("b.bin", Data(count: 1000))])
+        let downloader = try downloader([first, second])
+        let session = URLSession(configuration: .ephemeral)
+        write(downloader, task(for: first, in: session), bytes: 500, of: 1000)
+        write(downloader, task(for: second, in: session), bytes: 300, of: 1000)
+        #expect(await downloader.state(of: first.id) == .downloading(received: 500, total: 1000))
+        #expect(await downloader.state(of: second.id) == .downloading(received: 300, total: 1000))
+    }
+
+    /// A partial file kept as resume data still counts, so pausing never makes the figure go back.
+    @Test func `pausing keeps the bytes already received`() async throws {
+        let model = model(files: [("a.bin", Data(count: 1000))])
+        let downloader = try downloader([model])
+        write(downloader, task(for: model, in: URLSession(configuration: .ephemeral)), bytes: 600, of: 1000)
+        await downloader.pause(model.id)
+        #expect(await downloader.state(of: model.id) == .paused(received: 600, total: 1000))
+    }
+
     @Test func `the bundled catalog is complete and points only to allowed hosts`() throws {
         let catalog = try BundledCatalog()
         #expect(!catalog.models.isEmpty)
