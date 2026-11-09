@@ -17,7 +17,7 @@ final class IPadTests: XCTestCase {
     private func select(_ destination: String) {
         let item = app.buttons["drawer.item.\(destination)"]
         if !item.waitForExistence(timeout: 2) {
-            app.buttons["ToggleSidebar"].firstMatch.tap()
+            app.buttons["ToggleSidebar"].firstMatch.tapWhenReady()
         }
         XCTAssertTrue(item.waitForExistence(timeout: 3), destination)
         item.tap()
@@ -51,7 +51,7 @@ final class IPadTests: XCTestCase {
 
     func testSettingsOpenInTheNextColumn() {
         select("settings")
-        app.buttons["settings.about"].tap()
+        app.buttons["settings.about"].tapWhenReady()
         XCTAssertTrue(app.descendants(matching: .any)["screen.about"].waitForExistence(timeout: 3))
         XCTAssertTrue(app.descendants(matching: .any)["screen.settings"].exists)
     }

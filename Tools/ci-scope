@@ -5,7 +5,7 @@ Usage: git diff --name-only BASE HEAD | ci-scope
 
 Prints two lines for $GITHUB_OUTPUT:
   ios=true|false   false when every file is documentation, so the macOS jobs can be skipped
-  full=true|false  true when the change can break UI tests broadly, so every UI test runs, not only the smoke set
+  full=false       a pull request never runs every UI test: that is about 30 minutes. main and the nightly run do (D-082)
 """
 import re
 import sys
@@ -25,28 +25,13 @@ DOCS = re.compile(
     re.VERBOSE,
 )
 
-# Changes to the UI tests themselves, to CI, to the build, or to resolved dependencies.
-FULL = re.compile(
-    r"""(
-        AppUITests/.*
-      | \.github/workflows/.*
-      | project\.yml
-      | Makefile
-      | Brewfile
-      | Packages/Package\.resolved
-    )$""",
-    re.VERBOSE,
-)
-
 
 def scope(files):
     files = [name.strip() for name in files if name.strip()]
     if not files:
-        # An empty diff means we could not tell. Run everything rather than skip something.
-        return True, True
-    ios = any(not DOCS.match(name) for name in files)
-    full = ios and any(FULL.match(name) for name in files)
-    return ios, full
+        # An empty diff means we could not tell. Run the macOS jobs rather than skip them.
+        return True, False
+    return any(not DOCS.match(name) for name in files), False
 
 
 def main():

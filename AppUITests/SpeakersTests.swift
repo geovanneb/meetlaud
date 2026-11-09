@@ -19,7 +19,7 @@ final class SpeakersTests: XCTestCase {
     }
 
     private func openFirstSpeaker() {
-        app.buttons["speaker.chip"].firstMatch.tap()
+        app.buttons["speaker.chip"].firstMatch.tapWhenReady()
         XCTAssertTrue(app.textFields["speaker.name"].waitForExistence(timeout: 3))
     }
 
@@ -29,7 +29,7 @@ final class SpeakersTests: XCTestCase {
 
     private func setName(_ name: String) {
         let field = app.textFields["speaker.name"]
-        field.tap()
+        field.tapWhenReady()
         field.typeText(name)
     }
 
@@ -43,7 +43,7 @@ final class SpeakersTests: XCTestCase {
         openTranscript()
         openFirstSpeaker()
         setName("Ana")
-        app.buttons["speaker.save"].tap()
+        app.buttons["speaker.save"].tapWhenReady()
         XCTAssertTrue(chip("Ana").waitForExistence(timeout: 3))
     }
 
@@ -51,24 +51,24 @@ final class SpeakersTests: XCTestCase {
         openTranscript()
         openFirstSpeaker()
         setName("Ana")
-        app.switches["speaker.saveVoice"].switches.firstMatch.tap()
-        app.buttons["speaker.save"].tap()
+        app.switches["speaker.saveVoice"].switches.firstMatch.tapWhenReady()
+        app.buttons["speaker.save"].tapWhenReady()
         let consent = app.alerts.buttons["I have their consent"].firstMatch
         XCTAssertTrue(consent.waitForExistence(timeout: 3), "Saving a voice must never skip consent")
         consent.tap()
         XCTAssertTrue(chip("Ana").waitForExistence(timeout: 3))
 
-        app.navigationBars.buttons.firstMatch.tap()
-        app.buttons["drawer.toggle"].tap()
+        app.navigationBars.buttons.firstMatch.tapWhenReady()
+        app.buttons["drawer.toggle"].tapWhenReady()
         app.buttons["drawer.item.settings"].tapWhenReady()
-        app.buttons["settings.people"].tap()
+        app.buttons["settings.people"].tapWhenReady()
         XCTAssertTrue(app.staticTexts["Ana"].waitForExistence(timeout: 3))
     }
 
     func testPeopleStartsEmpty() {
-        app.buttons["drawer.toggle"].tap()
+        app.buttons["drawer.toggle"].tapWhenReady()
         app.buttons["drawer.item.settings"].tapWhenReady()
-        app.buttons["settings.people"].tap()
+        app.buttons["settings.people"].tapWhenReady()
         XCTAssertTrue(app.staticTexts["No saved voices"].waitForExistence(timeout: 3))
     }
 

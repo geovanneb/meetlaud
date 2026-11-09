@@ -18,7 +18,7 @@ concurrency:
 
 # Two tiers, so a pull request gets an answer in about 10 minutes instead of 30:
 # - A pull request runs lint, unit tests, and the UI smoke set (Tools/ui-smoke-tests.txt) on two macOS machines.
-#   It runs every UI test when it changes the UI tests, CI, the build, or Package.resolved (Tools/ci-scope).
+#   A pull request never runs every UI test: on GitHub's queued Macs that took over 30 minutes (D-082).
 # - A pull request that only changes documentation skips the macOS jobs.
 # - Every push to main, the nightly run, and a manual run run every UI test, in the four groups below.
 # Where the time goes, and why the jobs look like this:

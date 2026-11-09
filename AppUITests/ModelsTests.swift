@@ -12,16 +12,16 @@ final class ModelsTests: XCTestCase {
     }
 
     private func openModels() {
-        app.buttons["drawer.toggle"].tap()
+        app.buttons["drawer.toggle"].tapWhenReady()
         app.buttons["drawer.item.settings"].tapWhenReady()
-        app.buttons["settings.models"].tap()
+        app.buttons["settings.models"].tapWhenReady()
         XCTAssertTrue(app.descendants(matching: .any)["screen.models"].waitForExistence(timeout: 3))
     }
 
     private func openFastModel() {
         openModels()
-        app.buttons["models.role.transcription"].tap()
-        app.buttons["model.fake-small"].tap()
+        app.buttons["models.role.transcription"].tapWhenReady()
+        app.buttons["model.fake-small"].tapWhenReady()
         XCTAssertTrue(app.descendants(matching: .any)["screen.modelDetail"].waitForExistence(timeout: 3))
     }
 
@@ -35,7 +35,7 @@ final class ModelsTests: XCTestCase {
 
     func testSetupCanBeSkippedAndIsNotOfferedTwice() {
         launch(["--show-setup", "-models.hasSeenSetup", "NO"])
-        app.buttons["setup.notNow"].tap()
+        app.buttons["setup.notNow"].tapWhenReady()
         XCTAssertTrue(app.buttons["home.record"].waitForExistence(timeout: 3))
     }
 
@@ -53,17 +53,17 @@ final class ModelsTests: XCTestCase {
     func testDownloadThenDeleteAModel() {
         launch()
         openFastModel()
-        app.buttons["model.download"].tap()
+        app.buttons["model.download"].tapWhenReady()
         let delete = app.buttons["model.delete"]
         XCTAssertTrue(delete.waitForExistence(timeout: 5))
         delete.tap()
-        app.sheets.buttons["Delete"].firstMatch.tap()
+        app.sheets.buttons["Delete"].firstMatch.tapWhenReady()
         XCTAssertTrue(app.buttons["model.download"].waitForExistence(timeout: 3))
     }
 
     func testNetworkActivityStartsEmpty() {
         launch()
-        app.buttons["drawer.toggle"].tap()
+        app.buttons["drawer.toggle"].tapWhenReady()
         app.buttons["drawer.item.settings"].tapWhenReady()
         let row = app.buttons["settings.network"]
         app.reveal(row)
@@ -73,21 +73,21 @@ final class ModelsTests: XCTestCase {
 
     func testPreferencesOpen() {
         launch()
-        app.buttons["drawer.toggle"].tap()
+        app.buttons["drawer.toggle"].tapWhenReady()
         app.buttons["drawer.item.settings"].tapWhenReady()
-        app.buttons["settings.preferences"].tap()
+        app.buttons["settings.preferences"].tapWhenReady()
         XCTAssertTrue(app.descendants(matching: .any)["screen.preferences"].waitForExistence(timeout: 3))
     }
 
     func testTryOnAudioLetsMeChooseTheRecording() {
         launch()
         openModels()
-        app.buttons["models.role.transcription"].tap()
+        app.buttons["models.role.transcription"].tapWhenReady()
         for id in ["model.fake-small", "model.fake-large"] {
-            app.buttons[id].tap()
-            app.buttons["model.download"].tap()
+            app.buttons[id].tapWhenReady()
+            app.buttons["model.download"].tapWhenReady()
             XCTAssertTrue(app.buttons["model.delete"].waitForExistence(timeout: 5))
-            app.navigationBars.buttons.firstMatch.tap()
+            app.navigationBars.buttons.firstMatch.tapWhenReady()
         }
         let compare = app.buttons["models.compare"]
         app.reveal(compare)
@@ -96,7 +96,7 @@ final class ModelsTests: XCTestCase {
         XCTAssertTrue(picker.waitForExistence(timeout: 3))
         XCTAssertTrue(picker.label.contains("Sales meeting"), "The newest recording comes first")
         picker.tap()
-        app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Product memo'")).firstMatch.tap()
+        app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Product memo'")).firstMatch.tapWhenReady()
         XCTAssertTrue(picker.label.contains("Product memo"))
         XCTAssertFalse(
             app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Old draft'")).firstMatch.exists,
@@ -106,20 +106,20 @@ final class ModelsTests: XCTestCase {
 
     func testVocabularyCanBelongToOneFolder() {
         launch(["-transcript.vocabulary", "[]"])
-        app.buttons["drawer.toggle"].tap()
+        app.buttons["drawer.toggle"].tapWhenReady()
         app.buttons["drawer.item.settings"].tapWhenReady()
-        app.buttons["settings.preferences"].tap()
+        app.buttons["settings.preferences"].tapWhenReady()
         let row = app.buttons["preferences.vocabulary"]
         app.reveal(row)
         row.tap()
-        app.buttons["vocabulary.add"].tap()
-        app.textFields["vocabulary.heard"].tap()
+        app.buttons["vocabulary.add"].tapWhenReady()
+        app.textFields["vocabulary.heard"].tapWhenReady()
         app.typeText("acme")
-        app.textFields["vocabulary.written"].tap()
+        app.textFields["vocabulary.written"].tapWhenReady()
         app.typeText("ACME")
-        app.buttons["vocabulary.folder"].tap()
-        app.buttons["Clients"].firstMatch.tap()
-        app.buttons["vocabulary.save"].tap()
+        app.buttons["vocabulary.folder"].tapWhenReady()
+        app.buttons["Clients"].firstMatch.tapWhenReady()
+        app.buttons["vocabulary.save"].tapWhenReady()
         XCTAssertTrue(app.staticTexts["ACME"].waitForExistence(timeout: 3))
         XCTAssertTrue(
             app.staticTexts["CLIENTS"].exists || app.staticTexts["Clients"].exists,
@@ -130,7 +130,7 @@ final class ModelsTests: XCTestCase {
     func testASpeedTestIsKeptInTheHistory() {
         launch()
         openFastModel()
-        app.buttons["model.download"].tap()
+        app.buttons["model.download"].tapWhenReady()
         let quick = app.buttons["model.quickTest"]
         XCTAssertTrue(quick.waitForExistence(timeout: 5))
         quick.tap()
@@ -143,12 +143,12 @@ final class ModelsTests: XCTestCase {
     func testALowBatteryOffersToWaitForTheCharger() {
         launch(["--low-battery", "-library.sort", "newest"])
         openFastModel()
-        app.buttons["model.download"].tap()
+        app.buttons["model.download"].tapWhenReady()
         XCTAssertTrue(app.buttons["model.delete"].waitForExistence(timeout: 5))
         for _ in 0 ..< 4 where !app.buttons["drawer.toggle"].isHittable {
-            app.navigationBars.buttons["BackButton"].firstMatch.tap()
+            app.navigationBars.buttons["BackButton"].firstMatch.tapWhenReady()
         }
-        app.buttons["drawer.toggle"].tap()
+        app.buttons["drawer.toggle"].tapWhenReady()
         app.buttons["drawer.item.home"].tapWhenReady()
         let row = app.buttons.matching(NSPredicate(format: "label CONTAINS 'Sales meeting'")).firstMatch
         XCTAssertTrue(row.waitForExistence(timeout: 5))
@@ -156,7 +156,7 @@ final class ModelsTests: XCTestCase {
         let more = app.buttons["detail.more"]
         XCTAssertTrue(more.waitForExistence(timeout: 5))
         more.tap()
-        app.buttons["Transcribe again"].tap()
+        app.buttons["Transcribe again"].tapWhenReady()
         app.buttons["English"].tapWhenReady()
         let wait = app.buttons["transcript.startWhenCharging"].firstMatch
         XCTAssertTrue(wait.waitForExistence(timeout: 3), "A low battery is worth a word before a job")
@@ -169,12 +169,12 @@ final class ModelsTests: XCTestCase {
     func testATranscriptionShowsItsStepsWhileItRuns() {
         launch(["--slow-transcription", "-library.sort", "newest"])
         openFastModel()
-        app.buttons["model.download"].tap()
+        app.buttons["model.download"].tapWhenReady()
         XCTAssertTrue(app.buttons["model.delete"].waitForExistence(timeout: 5))
         for _ in 0 ..< 4 where !app.buttons["drawer.toggle"].isHittable {
-            app.navigationBars.buttons["BackButton"].firstMatch.tap()
+            app.navigationBars.buttons["BackButton"].firstMatch.tapWhenReady()
         }
-        app.buttons["drawer.toggle"].tap()
+        app.buttons["drawer.toggle"].tapWhenReady()
         app.buttons["drawer.item.home"].tapWhenReady()
         let row = app.buttons.matching(NSPredicate(format: "label CONTAINS 'Sales meeting'")).firstMatch
         XCTAssertTrue(row.waitForExistence(timeout: 5))
@@ -182,7 +182,7 @@ final class ModelsTests: XCTestCase {
         let more = app.buttons["detail.more"]
         XCTAssertTrue(more.waitForExistence(timeout: 5))
         more.tap()
-        app.buttons["Transcribe again"].tap()
+        app.buttons["Transcribe again"].tapWhenReady()
         app.buttons["English"].tapWhenReady()
         let start = app.buttons["transcript.startNow"].firstMatch
         if start.waitForExistence(timeout: 2) {
