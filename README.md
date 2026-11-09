@@ -105,7 +105,7 @@ make bootstrap        # installs the tools and generates the Xcode project
 open Meetlaud.xcodeproj
 ```
 
-Run the `Meetlaud` scheme on a simulator. To run on your own iPhone, add your team ID to `Config/Local.xcconfig` (see [CONTRIBUTING.md](CONTRIBUTING.md)).
+Run the `Meetlaud` scheme on a simulator. To run on your own iPhone, add your team ID and a bundle identifier of your own to `Config/Local.xcconfig` (see [CONTRIBUTING.md](CONTRIBUTING.md)).
 
 ## How it works
 

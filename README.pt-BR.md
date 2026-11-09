@@ -105,7 +105,7 @@ make bootstrap        # instala as ferramentas e gera o projeto do Xcode
 open Meetlaud.xcodeproj
 ```
 
-Rode o esquema `Meetlaud` num simulador. Para rodar no seu iPhone, coloque o ID do seu time em `Config/Local.xcconfig` (veja [CONTRIBUTING.md](CONTRIBUTING.md), em inglês).
+Rode o esquema `Meetlaud` num simulador. Para rodar no seu iPhone, coloque o ID do seu time e um identificador de pacote seu em `Config/Local.xcconfig` (veja [CONTRIBUTING.md](CONTRIBUTING.md), em inglês).
 
 ## Como funciona
 

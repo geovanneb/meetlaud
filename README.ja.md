@@ -105,7 +105,7 @@ make bootstrap        # ツールを入れて Xcode プロジェクトを生成
 open Meetlaud.xcodeproj
 ```
 
-シミュレータで `Meetlaud` スキームを実行します。自分の iPhone で動かすには、`Config/Local.xcconfig` にチーム ID を書きます([CONTRIBUTING.md](CONTRIBUTING.md)、英語)。
+シミュレータで `Meetlaud` スキームを実行します。自分の iPhone で動かすには、`Config/Local.xcconfig` にチーム ID と自分用のバンドル ID を書きます([CONTRIBUTING.md](CONTRIBUTING.md)、英語)。
 
 ## 仕組み
 
