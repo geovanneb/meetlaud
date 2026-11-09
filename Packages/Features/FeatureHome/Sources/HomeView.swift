@@ -95,7 +95,11 @@ public struct HomeView: View {
                     }
                 }
             case .undetermined:
-                connectCard
+                if model.isConnectHidden {
+                    calendarsOffRow
+                } else {
+                    connectCard
+                }
             case .denied:
                 Text(L10n.Home.calendarDenied)
                     .font(.dsMeta)
@@ -123,6 +127,7 @@ public struct HomeView: View {
             }
         }
         .listSectionSeparator(.hidden)
+        .motion(Motion.standard, value: model.isConnectHidden)
     }
 
     private var connectCard: some View {
@@ -138,12 +143,42 @@ public struct HomeView: View {
             .foregroundStyle(Color.dsAction)
             .buttonStyle(.plain)
             .accessibilityIdentifier("home.connect")
+            Button {
+                model.hideConnect()
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.dsMeta)
+                    .foregroundStyle(Color.dsSecondaryText)
+                    .tappableTarget()
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(L10n.Home.hideConnect)
+            .accessibilityIdentifier("home.connect.hide")
         }
         .padding(Spacing.medium)
         .background(Color.dsSurface, in: .rect(cornerRadius: Radius.medium))
         .listRowBackground(Color.clear)
         .listRowSeparator(.hidden)
         .listRowInsets(EdgeInsets(top: 0, leading: Spacing.medium, bottom: 0, trailing: Spacing.medium))
+    }
+
+    /// After the Connect card is closed: one quiet line, and the way back is in Settings.
+    private var calendarsOffRow: some View {
+        Button {
+            router.push(.calendars)
+        } label: {
+            HStack(spacing: Spacing.medium) {
+                RowLabel(L10n.Home.calendarsOffTitle, detail: L10n.Home.calendarsOffMessage)
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(Color.dsSecondaryText)
+                    .accessibilityHidden(true)
+            }
+            .contentShape(.rect)
+        }
+        .buttonStyle(.plain)
+        .listRowBackground(Color.clear)
+        .accessibilityIdentifier("home.calendarsOff")
     }
 
     // MARK: - Meeting notes

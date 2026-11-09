@@ -50,8 +50,26 @@ final class CalendarsTests: XCTestCase {
         XCTAssertTrue(app.switches["calendars.item.work"].waitForNonExistence(timeout: 3))
 
         open("home")
-        XCTAssertTrue(app.buttons["home.connect"].waitForExistence(timeout: 3), "Off reads as not connected")
+        let off = app.buttons["home.calendarsOff"]
+        XCTAssertTrue(off.waitForExistence(timeout: 3), "Turned off on purpose: no Connect card, one quiet line")
+        XCTAssertFalse(app.buttons["home.connect"].exists)
         XCTAssertFalse(text("Quarterly review").exists)
+    }
+
+    func testTheConnectCardCanBeClosedAndCalendarsConnectedLaterInSettings() {
+        XCTAssertTrue(app.buttons["home.connect"].waitForExistence(timeout: 3))
+        app.buttons["home.connect.hide"].tap()
+        let off = app.buttons["home.calendarsOff"]
+        XCTAssertTrue(off.waitForExistence(timeout: 3), "A quiet line says where to connect later")
+        XCTAssertFalse(app.buttons["home.connect"].exists)
+
+        off.tap()
+        XCTAssertTrue(app.descendants(matching: .any)["screen.calendars"].waitForExistence(timeout: 3))
+        app.switches["calendars.use"].switches.firstMatch.tap()
+        XCTAssertTrue(app.switches["calendars.item.work"].waitForExistence(timeout: 3))
+
+        open("home")
+        XCTAssertTrue(text("Quarterly review").waitForExistence(timeout: 3))
     }
 
     func testCalendarsPassAccessibilityAudit() throws {

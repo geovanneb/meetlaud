@@ -8,14 +8,23 @@ public final class HomeModel {
     public private(set) var recordings: [Recording] = []
     public private(set) var events: [CalendarEvent] = []
     public private(set) var calendarAccess: CalendarAccess
+    /// Closed Connect card: Upcoming shows a line that leads to Settings instead.
+    public private(set) var isConnectHidden: Bool
     private(set) var calendarEvents: [CalendarEvent] = []
 
     @ObservationIgnored private let calendar: any CalendarProvider
+    @ObservationIgnored private let choices: CalendarChoices
     @ObservationIgnored private var task: Task<Void, Never>?
 
-    public init(store: any RecordingStore, calendar: any CalendarProvider) {
+    public init(
+        store: any RecordingStore,
+        calendar: any CalendarProvider,
+        choices: CalendarChoices = CalendarChoices(),
+    ) {
         self.calendar = calendar
+        self.choices = choices
         calendarAccess = calendar.access
+        isConnectHidden = choices.isConnectHidden
         task = Task { [weak self] in
             for await recordings in store.observeRecordings() {
                 self?.recordings = recordings.filter { $0.deletedAt == nil }
@@ -29,9 +38,15 @@ public final class HomeModel {
 
     public func refreshEvents() async {
         calendarAccess = calendar.access
+        isConnectHidden = choices.isConnectHidden
         let now = Date()
         let end = Calendar.current.date(byAdding: .day, value: 7, to: now) ?? now
         events = await calendar.events(from: now, to: end).filter(\.hasDetails)
+    }
+
+    func hideConnect() {
+        choices.isConnectHidden = true
+        isConnectHidden = true
     }
 
     func connectCalendar() async {
