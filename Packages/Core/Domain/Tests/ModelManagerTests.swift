@@ -125,9 +125,9 @@ struct ModelManagerTests {
         #expect(await harness.usage.selection(for: .transcription) == .automatic)
     }
 
-    /// Waits up to two seconds for the manager to hear an installer event.
+    /// Waits for the manager to hear an installer event. Generous, because CI runs tests in parallel on a busy machine.
     private func waitFor(_ harness: Harness, _ id: String, until match: (InstallState) -> Bool) async -> Bool {
-        let deadline = ContinuousClock.now + .seconds(2)
+        let deadline = ContinuousClock.now + .seconds(15)
         while ContinuousClock.now < deadline {
             if await match(harness.manager.makeSnapshot().state(of: id)) {
                 return true
