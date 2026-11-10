@@ -45,6 +45,7 @@ The first public version. Everything below runs on the device.
 - Calendars: Settings lists every calendar on the device by account, and each can be turned off, so a personal calendar stays out of Upcoming, Calendar view, widgets, and reminders. Calendars can also be turned off altogether.
 - Home: the "See your meetings" card can be closed. Upcoming then shows one line that leads to Settings > Calendars, and turning calendars off in Settings does the same.
 - Transcription: the app no longer crashes, over and over, when iOS ends the background task that keeps a transcription going. This happened most after an update, while the model was being prepared again, and the system showed "Task failed" for each crash.
+- Transcription: the system no longer shows "Task failed" while a transcription is still running in the background. iOS ends background work that stops reporting progress, and the app reported nothing while it prepared the model or separated voices. It now reports progress all the way through.
 - Transcription: each window is cleaned before the model hears it (rumble filter and leveling of quiet voices), Whisper splits audio at pauses, and vocabulary spellings are given to the engine as hints. The recording itself is never changed.
 - Network activity: the note now mentions the computer you paired, and the history can be cleared.
 - AI models: a model with several files could report a failed install while it was actually fine, when two downloads finished at the same moment.
