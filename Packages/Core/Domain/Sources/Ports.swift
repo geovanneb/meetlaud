@@ -57,6 +57,8 @@ public protocol CalendarProvider: Sendable {
     func requestAccess() async -> Bool
     /// Timed events in a period, soonest first. All-day events, cancelled ones, and ones the person declined stay out.
     func events(from start: Date, to end: Date) async -> [CalendarEvent]
+    /// Every calendar on the device, grouped by account. Empty without access.
+    func calendars() async -> [CalendarSource]
 }
 
 public protocol RecordingFiles: Sendable {

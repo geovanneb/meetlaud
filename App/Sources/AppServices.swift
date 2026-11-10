@@ -24,6 +24,7 @@ struct Services {
     let files: any RecordingFiles
     let audio: any AudioProcessor
     let calendar: any CalendarProvider
+    let calendarChoices: CalendarChoices
     let catalog: any ModelCatalog
     let installer: any ModelInstaller
     let usage: any ModelUsageStore
@@ -58,6 +59,7 @@ struct Services {
         let database = try DatabaseStore(path: files.databasePath)
         try files.setBackupIncluded(UserDefaults.standard.bool(forKey: StoragePreferences.backupIncludedKey))
         let catalog = try BundledCatalog()
+        let calendarChoices = CalendarChoices()
         let downloader = try ModelDownloader(
             root: support.appending(path: "Meetlaud/models"),
             catalog: catalog.models,
@@ -72,7 +74,8 @@ struct Services {
             store: database,
             files: files,
             audio: AssetAudioProcessor(),
-            calendar: SystemCalendarProvider(),
+            calendar: ChosenCalendars(base: SystemCalendarProvider(), choices: calendarChoices),
+            calendarChoices: calendarChoices,
             catalog: catalog,
             installer: downloader,
             usage: database,
@@ -141,6 +144,34 @@ struct Services {
         await seedTranscript(of: sales, transcripts: transcripts, speakers: speakers)
     }
 
+    /// A work and a personal calendar. The personal event appears only with `--two-calendars`, so other tests keep
+    /// the one event they expect.
+    private static func fakeCalendar(_ arguments: [String]) -> FakeCalendarProvider {
+        var events = [
+            CalendarEvent(
+                id: "1", title: "Quarterly review", start: .now.addingTimeInterval(3600),
+                end: .now.addingTimeInterval(7200), attendees: ["Ana", "Bruno"], calendarID: "work",
+            ),
+        ]
+        let work = CalendarSource(id: "work", title: "Work", account: "Exchange")
+        guard arguments.contains("--two-calendars")
+        else { return FakeCalendarProvider(events: events, sources: [work]) }
+        events.append(CalendarEvent(
+            id: "2", title: "Piano lesson", start: .now.addingTimeInterval(5400),
+            end: .now.addingTimeInterval(9000), attendees: ["Clara"], calendarID: "personal",
+        ))
+        return FakeCalendarProvider(events: events, sources: [
+            work, CalendarSource(id: "personal", title: "Personal", account: "iCloud"),
+        ])
+    }
+
+    /// Fresh on every launch, so that one UI test's choices never reach the next.
+    private static func fakeCalendarChoices() -> CalendarChoices {
+        let suite = "ui-tests.calendars"
+        UserDefaults(suiteName: suite)?.removePersistentDomain(forName: suite)
+        return CalendarChoices(suiteName: suite)
+    }
+
     /// UI tests in the simulator have no microphone, so time passes with a scripted engine.
     /// A list of connections by nature, like the composition root.
     static func fake() -> Services { // swiftlint:disable:this function_body_length
@@ -155,6 +186,7 @@ struct Services {
             }
         }
         let store = InMemoryRecordingStore()
+        let calendarChoices = fakeCalendarChoices()
         let transcripts = FakeTranscriptStore()
         let speakers = FakeSpeakerStore()
         let arguments = ProcessInfo.processInfo.arguments
@@ -179,12 +211,8 @@ struct Services {
             store: store,
             files: FakeRecordingFiles(),
             audio: FakeAudioProcessor(),
-            calendar: FakeCalendarProvider(events: [
-                CalendarEvent(
-                    id: "1", title: "Quarterly review", start: .now.addingTimeInterval(3600),
-                    end: .now.addingTimeInterval(7200), attendees: ["Ana", "Bruno"],
-                ),
-            ]),
+            calendar: ChosenCalendars(base: fakeCalendar(arguments), choices: calendarChoices),
+            calendarChoices: calendarChoices,
             catalog: FakeCatalog(),
             installer: FakeInstaller(installed: showcase
                 ? ["fake-small", "fake-voices", "fake-chat", "fake-search"]

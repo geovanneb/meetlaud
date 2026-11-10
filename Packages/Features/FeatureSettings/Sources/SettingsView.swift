@@ -18,6 +18,7 @@ public struct SettingsView: View {
                 row(L10n.Settings.preferences, symbol: "slider.horizontal.3", route: .preferences)
                 row(L10n.Models.title, symbol: "cpu", route: .modelSettings)
                 row(L10n.People.title, symbol: "person.2", route: .people)
+                row(L10n.Calendars.title, symbol: "calendar", route: .calendars)
                 row(L10n.System.storageTitle, symbol: "externaldrive", route: .storage)
             }
             .listSectionSeparator(.hidden, edges: .top)
@@ -126,6 +127,7 @@ private extension AppRoute {
         case .people: "people"
         case .storage: "storage"
         case .notifications: "notifications"
+        case .calendars: "calendars"
         case .privacy: "privacy"
         case .about: "about"
         case .licenses: "licenses"

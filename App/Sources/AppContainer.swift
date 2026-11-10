@@ -59,6 +59,7 @@ final class AppContainer {
     let knowledgeIndexer: KnowledgeIndexer
     let lock: AppLockController
     let system: SystemController
+    let calendars: CalendarsModel
     let lockWindow: LockWindow
     let services: Services
     let modelManager: ModelManager
@@ -92,6 +93,7 @@ final class AppContainer {
         )
         recorder = RecordingController(coordinator: coordinator, permission: services.permission, router: router)
         home = HomeModel(store: services.store, calendar: services.calendar)
+        calendars = CalendarsModel(provider: services.calendar, choices: services.calendarChoices)
         service = LibraryService(store: services.store, files: services.files, audio: services.audio)
         library = LibraryController(service: service, store: services.store)
 
@@ -251,6 +253,8 @@ final class AppContainer {
                 await queue.resume()
                 await indexer.run()
             } else {
+                // Fresh events, not Home's last load: a calendar may have been turned off since.
+                await self.home.refreshEvents()
                 await self.refreshWidgets()
                 await self.scheduleReminders()
                 await askQueue.stopAndRelease()

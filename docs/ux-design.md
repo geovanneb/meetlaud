@@ -179,13 +179,14 @@ The title opens the week into the month, with a row of months below it, and the 
 In this order:
 
 ```
-Workspace   Personalization · Preferences · AI models · People · Storage & backup
+Workspace   Personalization · Preferences · AI models · People · Calendars · Storage & backup
 General     Notifications · Theme · Language
 Privacy     Privacy & security · Network activity
 Help        Help center · Share ideas · About Meetlaud · Licenses
 ```
 
 - **AI models** is the new centerpiece. It shows the device status and one model per function (Transcription, Speaker separation, Voice print, Chat & summary, Search), with speed test, download, pause, delete, storage, and continuous recommendations. See [Model management](model-management.md).
+- **Calendars** has one switch to use calendars at all, then every calendar on the device by account, each with its own switch. Upcoming, Calendar view, widgets, and reminders before a meeting read only the calendars that are on. New calendars are on by default. A work account, such as Exchange or Outlook, is added in iOS Settings, never through a sign-in in the app.
 - **Storage & backup** replaces Private Cloud Sync: usage by type, clear cache, iOS backup (off by default, with an explanation), encrypted export.
 - **Network activity** lists each download and each delivery to a paired computer, with date and destination. It proves the promise. "Clear History" empties it after a confirmation, and the empty screen then says the history was cleared.
 

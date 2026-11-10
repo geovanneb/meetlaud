@@ -296,10 +296,16 @@ public final class FakeAudioProcessor: AudioProcessor, @unchecked Sendable {
 public final class FakeCalendarProvider: CalendarProvider, @unchecked Sendable {
     public var access: CalendarAccess
     public var events: [CalendarEvent]
+    public var sources: [CalendarSource]
 
-    public init(access: CalendarAccess = .undetermined, events: [CalendarEvent] = []) {
+    public init(access: CalendarAccess = .undetermined, events: [CalendarEvent] = [], sources: [CalendarSource] = []) {
         self.access = access
         self.events = events
+        self.sources = sources
+    }
+
+    public func calendars() async -> [CalendarSource] {
+        access == .granted ? sources : []
     }
 
     public func requestAccess() async -> Bool {

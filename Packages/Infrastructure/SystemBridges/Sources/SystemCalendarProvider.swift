@@ -33,8 +33,31 @@ public final class SystemCalendarProvider: CalendarProvider, @unchecked Sendable
                     start: event.startDate,
                     end: event.endDate,
                     attendees: (event.attendees ?? []).compactMap(\.name),
+                    calendarID: event.calendar?.calendarIdentifier ?? "",
                 )
             }
+    }
+
+    public func calendars() async -> [CalendarSource] {
+        guard access == .granted else { return [] }
+        return store.calendars(for: .event)
+            .map { calendar in
+                CalendarSource(
+                    id: calendar.calendarIdentifier,
+                    title: calendar.title,
+                    account: calendar.source?.title ?? "",
+                    accountID: calendar.source?.sourceIdentifier,
+                    tint: Self.tint(of: calendar.cgColor),
+                )
+            }
+            .sorted { ($0.account, $0.title) < ($1.account, $1.title) }
+    }
+
+    private static func tint(of color: CGColor?) -> CalendarSource.Tint? {
+        guard let space = CGColorSpace(name: CGColorSpace.sRGB),
+              let rgb = color?.converted(to: space, intent: .defaultIntent, options: nil),
+              let parts = rgb.components, parts.count >= 3 else { return nil }
+        return CalendarSource.Tint(red: Double(parts[0]), green: Double(parts[1]), blue: Double(parts[2]))
     }
 
     private static func wasDeclined(_ event: EKEvent) -> Bool {

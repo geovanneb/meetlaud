@@ -28,8 +28,9 @@ extension XCUIApplication {
         let barFrame = bar.exists ? bar.frame.insetBy(dx: 0, dy: -40) : .null
         let isExpected = { (issue: XCUIAccessibilityAuditIssue) -> Bool in
             // Toolbars keep a fixed size and use the Large Content Viewer, as Apple recommends.
+            // A query by label longer than 128 characters throws, and no toolbar button is that long.
             if issue.auditType == .dynamicType, let label = issue.element?.label,
-               label == "Record" || self.navigationBars.buttons[label].exists
+               label == "Record" || label.count <= 128 && self.navigationBars.buttons[label].exists
             {
                 return true
             }

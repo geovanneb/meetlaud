@@ -27,7 +27,7 @@ public final class HomeModel {
         task?.cancel()
     }
 
-    func refreshEvents() async {
+    public func refreshEvents() async {
         calendarAccess = calendar.access
         let now = Date()
         let end = Calendar.current.date(byAdding: .day, value: 7, to: now) ?? now
