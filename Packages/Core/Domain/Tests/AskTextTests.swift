@@ -36,6 +36,7 @@ struct AnswerParserTests {
     @Test(arguments: [
         "NOT_FOUND", "NOT_FOUND.", "Sorry, NOT_FOUND", "Carla bought a new car.", "Made up [9].",
         "The main topic of the meeting was discussed.",
+        "The meeting does not say when the launch moved to March. [NOT_FOUND]",
     ])
     func `an answer with nothing real behind it is a refusal`(text: String) {
         let result = AnswerParser.parse(text, excerpts: excerpts)

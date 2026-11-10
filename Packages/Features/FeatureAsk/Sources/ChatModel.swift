@@ -22,6 +22,7 @@ final class ChatModel {
     @ObservationIgnored private let store: any ConversationStore
     @ObservationIgnored private let manager: ModelManager
     @ObservationIgnored private let onChange: @MainActor () async -> Void
+    @ObservationIgnored private let startingMeeting: RecordingID?
 
     init(
         conversation: Conversation,
@@ -31,6 +32,7 @@ final class ChatModel {
         onChange: @escaping @MainActor () async -> Void,
     ) {
         self.conversation = conversation
+        startingMeeting = conversation.scope.recordingID
         self.coordinator = coordinator
         self.store = store
         self.manager = manager
@@ -46,10 +48,21 @@ final class ChatModel {
         hasLanguageModel = await manager.model(for: .chat, language: nil) != nil
     }
 
+    /// The meeting this chat was opened from, so that the menu can always go back to it.
+    var meeting: RecordingID? {
+        startingMeeting ?? conversation.scope.recordingID
+    }
+
+    /// The earlier answers came from the old scope, and the model would read them as part of the new one. So once
+    /// a chat has messages, a new scope starts a new chat, and the old one stays in the list.
     func setScope(_ scope: AskScope) async {
-        conversation.scope = scope
-        if !messages.isEmpty {
-            try? await store.save(conversation)
+        guard scope != conversation.scope, !isBusy else { return }
+        if messages.isEmpty {
+            conversation.scope = scope
+        } else {
+            conversation = Conversation(scope: scope, createdAt: Date())
+            messages = []
+            partial = ""
         }
     }
 

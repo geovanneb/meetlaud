@@ -123,17 +123,17 @@ struct AskCoordinatorTests {
     @Test func `a short meeting goes to the model whole, with a citation at the exact phrase`() async throws {
         let harness = AskHarness()
         let id = try await harness.addRecording(lines: ["Hello", "We move the launch to March"])
-        await harness.language.setAnswers(["The launch moved to March [2]."])
+        await harness.language.setAnswers(["The launch moved to March [1]."])
 
         let (message, _) = await harness.ask("When is the launch?", scope: .recording(id))
 
         #expect(message?.state == .complete)
         #expect(message?.body == "The launch moved to March [1].")
         #expect(message?.citations.first?.time == 10)
+        #expect(message?.citations.first?.excerpt == "We move the launch to March")
         #expect(message?.citations.first?.recordingID == id)
         let prompt = try #require(await harness.language.requests.first?.prompt)
-        #expect(prompt.contains("[1] Hello"))
-        #expect(prompt.contains("[2] We move the launch"))
+        #expect(prompt.contains("[1] Hello We move the launch to March"))
     }
 
     @Test func `the question and the answer are both saved, and the chat gets a title`() async throws {

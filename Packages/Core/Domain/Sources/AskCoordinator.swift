@@ -212,6 +212,12 @@ public actor AskCoordinator {
             for try await chunk in language.generate(request) {
                 try Task.checkCancellation()
                 written += chunk
+                // A small model that has said what it knows often goes on to recite its sources until it runs out
+                // of room. That is never part of the answer, so it ends the answer.
+                if let copying = AnswerParser.copyingStart(in: written) {
+                    written = String(written[..<copying])
+                    break
+                }
                 update(.writing(AnswerParser.visible(written)))
             }
             try Task.checkCancellation()
