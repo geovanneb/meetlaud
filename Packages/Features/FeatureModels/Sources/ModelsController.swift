@@ -82,6 +82,10 @@ public final class ModelsController {
         Task { await manager.installRecommended() }
     }
 
+    func resumeSetup() {
+        Task { await manager.resumeSetup() }
+    }
+
     func install(_ model: ModelDescriptor, allowsCellular: Bool = false) {
         Task { await manager.install(model, allowsCellular: allowsCellular) }
     }

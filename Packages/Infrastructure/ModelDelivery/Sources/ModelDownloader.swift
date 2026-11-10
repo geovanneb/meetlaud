@@ -24,13 +24,17 @@ public final class ModelDownloader: NSObject, ModelInstaller, @unchecked Sendabl
 
     private var session: URLSession!
     private var states: [String: InstallState] = [:]
-    private var inFlight: [Int: Int64] = [:]
+    /// Bytes written by each running task, with the model it belongs to.
+    private var inFlight: [Int: (id: String, bytes: Int64)] = [:]
+    /// The last count shown for each model, so that pausing or resuming never shows less than was already received.
+    private var lastReceived: [String: Int64] = [:]
     private var damageRetries: [String: Int] = [:]
     private var pausing: Set<String> = []
     /// Models being verified and moved. Each file's task checks "all staged?" when it completes, and with several
     /// files more than one can see yes before the first finish has moved the folder. A second finish would then
     /// find no staging folder and report a failure over a good install.
     private var finishing: Set<String> = []
+    private var starting: Set<String> = []
     private var backgroundCompletion: (@Sendable () -> Void)?
 
     public init(
@@ -105,6 +109,14 @@ public final class ModelDownloader: NSObject, ModelInstaller, @unchecked Sendabl
             update(model.id, .ready)
             return
         }
+        // Already in `install` (awaiting the session), or being checked: a second pass would race the first.
+        let claimed = lock.withLock {
+            guard !finishing.contains(model.id), !starting.contains(model.id) else { return false }
+            starting.insert(model.id)
+            return true
+        }
+        guard claimed else { return }
+        defer { lock.withLock { _ = starting.remove(model.id) } }
         guard freeBytes() >= model.totalBytes + Self.spaceMargin else {
             update(model.id, .failed(.noSpace))
             return
@@ -115,7 +127,8 @@ public final class ModelDownloader: NSObject, ModelInstaller, @unchecked Sendabl
             update(model.id, .failed(.unavailable))
             return
         }
-        update(model.id, .queued)
+        let resumedFrom = lock.withLock { lastReceived[model.id] } ?? 0
+        update(model.id, resumedFrom > 0 ? .downloading(received: resumedFrom, total: model.totalBytes) : .queued)
 
         let running = await session.allTasks.filter { Self.identity(of: $0)?.id == model.id }
         let active = Set(running.compactMap { Self.identity(of: $0)?.path })
@@ -155,7 +168,7 @@ public final class ModelDownloader: NSObject, ModelInstaller, @unchecked Sendabl
                 try? data.write(to: resumeURL(for: file, in: id))
             }
         }
-        let received = stagedBytes(id)
+        let received = receivedSoFar(id)
         lock.withLock { _ = pausing.remove(id) }
         update(id, .paused(received: received, total: catalog[id]?.totalBytes ?? 0))
     }
@@ -166,7 +179,10 @@ public final class ModelDownloader: NSObject, ModelInstaller, @unchecked Sendabl
             task.cancel()
         }
         try? FileManager.default.removeItem(at: staging(id))
-        lock.withLock { _ = pausing.remove(id) }
+        lock.withLock {
+            _ = pausing.remove(id)
+            lastReceived[id] = nil
+        }
         update(id, .notInstalled)
     }
 
@@ -183,7 +199,7 @@ public final class ModelDownloader: NSObject, ModelInstaller, @unchecked Sendabl
         let running = Set(tasks.compactMap { Self.identity(of: $0)?.id })
         let folders = (try? FileManager.default.contentsOfDirectory(atPath: stagingRoot.path)) ?? []
         for id in folders where catalog[id] != nil {
-            let received = stagedBytes(id)
+            let received = receivedSoFar(id)
             let total = catalog[id]?.totalBytes ?? 0
             if running.contains(id) {
                 update(id, .downloading(received: received, total: total))
@@ -240,6 +256,8 @@ public final class ModelDownloader: NSObject, ModelInstaller, @unchecked Sendabl
         if retries <= Self.retriesAfterDamage {
             // The retry finishes on its own later, so this finish must let go first.
             lock.withLock { _ = finishing.remove(model.id) }
+            // Out of .verifying, so that installs and the progress row see the retry.
+            update(model.id, .downloading(received: stagedBytes(model.id), total: model.totalBytes))
             start(file, of: model)
         } else {
             lock.withLock { damageRetries[model.id] = 0 }
@@ -257,12 +275,28 @@ public final class ModelDownloader: NSObject, ModelInstaller, @unchecked Sendabl
         }
         return hasher.finalize().map { String(format: "%02x", $0) }.joined()
     }
+}
 
-    // MARK: - Helpers
-
+/// Helpers, outside the class body only to keep it short.
+extension ModelDownloader {
     private func update(_ id: String, _ state: InstallState) {
-        lock.withLock { states[id] = state }
+        lock.withLock {
+            states[id] = state
+            switch state {
+            case let .downloading(received, _), let .paused(received, _):
+                lastReceived[id] = received
+            case .ready, .notInstalled, .failed:
+                lastReceived[id] = nil
+            default:
+                break
+            }
+        }
         continuation.yield((id, state))
+    }
+
+    /// Whole files, or more if more was shown: resume data keeps a partial file. Without it, the figure can drop.
+    private func receivedSoFar(_ id: String) -> Int64 {
+        max(stagedBytes(id), lock.withLock { lastReceived[id] } ?? 0)
     }
 
     private func isStaged(_ file: ModelFile, in id: String) -> Bool {
@@ -295,9 +329,12 @@ extension ModelDownloader: URLSessionDownloadDelegate {
         totalBytesExpectedToWrite _: Int64,
     ) {
         guard let identity = Self.identity(of: downloadTask) else { return }
+        // A callback already queued when the person paused must not turn "Paused" back into "Downloading".
+        guard !lock.withLock({ pausing.contains(identity.id) }) else { return }
+        // Only this model's tasks: "Download all" runs several models at once.
         let running = lock.withLock {
-            inFlight[downloadTask.taskIdentifier] = totalBytesWritten
-            return inFlight.values.reduce(0, +)
+            inFlight[downloadTask.taskIdentifier] = (identity.id, totalBytesWritten)
+            return inFlight.values.filter { $0.id == identity.id }.reduce(0) { $0 + $1.bytes }
         }
         let total = catalog[identity.id]?.totalBytes ?? 0
         update(identity.id, .downloading(received: min(stagedBytes(identity.id) + running, total), total: total))
@@ -340,7 +377,7 @@ extension ModelDownloader: URLSessionDownloadDelegate {
             {
                 try? data.write(to: resumeURL(for: file, in: model.id))
             }
-            let received = stagedBytes(model.id)
+            let received = receivedSoFar(model.id)
             update(model.id, .paused(received: received, total: model.totalBytes))
             return
         }

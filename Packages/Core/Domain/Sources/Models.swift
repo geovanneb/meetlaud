@@ -129,6 +129,16 @@ public enum InstallState: Hashable, Sendable {
     case failed(InstallFailure)
 }
 
+public extension InstallState {
+    /// On its way: asked for, and neither ready nor given up on.
+    var isInFlight: Bool {
+        switch self {
+        case .queued, .downloading, .paused, .waitingForWiFi, .verifying, .preparing, .selfTest: true
+        case .notInstalled, .ready, .failed: false
+        }
+    }
+}
+
 public enum InstallFailure: String, Hashable, Sendable {
     case noSpace, damaged, unavailable, prepareFailed
 }

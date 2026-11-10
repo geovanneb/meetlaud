@@ -170,8 +170,20 @@ public actor ModelManager {
     public func installRecommended(allowsCellular: Bool = false) async {
         let snapshot = await makeSnapshot()
         // The smallest first, so that the app becomes useful as soon as possible.
-        for model in snapshot.missingFromSetup.sorted(by: { $0.totalBytes < $1.totalBytes }) {
+        // A model already on its way is left alone: asking again would restart a check or a preparation.
+        let missing = snapshot.missingFromSetup.filter { !snapshot.state(of: $0.id).isInFlight }
+        for model in missing.sorted(by: { $0.totalBytes < $1.totalBytes }) {
             await install(model, allowsCellular: allowsCellular)
+        }
+    }
+
+    /// Resumes the paused part of the setup, and nothing else: not what the person cancelled, not what failed.
+    public func resumeSetup(allowsCellular: Bool = false) async {
+        let snapshot = await makeSnapshot()
+        for model in snapshot.missingFromSetup {
+            if case .paused = snapshot.state(of: model.id) {
+                await install(model, allowsCellular: allowsCellular)
+            }
         }
     }
 
