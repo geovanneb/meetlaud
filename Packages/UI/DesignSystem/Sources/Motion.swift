@@ -1,11 +1,12 @@
 import SwiftUI
 
-/// The app's timing. Short and calm, and the same for the same kind of change on every screen.
+/// The app's timing. Short and calm, and the same for the same kind of change on every screen. Kept on the quick
+/// side, so that the app answers the finger before the eye starts waiting.
 public enum Motion {
     /// State inside a control: a selection, a highlight, a button changing.
-    public static let quick = Animation.smooth(duration: 0.2)
-    /// Something entering or leaving a screen.
-    public static let standard = Animation.smooth(duration: 0.3)
+    public static let quick = Animation.smooth(duration: 0.16)
+    /// Something entering or leaving a screen, or a folder opening.
+    public static let standard = Animation.smooth(duration: 0.25)
     /// The side menu. Halfway there in 50 ms, and settled in about 200, as measured frame by frame at 60 frames a
     /// second.
     public static let drawer = Animation.spring(duration: 0.2, bounce: 0)

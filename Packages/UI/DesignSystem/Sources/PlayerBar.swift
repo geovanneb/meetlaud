@@ -110,34 +110,39 @@ public struct PlayerBar: View {
             } label: {
                 Text(rate.formatted() + "×")
                     .font(.dsTimestamp)
-                    .frame(minWidth: 44, minHeight: 44)
+                    .tappableTarget()
             }
             .accessibilityLabel(labels.speed)
             .accessibilityIdentifier("player.speed")
 
             Spacer()
 
-            Button(labels.back, systemImage: "gobackward.15") { onSeek(time - 15) }
-                .labelStyle(.iconOnly)
-                .font(.dsIconLarge)
+            // Each target is set inside its label: a frame on the button grows the layout, not what a finger hits.
+            Button { onSeek(time - 15) } label: {
+                Label(labels.back, systemImage: "gobackward.15")
+                    .font(.dsIconLarge)
+                    .tappableTarget()
+            }
 
-            Button(isPlaying ? labels.pause : labels.play, systemImage: isPlaying ? "pause.fill" : "play.fill") {
-                onToggle()
+            Button { onToggle() } label: {
+                Label(isPlaying ? labels.pause : labels.play, systemImage: isPlaying ? "pause.fill" : "play.fill")
+                    .font(.dsHero)
+                    .tappableTarget()
             }
             .keyboardShortcut(.space, modifiers: [])
-            .labelStyle(.iconOnly)
-            .font(.dsHero)
-            .frame(minWidth: 44, minHeight: 44)
             .accessibilityIdentifier("player.toggle")
 
-            Button(labels.forward, systemImage: "goforward.30") { onSeek(time + 30) }
-                .labelStyle(.iconOnly)
-                .font(.dsIconLarge)
+            Button { onSeek(time + 30) } label: {
+                Label(labels.forward, systemImage: "goforward.30")
+                    .font(.dsIconLarge)
+                    .tappableTarget()
+            }
 
             Spacer()
 
             Color.clear.frame(width: 44, height: 44).accessibilityHidden(true)
         }
+        .labelStyle(.iconOnly)
         .foregroundStyle(.primary)
     }
 }

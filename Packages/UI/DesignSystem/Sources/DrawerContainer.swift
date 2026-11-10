@@ -74,12 +74,14 @@ public struct DrawerContainer<Menu: View, Content: View>: View {
 
     /// The drawer animates its own shell and nothing inside it. A screen that opens from the menu must not inherit the
     /// slide, or its bars and rows fly in from nowhere: `transaction` stops the animation at the content's edge.
+    /// Only when the drawer moves: a plain `transaction` here also cancelled every animation the screens start
+    /// themselves, such as a folder opening.
     private func menuLayer(width: CGFloat, progress: CGFloat) -> some View {
         menu
             .frame(width: width)
             .frame(maxHeight: .infinity, alignment: .top)
             .background(Color.dsBackground)
-            .transaction { $0.animation = nil }
+            .transaction(value: progress) { $0.animation = nil }
             .scaleEffect(reduceMotion ? 1 : DrawerGeometry.menuScale(progress: progress))
             .opacity(reduceMotion ? progress : DrawerGeometry.menuOpacity(progress: progress))
             .zIndex(reduceMotion ? 1 : 0)
@@ -105,7 +107,7 @@ public struct DrawerContainer<Menu: View, Content: View>: View {
                     .allowsHitTesting(false)
                     .accessibilityHidden(true)
             }
-            .transaction { $0.animation = nil }
+            .transaction(value: progress) { $0.animation = nil }
             // A mask and not a clip: the shape reaches past the safe area, while the content stays inside it, so that
             // the screen's bottom bars keep their real space above the home indicator.
             .mask { RoundedRectangle(cornerRadius: radius).ignoresSafeArea() }
