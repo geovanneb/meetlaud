@@ -52,6 +52,12 @@ final class CalendarChoicesTests {
         #expect(!choices.isShown("home"))
     }
 
+    @Test func `a closed Connect card stays closed`() {
+        #expect(!choices.isConnectHidden, "Shown until the person closes it")
+        choices.isConnectHidden = true
+        #expect(CalendarChoices(suiteName: suite).isConnectHidden, "Kept for the next launch")
+    }
+
     @Test func `turned off, nothing is read, and Home offers Connect again`() async {
         let calendars = ChosenCalendars(base: provider(), choices: choices)
         choices.isOn = false

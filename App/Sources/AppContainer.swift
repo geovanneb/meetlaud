@@ -92,7 +92,7 @@ final class AppContainer {
             activity: services.activity,
         )
         recorder = RecordingController(coordinator: coordinator, permission: services.permission, router: router)
-        home = HomeModel(store: services.store, calendar: services.calendar)
+        home = HomeModel(store: services.store, calendar: services.calendar, choices: services.calendarChoices)
         calendars = CalendarsModel(provider: services.calendar, choices: services.calendarChoices)
         service = LibraryService(store: services.store, files: services.files, audio: services.audio)
         library = LibraryController(service: service, store: services.store)

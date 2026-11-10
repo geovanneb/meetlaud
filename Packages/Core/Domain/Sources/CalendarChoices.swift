@@ -38,6 +38,7 @@ public struct CalendarSource: Identifiable, Hashable, Sendable {
 public struct CalendarChoices: Sendable {
     static let isOffKey = "calendars.isOff"
     static let hiddenKey = "calendars.hidden"
+    static let connectHiddenKey = "calendars.connectHidden"
 
     /// A name, not the store itself: `UserDefaults` is not `Sendable`, and opening it by name is cheap.
     private let suiteName: String?
@@ -55,6 +56,13 @@ public struct CalendarChoices: Sendable {
     public var isOn: Bool {
         get { !defaults.bool(forKey: Self.isOffKey) }
         nonmutating set { defaults.set(!newValue, forKey: Self.isOffKey) }
+    }
+
+    /// The person closed Home's Connect card, or turned calendars off in Settings. Home then shows one quiet line
+    /// that leads to Settings, instead of asking again.
+    public var isConnectHidden: Bool {
+        get { defaults.bool(forKey: Self.connectHiddenKey) }
+        nonmutating set { defaults.set(newValue, forKey: Self.connectHiddenKey) }
     }
 
     public var hidden: Set<String> {

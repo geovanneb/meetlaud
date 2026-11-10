@@ -13,3 +13,10 @@ public extension L10n {
         public static var addHelp: String { text("calendars.add_help") }
     }
 }
+
+/// Home's Upcoming, when calendars are not connected.
+public extension L10n.Home {
+    static var hideConnect: String { L10n.text("home.hide_connect") }
+    static var calendarsOffTitle: String { L10n.text("home.calendars_off_title") }
+    static var calendarsOffMessage: String { L10n.text("home.calendars_off_message") }
+}

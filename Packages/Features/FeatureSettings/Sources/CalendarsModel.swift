@@ -53,6 +53,8 @@ public final class CalendarsModel {
             _ = await provider.requestAccess()
         } else {
             choices.isOn = false
+            // Turned off on purpose: Home should not offer Connect again.
+            choices.isConnectHidden = true
         }
         await load()
     }

@@ -40,6 +40,7 @@ The first public version. Everything below runs on the device.
 - Speakers: two saved people in the same meeting are both recognized. Matching scores every voice against every person, and voice prints no longer depend on how long or loud each stretch was.
 - Speakers: a "Speakers" section at the top of the Summary shows how much each person spoke, their turns, and their longest turn.
 - Calendars: Settings lists every calendar on the device by account, and each can be turned off, so a personal calendar stays out of Upcoming, Calendar view, widgets, and reminders. Calendars can also be turned off altogether.
+- Home: the "See your meetings" card can be closed. Upcoming then shows one line that leads to Settings > Calendars, and turning calendars off in Settings does the same.
 - Transcription: each window is cleaned before the model hears it (rumble filter and leveling of quiet voices), Whisper splits audio at pauses, and vocabulary spellings are given to the engine as hints. The recording itself is never changed.
 - Network activity: the note now mentions the computer you paired, and the history can be cleared.
 - AI models: a model with several files could report a failed install while it was actually fine, when two downloads finished at the same moment.

@@ -12,6 +12,7 @@ public struct HomeView: View {
     private let onImport: () -> Void
     private let center: TranscriptionCenter
     @Environment(AppRouter.self) private var router
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @AppStorage(RecordingSort.storageKey) private var sort: RecordingSort = .newest
 
     public init(
@@ -95,7 +96,11 @@ public struct HomeView: View {
                     }
                 }
             case .undetermined:
-                connectCard
+                if model.isConnectHidden {
+                    calendarsOffRow
+                } else {
+                    connectCard
+                }
             case .denied:
                 Text(L10n.Home.calendarDenied)
                     .font(.dsMeta)
@@ -123,27 +128,68 @@ public struct HomeView: View {
             }
         }
         .listSectionSeparator(.hidden)
+        .motion(Motion.standard, value: model.isConnectHidden)
     }
 
+    /// At accessibility text sizes the text and Connect stack, so the card keeps its width for words. The close
+    /// button stays in the top corner either way.
     private var connectCard: some View {
-        HStack(spacing: Spacing.medium) {
-            RowLabel(L10n.Home.connectTitle, detail: L10n.Home.connectMessage)
-            Spacer(minLength: 0)
+        let layout = dynamicTypeSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(alignment: .leading, spacing: Spacing.small))
+            : AnyLayout(HStackLayout(spacing: Spacing.medium))
+        return HStack(alignment: .top, spacing: Spacing.small) {
+            layout {
+                RowLabel(L10n.Home.connectTitle, detail: L10n.Home.connectMessage)
+                if !dynamicTypeSize.isAccessibilitySize {
+                    Spacer(minLength: 0)
+                }
+                Button {
+                    Task { await model.connectCalendar() }
+                } label: {
+                    Text(L10n.Home.connect)
+                        .tappableTarget()
+                }
+                .foregroundStyle(Color.dsAction)
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("home.connect")
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
             Button {
-                Task { await model.connectCalendar() }
+                model.hideConnect()
             } label: {
-                Text(L10n.Home.connect)
+                Image(systemName: "xmark")
+                    .font(.dsMeta)
+                    .foregroundStyle(Color.dsSecondaryText)
                     .tappableTarget()
             }
-            .foregroundStyle(Color.dsAction)
             .buttonStyle(.plain)
-            .accessibilityIdentifier("home.connect")
+            .accessibilityLabel(L10n.Home.hideConnect)
+            .accessibilityIdentifier("home.connect.hide")
         }
         .padding(Spacing.medium)
         .background(Color.dsSurface, in: .rect(cornerRadius: Radius.medium))
         .listRowBackground(Color.clear)
         .listRowSeparator(.hidden)
         .listRowInsets(EdgeInsets(top: 0, leading: Spacing.medium, bottom: 0, trailing: Spacing.medium))
+    }
+
+    /// After the Connect card is closed: one quiet line, and the way back is in Settings.
+    private var calendarsOffRow: some View {
+        Button {
+            router.push(.calendars)
+        } label: {
+            HStack(spacing: Spacing.medium) {
+                RowLabel(L10n.Home.calendarsOffTitle, detail: L10n.Home.calendarsOffMessage)
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(Color.dsSecondaryText)
+                    .accessibilityHidden(true)
+            }
+            .contentShape(.rect)
+        }
+        .buttonStyle(.plain)
+        .listRowBackground(Color.clear)
+        .accessibilityIdentifier("home.calendarsOff")
     }
 
     // MARK: - Meeting notes

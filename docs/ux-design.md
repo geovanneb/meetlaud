@@ -98,7 +98,7 @@ meetlaud://settings/models
 
 - Each row shows a clear state: Not transcribed, Queued, Transcribing 42%, Ready.
 - Empty state: "Start by recording or importing audio".
-- Without calendar permission, the card with `Connect` appears. No screen blocks because of it.
+- Without calendar permission, the card with `Connect` appears. No screen blocks because of it. Its `×` closes it for good, and so does turning calendars off in Settings. Upcoming then shows one quiet line, "Calendars are off", that opens Settings > Calendars.
 
 ### Recording screen
 
