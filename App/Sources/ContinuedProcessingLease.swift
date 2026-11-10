@@ -36,8 +36,10 @@ final class ContinuedProcessingLease: BackgroundWorkLease {
     private func attach(_ task: BGContinuedProcessingTask) {
         self.task = task
         task.progress.totalUnitCount = 100
+        // iOS calls this on a background queue, not on the queue the task was registered with, so it hops to the
+        // main actor instead of assuming it is already there. Asserting crashed the app each time iOS ended the task.
         task.expirationHandler = { [weak self] in
-            MainActor.assumeIsolated { self?.finish(success: false) }
+            Task { @MainActor in self?.finish(success: false) }
         }
     }
 
