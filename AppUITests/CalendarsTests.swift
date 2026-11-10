@@ -26,12 +26,24 @@ final class CalendarsTests: XCTestCase {
         XCTAssertTrue(app.descendants(matching: .any)["screen.calendars"].waitForExistence(timeout: 3))
     }
 
+    /// At large text sizes the card is tall, and Connect can sit under the Ask bar until Home scrolls. `isHittable`
+    /// does not see the bar on top, so this compares frames.
+    private func connect() {
+        let button = app.buttons["home.connect"]
+        XCTAssertTrue(button.waitForExistence(timeout: 5))
+        let bar = app.descendants(matching: .any)["prompt.bar"].firstMatch
+        for _ in 0 ..< 4 where bar.exists && button.frame.maxY > bar.frame.minY {
+            app.swipeUp()
+        }
+        button.tap()
+    }
+
     private func text(_ value: String) -> XCUIElement {
         app.staticTexts[value]
     }
 
     func testAPersonalCalendarCanBeLeftOutAndCalendarsTurnedOff() {
-        app.buttons["home.connect"].tapWhenReady()
+        connect()
         XCTAssertTrue(text("Quarterly review").waitForExistence(timeout: 3))
         XCTAssertTrue(text("Piano lesson").exists)
 
@@ -73,7 +85,7 @@ final class CalendarsTests: XCTestCase {
     }
 
     func testCalendarsPassAccessibilityAudit() throws {
-        app.buttons["home.connect"].tapWhenReady()
+        connect()
         openCalendarSettings()
         XCTAssertTrue(app.switches["calendars.item.work"].waitForExistence(timeout: 3))
         // A long page: Dynamic Type is checked at the largest size below, as in `SystemTests`.
@@ -83,7 +95,7 @@ final class CalendarsTests: XCTestCase {
     func testCalendarsWorkAtTheLargestTextSize() {
         app.launchArguments += ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
         app.launch()
-        app.buttons["home.connect"].tapWhenReady()
+        connect()
         openCalendarSettings()
         // Rows below the screen do not exist until the list scrolls to them.
         let personal = app.switches["calendars.item.personal"]
