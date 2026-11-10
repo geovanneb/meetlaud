@@ -70,6 +70,10 @@ public enum QueryTerms {
     private static let limit = 12
 
     public static func terms(in text: String) -> [String] {
+        terms(in: text, limit: limit)
+    }
+
+    static func terms(in text: String, limit: Int) -> [String] {
         var seen: Set<String> = []
         var result: [String] = []
         text.enumerateSubstrings(in: text.startIndex..., options: .byWords) { word, _, _, stop in
@@ -255,7 +259,9 @@ public enum AnswerParser {
     private nonisolated(unsafe) static let reference = /\[\s*(\d+(?:\s*[,、]\s*\d+)*)\s*\]/
 
     public static func parse(_ text: String, excerpts: [AskExcerpt]) -> Result {
-        guard !text.contains(AskPrompts.notFound) else { return Result(body: "", citations: [], hasBasis: false) }
+        // The prompt asks for the part it can answer, so the refusal word can follow a real answer about that part.
+        let text = withoutRefusal(text)
+        guard !text.isEmpty else { return Result(body: "", citations: [], hasBasis: false) }
 
         var numbering: [Int: Int] = [:]
         var citations: [Citation] = []
@@ -281,17 +287,36 @@ public enum AnswerParser {
         }
         .trimmingCharacters(in: .whitespacesAndNewlines)
 
-        // An answer with nothing behind it reads exactly like a good one, so it does not get shown.
-        guard !citations.isEmpty else { return Result(body: "", citations: [], hasBasis: false) }
-        return Result(body: body, citations: citations, hasBasis: true)
+        if !citations.isEmpty {
+            return Result(body: body, citations: citations, hasBasis: true)
+        }
+        // A small model often answers a broad question well and forgets the numbers. Each sentence that clearly
+        // rests on one line gets that line. An answer with nothing behind it reads exactly like a good one, so a
+        // sentence that rests on nothing is not shown (D-051).
+        return CitationInference.cite(body, excerpts: excerpts)
     }
 
     /// What can be shown while the model writes. The refusal word starts arriving before it can be recognized.
     public static func visible(_ partial: String) -> String {
-        let trimmed = partial.trimmingCharacters(in: .whitespacesAndNewlines)
-        if trimmed.contains(AskPrompts.notFound) || AskPrompts.notFound.hasPrefix(trimmed) {
-            return ""
+        var shown = withoutRefusal(partial)
+        // The start of the refusal word, after a real answer.
+        let word = AskPrompts.notFound
+        for length in stride(from: word.count - 1, through: 1, by: -1) {
+            let start = String(word.prefix(length))
+            guard shown.hasSuffix(start) else { continue }
+            let rest = shown.dropLast(length)
+            if rest.isEmpty || rest.last?.isWhitespace == true {
+                shown = String(rest).trimmingCharacters(in: .whitespacesAndNewlines)
+            }
+            break
         }
-        return trimmed
+        return shown
     }
+
+    /// The text with the refusal word and its punctuation taken out.
+    static func withoutRefusal(_ text: String) -> String {
+        text.replacing(refusal, with: "").trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private nonisolated(unsafe) static let refusal = /[\s,;:—-]*NOT_FOUND[\s.。!！]*/
 }

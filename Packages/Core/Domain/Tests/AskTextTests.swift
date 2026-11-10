@@ -34,7 +34,8 @@ struct AnswerParserTests {
     }
 
     @Test(arguments: [
-        "NOT_FOUND", "NOT_FOUND.", "Sorry, NOT_FOUND", "The launch moved to March.", "Made up [9].",
+        "NOT_FOUND", "NOT_FOUND.", "Sorry, NOT_FOUND", "Carla bought a new car.", "Made up [9].",
+        "The main topic of the meeting was discussed.",
     ])
     func `an answer with nothing real behind it is a refusal`(text: String) {
         let result = AnswerParser.parse(text, excerpts: excerpts)
@@ -43,7 +44,40 @@ struct AnswerParserTests {
         #expect(result.citations.isEmpty)
     }
 
-    @Test(arguments: [("N", ""), ("NOT_F", ""), ("NOT_FOUND", ""), ("The launch", "The launch"), ("  ", "")])
+    @Test(arguments: ["The launch moved to March [1]. NOT_FOUND", "The launch moved to March [1].\n\nNOT_FOUND."])
+    func `the part it could answer stays when the refusal word follows`(text: String) {
+        let result = AnswerParser.parse(text, excerpts: excerpts)
+        #expect(result.hasBasis)
+        #expect(result.body == "The launch moved to March [1].")
+    }
+
+    @Test func `an answer without numbers gets the line each sentence rests on`() {
+        let result = AnswerParser.parse("The launch moved to March. Bruno will send the budget.", excerpts: excerpts)
+        #expect(result.hasBasis)
+        #expect(result.body == "The launch moved to March [1]. Bruno will send the budget [2].")
+        #expect(result.citations.map(\.time) == [10, 42])
+    }
+
+    @Test func `a sentence without numbers and with nothing behind it is left out`() {
+        let result = AnswerParser.parse("The launch moved to March. Carla bought a new car.", excerpts: excerpts)
+        #expect(result.body == "The launch moved to March [1].")
+        #expect(result.citations.count == 1)
+    }
+
+    @Test func `a broad question answered from the summary without numbers keeps its answer`() {
+        let summary = [
+            AskExcerpt(recordingID: id, title: "Sync", time: 5, text: "Summary, Topics: Budget for the March launch"),
+            AskExcerpt(recordingID: id, title: "Sync", time: 42, text: "Bruno: I will send the budget"),
+        ]
+        let result = AnswerParser.parse("The main topic was the budget for the March launch.", excerpts: summary)
+        #expect(result.hasBasis)
+        #expect(result.citations.map(\.time) == [5])
+    }
+
+    @Test(arguments: [
+        ("N", ""), ("NOT_F", ""), ("NOT_FOUND", ""), ("The launch", "The launch"), ("  ", ""),
+        ("Moved [1]. NOT_F", "Moved [1]."), ("Moved [1]. NOT_FOUND", "Moved [1]."), ("A PLAN", "A PLAN"),
+    ])
     func `the refusal word never shows while it is being written`(partial: String, shown: String) {
         #expect(AnswerParser.visible(partial) == shown)
     }
