@@ -36,6 +36,9 @@ The first public version. Everything below runs on the device.
 - Storage & backup and AI model storage show space as one bar, next to what is free on the device. Model downloads show progress for every step, not only the download.
 - AI models: after "Download all", the screen shows the download progress and the state of each function, instead of "Not installed". Each model counts only its own bytes, and pausing keeps what was received.
 - Folders and the Speakers section open and close with motion, and with a fade when Reduce Motion is on.
+- Folders in My files now really open and close with motion on iPhone: the side menu was cancelling it. Animations across the app are a little shorter, and My files sorts its list once per update instead of once per folder, so the app feels quicker.
+- Home: with calendars off, "Calendars are off" now sits in a card like "See your meetings", and the whole card opens Settings > Calendars.
+- Fewer missed taps: the player's back, play, and forward buttons, the Library selection bar, and search results now take taps across their full 44-point area, not only on the icon or text.
 - Home: "No recordings yet" no longer covers the upcoming meetings. It now sits under Meeting notes.
 - Speakers: two saved people in the same meeting are both recognized. Matching scores every voice against every person, and voice prints no longer depend on how long or loud each stretch was.
 - Speakers: a "Speakers" section at the top of the Summary shows how much each person spoke, their turns, and their longest turn.

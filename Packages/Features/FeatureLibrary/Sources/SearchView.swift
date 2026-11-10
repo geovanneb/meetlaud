@@ -37,6 +37,9 @@ public struct SearchView: View {
                                     .foregroundStyle(Color.dsSecondaryText)
                             }
                         }
+                        // The whole row, not only its text: the space beside a short excerpt took no taps.
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .contentShape(.rect)
                     }
                     .buttonStyle(.plain)
                     .listRowBackground(Color.clear)

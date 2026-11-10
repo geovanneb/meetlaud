@@ -8,11 +8,15 @@ struct MoveMenu: View {
     let onMove: (FolderID?) -> Void
 
     var body: some View {
-        Menu(L10n.Library.move, systemImage: "folder") {
+        Menu {
             Button(L10n.Library.recordings) { onMove(nil) }
             ForEach(folders) { folder in
                 Button(folder.name) { onMove(folder.id) }
             }
+        } label: {
+            // The target only matters in the selection bar. In a context menu iOS draws the row itself.
+            Label(L10n.Library.move, systemImage: "folder")
+                .tappableTarget()
         }
     }
 }
@@ -45,24 +49,31 @@ struct SelectionBar: View {
         HStack(spacing: Spacing.large) {
             MoveMenu(folders: library.folders, onMove: onMove)
             Spacer()
-            Button(L10n.Library.merge, systemImage: "arrow.trianglehead.merge") {
+            Button {
                 Task { try? await library.service.merge(ids) }
                 onFinish()
+            } label: {
+                Label(L10n.Library.merge, systemImage: "arrow.trianglehead.merge")
+                    .tappableTarget()
             }
             .disabled(ids.count < 2)
             .accessibilityIdentifier("library.merge")
             Spacer()
-            Button(L10n.Library.moveToTrash, systemImage: "trash", role: .destructive) {
+            Button(role: .destructive) {
                 Task { try? await library.service.trash(ids) }
                 onFinish()
+            } label: {
+                Label(L10n.Library.moveToTrash, systemImage: "trash")
+                    .tappableTarget()
             }
             .accessibilityIdentifier("library.trashSelected")
         }
         .labelStyle(.iconOnly)
         .font(.dsIcon)
         .disabled(ids.isEmpty)
+        // The targets are 44 points tall, so the bar needs less padding of its own to keep its height.
         .padding(.horizontal, Spacing.large)
-        .padding(.vertical, Spacing.medium)
+        .padding(.vertical, Spacing.xSmall)
         .glassEffect(.regular, in: .capsule)
         .padding(.horizontal, Spacing.medium)
         .padding(.bottom, Spacing.small)

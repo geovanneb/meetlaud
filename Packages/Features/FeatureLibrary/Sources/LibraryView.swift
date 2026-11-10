@@ -100,10 +100,14 @@ public struct LibraryView: View {
             .screenList()
             .environment(\.editMode, .constant(.active))
         } else {
+            // Grouped once per update: asking the library per folder sorted every recording several times a folder.
+            let groups = Dictionary(grouping: library.active, by: \.folderID)
             List {
                 Section {
-                    mainFolder
-                    ForEach(library.folders, content: folderRow)
+                    mainFolder(groups[FolderID?.none] ?? [])
+                    ForEach(library.folders) { folder in
+                        folderRow(folder, recordings: groups[folder.id] ?? [])
+                    }
                 } header: {
                     header
                 }
@@ -136,16 +140,16 @@ public struct LibraryView: View {
         }
     }
 
-    private var mainFolder: some View {
+    private func mainFolder(_ recordings: [Recording]) -> some View {
         DisclosureGroup(isExpanded: $isMainExpanded.animation(disclosure)) {
-            recordings(in: nil)
+            rows(recordings)
         } label: {
-            folderLabel(name: L10n.Library.recordings, count: library.recordings(in: nil).count, symbol: "mic")
+            folderLabel(name: L10n.Library.recordings, count: recordings.count, symbol: "mic")
                 .dropDestination(for: String.self) { ids, _ in drop(ids, into: nil) }
         }
     }
 
-    private func folderRow(_ folder: Folder) -> some View {
+    private func folderRow(_ folder: Folder, recordings: [Recording]) -> some View {
         DisclosureGroup(isExpanded: Binding(
             get: { expanded.contains(folder.id) },
             set: { isOn in
@@ -158,15 +162,15 @@ public struct LibraryView: View {
                 }
             },
         )) {
-            recordings(in: folder.id)
-            if library.recordings(in: folder.id).isEmpty {
+            rows(recordings)
+            if recordings.isEmpty {
                 Text(L10n.Library.folderEmpty)
                     .font(.dsNote)
                     .foregroundStyle(Color.dsSecondaryText)
                     .listRowBackground(Color.clear)
             }
         } label: {
-            folderLabel(name: folder.name, count: library.recordings(in: folder.id).count, symbol: "folder")
+            folderLabel(name: folder.name, count: recordings.count, symbol: "folder")
                 .dropDestination(for: String.self) { ids, _ in drop(ids, into: folder.id) }
         }
         .swipeActions {
@@ -183,8 +187,8 @@ public struct LibraryView: View {
         }
     }
 
-    private func recordings(in folder: FolderID?) -> some View {
-        ForEach(library.recordings(in: folder)) { recording in
+    private func rows(_ recordings: [Recording]) -> some View {
+        ForEach(recordings) { recording in
             Button {
                 router.push(.recording(recording.id, at: nil))
             } label: {

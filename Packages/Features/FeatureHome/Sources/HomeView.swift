@@ -166,14 +166,12 @@ public struct HomeView: View {
             .accessibilityLabel(L10n.Home.hideConnect)
             .accessibilityIdentifier("home.connect.hide")
         }
-        .padding(Spacing.medium)
-        .background(Color.dsSurface, in: .rect(cornerRadius: Radius.medium))
-        .listRowBackground(Color.clear)
-        .listRowSeparator(.hidden)
-        .listRowInsets(EdgeInsets(top: 0, leading: Spacing.medium, bottom: 0, trailing: Spacing.medium))
+        .dsCard()
+        .upcomingCardRow()
     }
 
-    /// After the Connect card is closed: one quiet line, and the way back is in Settings.
+    /// After the Connect card is closed: the same card, quieter, and the way back is in Settings. The whole card is
+    /// the button.
     private var calendarsOffRow: some View {
         Button {
             router.push(.calendars)
@@ -185,10 +183,11 @@ public struct HomeView: View {
                     .foregroundStyle(Color.dsSecondaryText)
                     .accessibilityHidden(true)
             }
+            .dsCard()
             .contentShape(.rect)
         }
         .buttonStyle(.plain)
-        .listRowBackground(Color.clear)
+        .upcomingCardRow()
         .accessibilityIdentifier("home.calendarsOff")
     }
 
@@ -255,6 +254,15 @@ public struct HomeView: View {
         .padding(.vertical, Spacing.large)
         .listRowBackground(Color.clear)
         .listRowSeparator(.hidden)
+    }
+}
+
+private extension View {
+    /// A card in Upcoming: inset from the edges like the rows around it, with no row background or separator.
+    func upcomingCardRow() -> some View {
+        listRowBackground(Color.clear)
+            .listRowSeparator(.hidden)
+            .listRowInsets(EdgeInsets(top: 0, leading: Spacing.medium, bottom: 0, trailing: Spacing.medium))
     }
 }
 
