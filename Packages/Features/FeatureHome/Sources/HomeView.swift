@@ -12,6 +12,7 @@ public struct HomeView: View {
     private let onImport: () -> Void
     private let center: TranscriptionCenter
     @Environment(AppRouter.self) private var router
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @AppStorage(RecordingSort.storageKey) private var sort: RecordingSort = .newest
 
     public init(
@@ -130,19 +131,29 @@ public struct HomeView: View {
         .motion(Motion.standard, value: model.isConnectHidden)
     }
 
+    /// At accessibility text sizes the text and Connect stack, so the card keeps its width for words. The close
+    /// button stays in the top corner either way.
     private var connectCard: some View {
-        HStack(spacing: Spacing.medium) {
-            RowLabel(L10n.Home.connectTitle, detail: L10n.Home.connectMessage)
-            Spacer(minLength: 0)
-            Button {
-                Task { await model.connectCalendar() }
-            } label: {
-                Text(L10n.Home.connect)
-                    .tappableTarget()
+        let layout = dynamicTypeSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(alignment: .leading, spacing: Spacing.small))
+            : AnyLayout(HStackLayout(spacing: Spacing.medium))
+        return HStack(alignment: .top, spacing: Spacing.small) {
+            layout {
+                RowLabel(L10n.Home.connectTitle, detail: L10n.Home.connectMessage)
+                if !dynamicTypeSize.isAccessibilitySize {
+                    Spacer(minLength: 0)
+                }
+                Button {
+                    Task { await model.connectCalendar() }
+                } label: {
+                    Text(L10n.Home.connect)
+                        .tappableTarget()
+                }
+                .foregroundStyle(Color.dsAction)
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("home.connect")
             }
-            .foregroundStyle(Color.dsAction)
-            .buttonStyle(.plain)
-            .accessibilityIdentifier("home.connect")
+            .frame(maxWidth: .infinity, alignment: .leading)
             Button {
                 model.hideConnect()
             } label: {
