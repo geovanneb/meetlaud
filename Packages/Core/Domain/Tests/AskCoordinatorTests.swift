@@ -26,6 +26,7 @@ struct AskHarness {
     let knowledge: FakeKnowledgeStore
     let transcripts = FakeTranscriptStore()
     let speakers = FakeSpeakerStore()
+    let summaries = FakeSummaryStore()
     let language = ScriptedLanguageEngine()
     let embedder = FakeEmbeddingEngine()
     let arbiter = ModelArbiter()
@@ -48,7 +49,8 @@ struct AskHarness {
         )
         coordinator = AskCoordinator(
             conversations: conversations, knowledge: knowledge, recordings: recordings, transcripts: transcripts,
-            speakers: speakers, language: language, embedder: embedder, indexer: indexer, arbiter: arbiter,
+            speakers: speakers, summaries: summaries, language: language, embedder: embedder, indexer: indexer,
+            arbiter: arbiter,
             models: { $0 == "llm" ? (llm, nil) : nil },
             canRun: { canRun.isOn },
             pauseOtherWork: { paused.isOn = true },
@@ -156,6 +158,33 @@ struct AskCoordinatorTests {
 
         #expect(message?.state == .complete)
         #expect(message?.citations.first?.excerpt.contains("zebra") == true)
+    }
+
+    @Test func `a broad question about a long meeting reads its summary, and the citation lands on the transcript`()
+        async throws
+    {
+        let harness = AskHarness()
+        let id = try await harness.addRecording(lines: longMeeting("We agreed to rebuild the onboarding flow"))
+        await harness.summaries.save(Summary(
+            recordingID: id, templateName: "Meeting", modelID: "llm", language: "en",
+            sections: [SummarySection(title: "Topics", kind: .bullets, items: [
+                SummaryItem(text: "Rebuilding the onboarding flow", sourceTime: 402),
+                SummaryItem(text: "A point nobody said", sourceTime: 10, needsReview: true),
+                SummaryItem(text: "A point with no moment"),
+            ])],
+            isComplete: true, createdAt: .now,
+        ))
+        await harness.language.setAnswers(["The meeting was about rebuilding the onboarding flow [1]."])
+
+        let (message, _) = await harness.ask("What was the main topic?", scope: .recording(id))
+
+        #expect(message?.state == .complete)
+        #expect(message?.citations.first?.time == 400)
+        #expect(message?.citations.first?.excerpt == "We agreed to rebuild the onboarding flow")
+        let prompt = try #require(await harness.language.requests.first?.prompt)
+        #expect(prompt.contains("[1] Summary, Topics: Rebuilding the onboarding flow"))
+        #expect(!prompt.contains("A point nobody said"))
+        #expect(!prompt.contains("A point with no moment"))
     }
 
     @Test func `the model decides there is no answer`() async throws {

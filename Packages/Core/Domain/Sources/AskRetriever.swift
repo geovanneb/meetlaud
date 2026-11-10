@@ -5,12 +5,15 @@ struct AskRetriever: Sendable {
     private enum Limits {
         /// How many each search brings in before merging.
         static let candidates = 24
+        /// The summary's share of the context. Search results get the rest.
+        static let summaryTokens = 600
     }
 
     let knowledge: any KnowledgeStore
     let recordings: any RecordingStore
     let transcripts: any TranscriptStore
     let speakers: any SpeakerStore
+    let summaries: (any SummaryStore)?
     let language: any LanguageModelEngine
     let embedder: any TextEmbeddingEngine
     let indexer: KnowledgeIndexer
@@ -31,8 +34,53 @@ struct AskRetriever: Sendable {
             }
             // A person can ask about a long meeting the moment it finishes, before the background work gets to it.
             try await indexIfStale(id)
+            // "What was it about?" shares no words with any passage, so search alone finds noise. The summary already
+            // answers it, and each of its points is tied to a moment, so a citation still lands on the transcript.
+            let overview = try await summaryExcerpts(id, segments: segments, title: recording.title)
+            let found = try await search(question, scope: scope, history: history)
+            return Self.withinBudget(overview + found)
         }
         return try await search(question, scope: scope, history: history)
+    }
+
+    /// The points of the newest summary that are tied to a phrase. A point flagged for review is left out (D-049).
+    private func summaryExcerpts(
+        _ id: RecordingID,
+        segments: [TranscriptSegment],
+        title: String,
+    ) async throws -> [AskExcerpt] {
+        guard let summaries,
+              let summary = try await summaries.summaries(for: id).max(by: { $0.createdAt < $1.createdAt })
+        else { return [] }
+        var result: [AskExcerpt] = []
+        var tokens = 0
+        for section in summary.sections {
+            for item in section.items where !item.needsReview {
+                guard let time = item.sourceTime,
+                      let segment = segments.last(where: { $0.start <= time }) ?? segments.first
+                else { continue }
+                let text = "Summary, \(section.title): \(item.text)"
+                tokens += TokenEstimator.tokens(in: text) + 2
+                guard tokens <= Limits.summaryTokens else { return result }
+                // The passage is that one phrase, so the citation shows what was said, not the summary's words.
+                result.append(AskExcerpt(
+                    recordingID: id, title: title, time: segment.start, end: segment.end, text: text,
+                ))
+            }
+        }
+        return result
+    }
+
+    /// Keeps the excerpts in order until the context is full.
+    private static func withinBudget(_ excerpts: [AskExcerpt]) -> [AskExcerpt] {
+        var tokens = 0
+        var result: [AskExcerpt] = []
+        for excerpt in excerpts {
+            tokens += TokenEstimator.tokens(in: excerpt.text) + 2
+            guard tokens <= AskCoordinator.Limits.contextTokens else { break }
+            result.append(excerpt)
+        }
+        return result
     }
 
     private static func wholeMeeting(

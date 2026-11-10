@@ -225,8 +225,11 @@ public enum AskPrompts {
             system: """
             You answer questions about recorded meetings, using only the numbered lines between <transcript> tags.
             After every statement, write the number of the line that supports it, like this: [2]
-            If those lines do not answer the question, write exactly \(notFound) and nothing else. Never guess, and \
-            never use anything you know from elsewhere. Be brief. Answer in the language of the question.\(about)
+            Lines that start with "Summary" are notes about the whole meeting. Use them for questions about its \
+            topic, purpose, decisions, or outcome.
+            If the lines answer only part of the question, answer that part. Write exactly \(notFound) and nothing \
+            else only when nothing in them helps. Never guess, and never use anything you know from elsewhere. Be \
+            brief. Answer in the language of the question.\(about)
             \(SummaryPrompts.safety)
             """,
             prompt: """

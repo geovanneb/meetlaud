@@ -28,6 +28,7 @@ The first public version. Everything below runs on the device.
 - Interface in English, Japanese, Portuguese, and Spanish.
 
 ### Fixed and improved since the first build
+- Ask about this meeting: broad questions like "What was the main topic?" now get an answer on long meetings. The chat reads the meeting's summary along with the passages it finds, and answers the part it can instead of saying it found nothing.
 - Work in progress is always visible: after recording, the Summary and Transcript tabs show the steps of the transcription, a bar that keeps moving while the model loads, elapsed time, and time left once it can be measured. Home and Library rows show the same state as a badge.
 - Speakers: when the app finds too few voices, "Detect again" lets you say how many people spoke. A voice heard for less than 2 seconds no longer becomes a speaker.
 - Speakers: the automatic count now finds people whose voices are clearly different even when the model first merges them. Four people at a table were found as one before.

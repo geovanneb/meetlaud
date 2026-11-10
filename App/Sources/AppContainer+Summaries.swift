@@ -67,6 +67,7 @@ extension AppContainer {
             recordings: services.store,
             transcripts: services.transcripts,
             speakers: services.speakers,
+            summaries: services.summaries,
             language: services.language,
             embedder: services.embedder,
             indexer: indexer,
