@@ -28,15 +28,14 @@ struct AskRetriever: Sendable {
             let segments = try await transcripts.segments(for: id)
             guard !segments.isEmpty else { return [] }
             let people = try await speakers.speakers(for: id)
-            let whole = Self.wholeMeeting(segments, speakers: people, title: recording.title)
-            if let whole {
-                return whole
-            }
-            // A person can ask about a long meeting the moment it finishes, before the background work gets to it.
-            try await indexIfStale(id)
             // "What was it about?" shares no words with any passage, so search alone finds noise. The summary already
             // answers it, and each of its points is tied to a moment, so a citation still lands on the transcript.
             let overview = try await summaryExcerpts(id, segments: segments, title: recording.title)
+            if let whole = Self.wholeMeeting(segments, speakers: people, title: recording.title, after: overview) {
+                return overview + whole
+            }
+            // A person can ask about a long meeting the moment it finishes, before the background work gets to it.
+            try await indexIfStale(id)
             let found = try await search(question, scope: scope, history: history)
             return Self.withinBudget(overview + found)
         }
@@ -83,18 +82,21 @@ struct AskRetriever: Sendable {
         return result
     }
 
+    /// The whole meeting as a few passages, when it fits next to the summary. One number per phrase gave a small
+    /// model dozens of lines to choose from: it skipped the numbers, or recited the lines after answering. A
+    /// passage still leads to its exact phrase, because `located` finds it after the answer.
     private static func wholeMeeting(
         _ segments: [TranscriptSegment],
         speakers: [Speaker],
         title: String,
+        after overview: [AskExcerpt],
     ) -> [AskExcerpt]? {
-        let excerpts = segments.map { segment in
+        let excerpts = KnowledgeChunker.chunks(segments: segments, speakers: speakers, language: nil).map { chunk in
             AskExcerpt(
-                recordingID: segment.recordingID, title: title, time: segment.start,
-                text: KnowledgeChunker.speakerLine(segment, speakers: speakers),
+                recordingID: chunk.recordingID, title: title, time: chunk.start, end: chunk.end, text: chunk.text,
             )
         }
-        let tokens = excerpts.reduce(0) { $0 + TokenEstimator.tokens(in: $1.text) + 2 }
+        let tokens = (overview + excerpts).reduce(0) { $0 + TokenEstimator.tokens(in: $1.text) + 2 }
         return tokens <= AskCoordinator.Limits.contextTokens ? excerpts : nil
     }
 

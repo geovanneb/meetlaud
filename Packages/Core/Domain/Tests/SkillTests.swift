@@ -7,7 +7,7 @@ struct SkillTests {
         let request = AskPrompts.answer(
             question: "What now?", excerpts: [], history: [], memories: [], profile: nil, skill: "Answer as a poem.",
         )
-        let rule = request.system.range(of: "using only the numbered lines")
+        let rule = request.system.range(of: "End each sentence with the number")
         let shape = request.system.range(of: "Shape your answer this way: Answer as a poem.")
         #expect(rule != nil && shape != nil)
         if let rule, let shape {

@@ -29,6 +29,7 @@ The first public version. Everything below runs on the device.
 
 ### Fixed and improved since the first build
 - Ask about this meeting: broad questions like "What was the main topic?" now get an answer on long meetings. The chat reads the meeting's summary along with the passages it finds, and answers the part it can instead of saying it found nothing.
+- Ask: answers no longer appear and then turn into "I could not find that". The chat model now reads the meeting's summary first and the transcript as a few passages instead of one numbered line per phrase, which made it skip its sources or recite them after answering. If it starts reciting anyway, the answer ends there. An answer is kept when the model only says it cannot answer part of the question, and earlier refusals no longer steer the next answer. The scope menu keeps the meeting a chat was opened from, and changing scope starts a new chat so that answers from another scope are not mixed in.
 - Work in progress is always visible: after recording, the Summary and Transcript tabs show the steps of the transcription, a bar that keeps moving while the model loads, elapsed time, and time left once it can be measured. Home and Library rows show the same state as a badge.
 - Speakers: when the app finds too few voices, "Detect again" lets you say how many people spoke. A voice heard for less than 2 seconds no longer becomes a speaker.
 - Speakers: the automatic count now finds people whose voices are clearly different even when the model first merges them. Four people at a table were found as one before.

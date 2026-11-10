@@ -120,6 +120,9 @@ struct ChatView: View {
 
     private var scopeMenu: some View {
         Menu {
+            if let meeting = model.meeting {
+                Button(scopeTitle ?? L10n.Ask.scopeMeeting) { choose(.recording(meeting)) }
+            }
             Button(L10n.Ask.scopeLibrary) { choose(.library) }
             ForEach(controller.folders) { folder in
                 Button(folder.name) { choose(.folder(folder.id)) }
@@ -154,7 +157,7 @@ struct ChatView: View {
     }
 
     private func loadScopeTitle() async {
-        if let id = model.conversation.scope.recordingID {
+        if let id = model.meeting {
             scopeTitle = await controller.title(of: id)
         }
     }
