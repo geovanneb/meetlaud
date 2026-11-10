@@ -3,7 +3,10 @@ import Foundation
 /// Answers one question at a time, from what is in the recordings and nothing else.
 ///
 /// A short meeting goes to the model whole, for the same reason as in D-046. Anything bigger goes through search: words
-/// and meaning together, because each finds what the other misses. Similarity alone cannot say that nothing matches
+/// and meaning together, because each finds what the other misses. For one meeting, the summary's points that are tied
+/// to
+/// a moment come first, since a question like "what was it about?" shares no words with any passage. Similarity alone
+/// cannot say that nothing matches
 /// (see SP-5), so the refusal comes from the model and from checking its citations.
 public actor AskCoordinator {
     public enum Limits {
@@ -40,6 +43,7 @@ public actor AskCoordinator {
         recordings: any RecordingStore,
         transcripts: any TranscriptStore,
         speakers: any SpeakerStore,
+        summaries: (any SummaryStore)? = nil,
         language: any LanguageModelEngine,
         embedder: any TextEmbeddingEngine,
         indexer: KnowledgeIndexer,
@@ -54,7 +58,7 @@ public actor AskCoordinator {
         self.conversations = conversations
         retriever = AskRetriever(
             knowledge: knowledge, recordings: recordings, transcripts: transcripts, speakers: speakers,
-            language: language, embedder: embedder, indexer: indexer,
+            summaries: summaries, language: language, embedder: embedder, indexer: indexer,
         )
         self.language = language
         self.embedder = embedder
