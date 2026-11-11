@@ -164,7 +164,7 @@ struct SummaryLanguagePromptTests {
     @Test func `a translation keeps the names it is given, and every currency`() {
         let system = SummaryPrompts.translation(["[1] x"], into: "ja", names: ["鈴木", "Ana"]).system
         #expect(system.contains("Write these names exactly like this, never translated: 鈴木, Ana."))
-        #expect(system.contains("8,000 reais stays 8,000 reais"))
+        #expect(system.contains("a price in yen stays in yen, and a price in reais stays in reais"))
         #expect(!SummaryPrompts.translation(["[1] x"], into: "ja").system.contains("these names"))
     }
 

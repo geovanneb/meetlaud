@@ -154,20 +154,33 @@ struct SummaryLanguageCoordinatorTests {
         #expect(summary.sections[0].items.map(\.text) == ["価格は9,500円に決定した", "価格は9,500円"])
     }
 
-    @Test func `a translation keeps the names of the people in the meeting`() async throws {
+    @Test func `a translation keeps names already written in its script, and romanizes the others`() async throws {
         let harness = Harness()
         try await harness.addTranscript(spoken: "ja", text: "鈴木：資料を作ります。")
         await harness.speakers.saveSpeakers(
-            [Speaker(recordingID: harness.id, number: 1, name: "鈴木"), Speaker(recordingID: harness.id, number: 2)],
+            [
+                Speaker(recordingID: harness.id, number: 1, name: "鈴木"),
+                Speaker(recordingID: harness.id, number: 2, name: "Ana"),
+            ],
             assignments: [:], for: harness.id,
         )
         await harness.engine.setSectionAnswers(["[1] 鈴木が資料を作る\n", ""])
-        await harness.engine.setTranslations(["[1] 鈴木 vai preparar os materiais\n"])
+        await harness.engine.setTranslations(["[1] Suzuki vai preparar os materiais\n"])
         let summary = try await harness.run(language: "pt")
 
         let translation = try #require(await harness.translations.first)
-        #expect(translation.system.contains("never translated: 鈴木, Speaker 2."))
-        #expect(summary.sections[0].items.first?.text.contains("vai preparar os materiais") == true)
+        #expect(translation.system.contains("never translated: Ana."), "Listing 佐藤 made the model copy the line")
+        #expect(summary.sections[0].items.first?.text == "Suzuki vai preparar os materiais")
+    }
+
+    @Test(arguments: [("ja", ["鈴木", "Ana"]), ("pt", ["Ana"]), ("en", ["Ana"])])
+    func `names in another script are left for the model to romanize`(_ language: String, _ kept: [String]) {
+        let id = RecordingID()
+        let speakers = [
+            Speaker(recordingID: id, number: 1, name: "鈴木"),
+            Speaker(recordingID: id, number: 2, name: "Ana"),
+        ]
+        #expect(SummaryCoordinator.keptNames(speakers, in: language) == kept)
     }
 
     @Test func `with the spoken language unknown, the model writes in the one asked for`() async throws {
