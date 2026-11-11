@@ -92,7 +92,19 @@ final class SummaryTests: XCTestCase {
         let tab = app.buttons["Templates"]
         XCTAssertTrue(tab.waitForExistence(timeout: 3))
         tab.tap()
-        XCTAssertTrue(app.staticTexts["Meeting minutes"].waitForExistence(timeout: 3))
+        XCTAssertTrue(templateCard("Meeting minutes").waitForExistence(timeout: 3))
+    }
+
+    /// A template in the library is a card: a button whose label starts with its name.
+    private func templateCard(_ name: String) -> XCUIElement {
+        app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", name)).firstMatch
+    }
+
+    private func searchTemplates(_ text: String) {
+        let search = app.searchFields.firstMatch
+        XCTAssertTrue(search.waitForExistence(timeout: 3))
+        search.tap()
+        search.typeText(text)
     }
 
     private func openTools() {
@@ -142,12 +154,17 @@ final class SummaryTests: XCTestCase {
 
     func testTheLibraryShowsBuiltInTemplatesAndSearches() {
         openTemplates()
-        let search = app.searchFields.firstMatch
-        XCTAssertTrue(search.waitForExistence(timeout: 3))
-        search.tap()
-        search.typeText("lecture")
-        XCTAssertTrue(app.staticTexts["Lecture notes"].waitForExistence(timeout: 3))
-        XCTAssertFalse(app.staticTexts["Meeting minutes"].exists)
+        searchTemplates("lecture")
+        XCTAssertTrue(templateCard("Lecture notes").waitForExistence(timeout: 3))
+        XCTAssertFalse(templateCard("Meeting minutes").exists)
+    }
+
+    func testACategoryOpensEveryTemplateInIt() {
+        openTemplates()
+        app.buttons["templates.category.meeting"].tapWhenReady()
+        XCTAssertTrue(app.descendants(matching: .any)["screen.templateCategory"].waitForExistence(timeout: 3))
+        XCTAssertTrue(templateCard("One-on-one").waitForExistence(timeout: 3))
+        XCTAssertFalse(templateCard("Lecture notes").exists)
     }
 
     func testATemplateCanBeWrittenByHand() {
@@ -163,7 +180,7 @@ final class SummaryTests: XCTestCase {
         section.tapWhenReady()
         section.typeText("Shipped")
         app.buttons["template.save"].tapWhenReady()
-        XCTAssertTrue(app.staticTexts["Sprint review"].waitForExistence(timeout: 3))
+        XCTAssertTrue(templateCard("Sprint review").waitForExistence(timeout: 3))
         XCTAssertTrue(app.staticTexts["My templates"].exists)
     }
 
@@ -212,12 +229,15 @@ final class SummaryTests: XCTestCase {
 
     func testChoosingADefaultTemplate() {
         openTemplates()
-        app.staticTexts["Call notes"].tapWhenReady()
+        searchTemplates("Call notes")
+        templateCard("Call notes").tapWhenReady()
         let more = app.buttons["template.more"]
         XCTAssertTrue(more.waitForExistence(timeout: 3))
         more.tap()
         app.buttons["template.default"].tapWhenReady()
         app.navigationBars.buttons.firstMatch.tapWhenReady()
-        XCTAssertTrue(app.staticTexts["Default"].waitForExistence(timeout: 3))
+        let card = templateCard("Call notes")
+        XCTAssertTrue(card.waitForExistence(timeout: 3))
+        XCTAssertTrue(card.label.contains("Default"), "The card shows the new default")
     }
 }

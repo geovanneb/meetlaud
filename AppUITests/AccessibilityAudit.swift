@@ -26,6 +26,9 @@ extension XCUIApplication {
         // audit still sees the text there.
         let bar = descendants(matching: .any).matching(NSPredicate(format: "label BEGINSWITH 'Ask about'")).firstMatch
         let barFrame = bar.exists ? bar.frame.insetBy(dx: 0, dy: -40) : .null
+        // The search field floats over the bottom of a screen the same way, and blurs what scrolls under it.
+        let search = searchFields.firstMatch
+        let searchFrame = search.exists ? search.frame.insetBy(dx: 0, dy: -24) : .null
         let isExpected = { (issue: XCUIAccessibilityAuditIssue) -> Bool in
             // Toolbars keep a fixed size and use the Large Content Viewer, as Apple recommends.
             // A query by label longer than 128 characters throws, and no toolbar button is that long.
@@ -37,7 +40,8 @@ extension XCUIApplication {
             // Text scrolled behind a bar exists but cannot be seen, so its contrast means nothing.
             // So is text cut off by the bottom of the screen, a line that only shows its top few points.
             if issue.auditType == .contrast, let element = issue.element,
-               !element.isHittable || element.frame.intersects(barFrame) || element.frame.maxY > self.frame.maxY
+               !element.isHittable || element.frame.intersects(barFrame) || element.frame.intersects(searchFrame)
+               || element.frame.maxY > self.frame.maxY
             {
                 return true
             }

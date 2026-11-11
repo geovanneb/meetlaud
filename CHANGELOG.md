@@ -15,6 +15,7 @@ The first public version. Everything below runs on the device.
 - Transcription with Whisper or Apple Speech, tested in English, Japanese, Portuguese, and Spanish.
 - Speaker separation, and optional voice prints that suggest names in later meetings.
 - Summaries from templates or your own, with every claim linked to its moment in the audio. Long meetings are summarized in parts, so the beginning is never lost.
+- A template library you can browse: categories at the top, a row of cards per category, and a page with every template in a category.
 - Ask about one meeting, a folder, or the whole library, with cited sources. Memory of facts you ask it to remember.
 - Action items to Reminders, mind maps, vocabulary per folder or for everything, and a polished reading mode.
 
