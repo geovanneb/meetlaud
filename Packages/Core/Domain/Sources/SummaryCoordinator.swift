@@ -210,25 +210,36 @@ extension SummaryCoordinator {
         let people = try await speakers.speakers(for: job.recordingID)
         let lines = TranscriptFormatter.lines(segments: segments, speakers: people)
         let spoken = try await transcripts.transcript(for: job.recordingID)?.language
-        let language = job.language ?? spoken
 
         let duration = segments.last?.end ?? 0
-        try await prepareNotes(&job, lines: lines, duration: duration, language: language)
+        try await prepareNotes(&job, lines: lines, duration: duration, language: spoken)
         var summary = try await store.summaries(for: job.recordingID).first { $0.id == job.summaryID }
             ?? Summary(
                 id: job.summaryID, recordingID: job.recordingID, templateName: job.template.name,
                 modelID: job.modelID, language: job.language, createdAt: Date(),
             )
 
+        // A small model summarizes well in the language that was spoken, and translates well, but doing both at once
+        // gave line-by-line translations and wrong numbers. So it writes in the spoken language, then translates.
+        let languages = SummaryLanguages(spoken: spoken, asked: job.language)
         let total = job.template.sections.count
         while job.nextSection < total {
             let section = job.template.sections[job.nextSection]
             let done = Double(job.nextSection) / Double(total)
-            let sameLanguage = job.language == nil || job.language == spoken
-            let items = try await sectionItems(
-                section, job: job, duration: duration, language: language, showingAs: done,
+            let written = try await sectionItems(
+                section, job: job, duration: duration, languages: languages, showingAs: done,
             )
-            .map { SummaryValidator.validate($0, segments: segments, speakers: people, sameLanguage: sameLanguage) }
+            .filter { Self.belongs($0, in: section, segments: segments, speakers: people) }
+            // Checked before translating, so a date can still be found in the transcript.
+            .map {
+                SummaryValidator.validate(
+                    $0, segments: segments, speakers: people, sameLanguage: languages.written == spoken,
+                )
+            }
+            let items = try await inLanguage(
+                written, kind: section.kind, languages: languages,
+                names: Self.keptNames(people, in: languages.target),
+            )
             .map { Self.tokenized($0, speakers: people) }
             summary.sections.append(SummarySection(title: section.title, kind: section.kind, items: items))
             job.nextSection += 1
@@ -249,15 +260,15 @@ extension SummaryCoordinator {
         _ section: TemplateSection,
         job: SummaryJob,
         duration: TimeInterval,
-        language: String?,
+        languages: SummaryLanguages,
         showingAs done: Double,
     ) async throws -> [SummaryItem] {
         let parts = job.nextChunk > 0 ? SummaryParts.split(job.notes, duration: duration) : [job.notes]
         var found: [[SummaryItem]] = []
         for part in parts {
             let request = SummaryPrompts.section(
-                section, template: job.template, notes: part, language: language, profile: profile(),
-                limit: parts.count > 1 ? SummaryParts.limit(for: section.kind) : nil,
+                section, template: job.template, notes: part, language: languages.written, spoken: languages.spoken,
+                profile: profile(), limit: parts.count > 1 ? SummaryParts.limit(for: section.kind) : nil,
             )
             let text = try await generate(request, showingAs: (job.summaryID, done))
             found.append(SummaryParser.items(from: text, kind: section.kind))
@@ -312,7 +323,7 @@ extension SummaryCoordinator {
         return notes
     }
 
-    private func generate(
+    func generate(
         _ request: LanguageRequest,
         showingAs live: (id: UUID, fraction: Double)? = nil,
     ) async throws -> String {
@@ -332,6 +343,27 @@ extension SummaryCoordinator {
         // A canceled stream ends quietly, and a partial answer must not pass for a finished one.
         try Task.checkCancellation()
         return text
+    }
+
+    /// What the model wrote that cannot be a point of this section.
+    private static func belongs(
+        _ item: SummaryItem,
+        in section: TemplateSection,
+        segments: [TranscriptSegment],
+        speakers: [Speaker],
+    ) -> Bool {
+        if section.kind == .tasks, SummaryValidator.isEchoedExample(item, segments: segments) {
+            return false
+        }
+        // A statement in a section of questions is the decision or a task, listed again.
+        if SectionGuide.asksQuestions(section), !SectionGuide.isQuestion(item.text) {
+            return false
+        }
+        // "Pedro?" alone says nothing.
+        let letters = item.text.filter { $0.isLetter || $0.isNumber }
+        return !speakers.compactMap(TranscriptFormatter.displayName(of:)).contains {
+            $0.filter { $0.isLetter || $0.isNumber } == letters
+        }
     }
 
     private static func tokenized(_ item: SummaryItem, speakers: [Speaker]) -> SummaryItem {

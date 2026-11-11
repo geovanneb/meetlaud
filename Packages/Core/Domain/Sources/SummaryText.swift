@@ -84,6 +84,13 @@ public enum SummaryParser {
         return kept.sorted { ($0.sourceTime ?? .infinity) < ($1.sourceTime ?? .infinity) }
     }
 
+    /// An item written back in the format the model reads, to hand it to the model again.
+    public static func line(for item: SummaryItem, kind: SectionKind) -> String {
+        let time = item.sourceTime.map { "[\(Int($0))] " } ?? ""
+        guard kind == .tasks else { return time + item.text }
+        return "\(time)\(item.owner ?? "-") | \(item.text) | \(item.due ?? "-")"
+    }
+
     /// Notes keep their `[seconds]`, and lose everything around it.
     public static func notes(from text: String) -> [String] {
         text.split(whereSeparator: \.isNewline).compactMap { line in
@@ -97,8 +104,10 @@ public enum SummaryParser {
     private static func item(from line: String, kind: SectionKind) -> SummaryItem? {
         let cleaned = cleanBullet(line)
         guard !isHeading(cleaned) else { return nil }
-        let (time, rest) = splitTime(cleaned)
-        guard !rest.isEmpty else { return nil }
+        let (time, written) = splitTime(cleaned)
+        let rest = withoutEchoedFormat(written)
+        // A model stuck in a loop writes the same words over and over, and nothing in such a line can be trusted.
+        guard !rest.isEmpty, !isPlaceholder(rest), TranscriptCleanup.markRepeats(rest) == rest else { return nil }
 
         guard kind == .tasks else { return SummaryItem(text: rest, sourceTime: time) }
 
@@ -123,7 +132,15 @@ public enum SummaryParser {
 
     /// The names of the columns in the prompt, which are not an answer.
     private static func isPlaceholder(_ text: String) -> Bool {
-        ["owner", "task", "due date", "date", "unknown", "none", "n/a"].contains(text.lowercased())
+        ["owner", "task", "due date", "date", "unknown", "none", "n/a", "item", "note"].contains(text.lowercased())
+    }
+
+    /// The prompt says "[seconds] item", and a small model sometimes starts each line with "Item:".
+    private static func withoutEchoedFormat(_ text: String) -> String {
+        for word in ["Item:", "item:", "Note:", "note:"] where text.hasPrefix(word) {
+            return text.dropFirst(word.count).trimmingCharacters(in: .whitespaces)
+        }
+        return text
     }
 
     private static func cleanBullet(_ line: String) -> String {
@@ -161,6 +178,12 @@ public enum SummaryValidator {
         guard sameLanguage else { return true }
         let words = due.split { !$0.isLetter }.map(String.init)
         return words.contains { word in segments.contains { $0.text.localizedCaseInsensitiveContains(word) } }
+    }
+
+    /// The example from the prompt, copied as if someone had said it. A meeting that really was about it keeps it.
+    public static func isEchoedExample(_ item: SummaryItem, segments: [TranscriptSegment]) -> Bool {
+        SummaryPrompts.exampleTasks.contains(item.text)
+            && !segments.contains { $0.text.localizedCaseInsensitiveContains(item.text) }
     }
 
     /// How far a citation can sit from a real phrase.

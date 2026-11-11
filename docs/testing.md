@@ -95,6 +95,8 @@ Run on a real iPhone before each release.
 
 A Mac CLI using the same domain logic, plus a benchmark app for real devices.
 
+The first one is `Evals/SummaryEval`: the app's own summary code and model, over invented meetings in four languages, for every built-in template and output language. Run it with `make eval-summary` before changing a summary prompt or the language model.
+
 | Area | Metrics | Dataset |
 |---|---|---|
 | Transcription | WER, CER (ja), RTF, memory | Our own meetings with consent, in 4 languages, real room and distance |

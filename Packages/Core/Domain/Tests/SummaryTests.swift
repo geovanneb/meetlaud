@@ -24,6 +24,13 @@ struct SummaryParserTests {
         #expect(SummaryParser.items(from: text, kind: .bullets).map(\.text) == ["Real item"])
     }
 
+    @Test func `the format the model echoes back is not part of an item`() {
+        let text = "[1] Item: Three quotes by Friday\n[2] item\n[3] Note: Budget is eight thousand"
+        #expect(SummaryParser.items(from: text, kind: .bullets).map(\.text) == [
+            "Three quotes by Friday", "Budget is eight thousand",
+        ])
+    }
+
     @Test func `a task has an owner, a text, and a date`() throws {
         let item = try #require(SummaryParser.items(from: "[5] Ana | Send the report | Friday", kind: .tasks).first)
         #expect(item.owner == "Ana")
@@ -137,9 +144,10 @@ struct SummaryParserTests {
     @Test func `the language rule comes last, where a small model follows it`() {
         let section = TemplateSection(title: "Key points")
         let request = SummaryPrompts.section(
-            section, template: BuiltInTemplates.all[0], notes: [], language: "pt", profile: nil,
+            section, template: BuiltInTemplates.all[0], notes: [], language: "pt", spoken: "pt", profile: nil,
         )
-        #expect(request.prompt.hasSuffix("Write in the language with code pt."))
+        #expect(request.prompt
+            .hasSuffix("Write in Brazilian Portuguese (português do Brasil), the language of the transcript."))
     }
 
     @Test func `a task the model wrote as a sentence is kept`() {

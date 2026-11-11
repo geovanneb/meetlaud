@@ -124,6 +124,10 @@ public actor ScriptedLanguageEngine: LanguageModelEngine {
     public var answers: [String] = []
     /// Holds each answer until released, to test suspending in the middle of one.
     public var delay: Duration?
+    /// What the next summary sections get, in order. After these, the usual scripted section.
+    public var sectionAnswers: [String] = []
+    /// What the next translation requests get. After these, the lines come back unchanged.
+    public var translations: [String] = []
 
     public init() {}
 
@@ -137,6 +141,14 @@ public actor ScriptedLanguageEngine: LanguageModelEngine {
 
     public func setDelay(_ value: Duration?) {
         delay = value
+    }
+
+    public func setSectionAnswers(_ value: [String]) {
+        sectionAnswers = value
+    }
+
+    public func setTranslations(_ value: [String]) {
+        translations = value
     }
 
     public func prepare(model _: ModelDescriptor, folder _: URL?) async throws {
@@ -158,11 +170,19 @@ public actor ScriptedLanguageEngine: LanguageModelEngine {
         if request.system.contains("You design templates") {
             return "Name: Drafted\nInstructions: Focus.\nSection: Notes\nTask section: Next\n"
         }
+        if request.system.contains("You translate lines") {
+            guard translations.isEmpty else { return translations.removeFirst() }
+            return request.prompt.components(separatedBy: "<lines>\n").last?
+                .components(separatedBy: "\n</lines>").first ?? ""
+        }
+        if request.system.contains("You write one section"), !sectionAnswers.isEmpty {
+            return sectionAnswers.removeFirst()
+        }
         if request.system.contains("You take notes") {
             return "[1] A note from this part\n"
         }
         if request.system.contains("in three columns") {
-            return "[1] Ana | Send the report | Friday\n[1] Stranger | Do something | -\n"
+            return "[1] Ana | Send the budget | Friday\n[1] Stranger | Do something | -\n"
         }
         return "**Key points:**\n- [1] Ana opened the meeting\n- [9999] A claim about nothing\nNo citation here\n"
     }
