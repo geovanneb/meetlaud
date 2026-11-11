@@ -168,6 +168,19 @@ Structured `sections` help small models, allow section-by-section generation, an
 
 Initial categories, with our own text: General, Meeting, Speech, Interview, Call, Medical, Legal. Fewer templates, each one tested by the eval.
 
+### Summary languages
+
+The person can ask for a summary in another language than the meeting's (D-083). A 2B model does two things well on their own and badly together, so:
+
+1. Each section is written in the language that was spoken. The prompt names the language ("Brazilian Portuguese"), never a code: told "the language with code ja", the model ignored it.
+2. Citations, owners, and dates are checked against the transcript, while the words still match it.
+3. The items are translated, in one request per section. The translator gets the names of the people in the meeting and keeps every amount in its own currency. If it drops or merges a line, the section is translated again one line at a time, so no translation lands under another item's citation.
+4. `LanguageCheck` catches a line still in the wrong language (by script for Japanese, by short words for English, Portuguese, and Spanish) and sends it for one more translation. A line that still fails stays as it was.
+
+Each built-in section has a one-line guide (`SectionGuide`) of what belongs in it. "Open questions" asks for questions, and drops any line that is not one: asked for sentences, the model listed the decision and the tasks there.
+
+`make eval-summary` runs all of this on a Mac with the real model. Results are in `Evals/results/summary-languages.md`.
+
 ## Chat (Ask)
 
 Local RAG with citations.

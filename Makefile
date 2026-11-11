@@ -8,7 +8,7 @@ XCODEFLAGS ?=
 ## A few UI tests per area, listed in Tools/ui-smoke-tests.txt. Pull requests run these; main runs every UI test.
 SMOKE_TESTS := $(addprefix -only-testing:MeetlaudUITests/,$(shell cat Tools/ui-smoke-tests.txt))
 
-.PHONY: bootstrap generate format lint check test-tools test test-ui test-ui-smoke build ci screenshots
+.PHONY: bootstrap generate format lint check test-tools test test-ui test-ui-smoke build ci screenshots eval-summary
 
 bootstrap:
 	brew bundle --file=Brewfile
@@ -62,3 +62,16 @@ screenshots: generate
 	done
 	xcrun simctl ui booted appearance light
 	xcrun simctl status_bar booted clear
+
+## Summaries from the real model on this Mac, for every template and language. See Evals/SummaryEval/README.md.
+## Takes about 30 minutes on an M4. Narrow it with EVAL_ARGS, e.g. EVAL_ARGS="pt ja builtin.discussion".
+EVAL_MODEL ?= $(HOME)/.meetlaud-eval/qwen35-2b
+EVAL_OUT ?= $(DERIVED)/eval/summary.jsonl
+EVAL_ARGS ?= en,pt,ja,es auto,en,ja,pt,es all
+eval-summary:
+	python3 -I Evals/SummaryEval/fetch-model.py qwen35-2b $(EVAL_MODEL)
+	cd Evals/SummaryEval && xcodebuild -scheme SummaryEval -destination 'platform=macOS' \
+		-derivedDataPath ../../$(DERIVED)/eval -configuration Release -quiet build
+	mkdir -p $(dir $(EVAL_OUT))
+	$(DERIVED)/eval/Build/Products/Release/SummaryEval $(EVAL_MODEL) $(EVAL_OUT) $(EVAL_ARGS)
+	python3 -I Evals/SummaryEval/score.py $(EVAL_OUT)

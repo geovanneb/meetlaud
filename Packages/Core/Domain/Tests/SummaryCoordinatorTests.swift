@@ -230,7 +230,7 @@ struct SummaryCoordinatorTests {
         ))
         try await harness.coordinator.enqueue(harness.id, template: template, modelID: "llm", language: nil)
         try await harness.finished()
-        #expect(await harness.engine.requests.first?.system.contains("code ja") == true)
+        #expect(await harness.engine.requests.first?.system.contains("Write in Japanese (日本語)") == true)
     }
 
     @Test func `a recording with no transcript ends without touching the model`() async throws {

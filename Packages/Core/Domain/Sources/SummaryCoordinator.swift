@@ -210,25 +210,37 @@ extension SummaryCoordinator {
         let people = try await speakers.speakers(for: job.recordingID)
         let lines = TranscriptFormatter.lines(segments: segments, speakers: people)
         let spoken = try await transcripts.transcript(for: job.recordingID)?.language
-        let language = job.language ?? spoken
 
         let duration = segments.last?.end ?? 0
-        try await prepareNotes(&job, lines: lines, duration: duration, language: language)
+        try await prepareNotes(&job, lines: lines, duration: duration, language: spoken)
         var summary = try await store.summaries(for: job.recordingID).first { $0.id == job.summaryID }
             ?? Summary(
                 id: job.summaryID, recordingID: job.recordingID, templateName: job.template.name,
                 modelID: job.modelID, language: job.language, createdAt: Date(),
             )
 
+        // A small model summarizes well in the language that was spoken, and translates well, but doing both at once
+        // gave line-by-line translations and wrong numbers. So it writes in the spoken language, then translates.
+        let writtenIn = spoken ?? job.language
         let total = job.template.sections.count
         while job.nextSection < total {
             let section = job.template.sections[job.nextSection]
             let done = Double(job.nextSection) / Double(total)
-            let sameLanguage = job.language == nil || job.language == spoken
-            let items = try await sectionItems(
-                section, job: job, duration: duration, language: language, showingAs: done,
+            let written = try await sectionItems(
+                section, job: job, duration: duration, writtenIn: writtenIn, spoken: spoken, showingAs: done,
             )
-            .map { SummaryValidator.validate($0, segments: segments, speakers: people, sameLanguage: sameLanguage) }
+            .filter { Self.belongs($0, in: section, segments: segments, speakers: people) }
+            // Checked before translating, so a date can still be found in the transcript.
+            .map {
+                SummaryValidator.validate($0, segments: segments, speakers: people, sameLanguage: writtenIn == spoken)
+            }
+            let items = try await inLanguage(
+                written,
+                kind: section.kind,
+                writtenIn: writtenIn,
+                target: job.language ?? spoken,
+                names: people.compactMap(TranscriptFormatter.displayName(of:)),
+            )
             .map { Self.tokenized($0, speakers: people) }
             summary.sections.append(SummarySection(title: section.title, kind: section.kind, items: items))
             job.nextSection += 1
@@ -249,20 +261,83 @@ extension SummaryCoordinator {
         _ section: TemplateSection,
         job: SummaryJob,
         duration: TimeInterval,
-        language: String?,
+        writtenIn: String?,
+        spoken: String?,
         showingAs done: Double,
     ) async throws -> [SummaryItem] {
         let parts = job.nextChunk > 0 ? SummaryParts.split(job.notes, duration: duration) : [job.notes]
         var found: [[SummaryItem]] = []
         for part in parts {
             let request = SummaryPrompts.section(
-                section, template: job.template, notes: part, language: language, profile: profile(),
-                limit: parts.count > 1 ? SummaryParts.limit(for: section.kind) : nil,
+                section, template: job.template, notes: part, language: writtenIn, spoken: spoken,
+                profile: profile(), limit: parts.count > 1 ? SummaryParts.limit(for: section.kind) : nil,
             )
             let text = try await generate(request, showingAs: (job.summaryID, done))
             found.append(SummaryParser.items(from: text, kind: section.kind))
         }
         return found.count > 1 ? SummaryParser.balanced(found, kind: section.kind) : found.first ?? []
+    }
+
+    /// Brings every item into the language the person asked for: all of them when the summary was written in another
+    /// language, and otherwise only those the model let slip into one.
+    private func inLanguage(
+        _ items: [SummaryItem],
+        kind: SectionKind,
+        writtenIn: String?,
+        target: String?,
+        names: [String],
+    ) async throws -> [SummaryItem] {
+        guard let target else { return items }
+        let needed = items.indices.filter { writtenIn != target || LanguageCheck.isWrong(items[$0].text, for: target) }
+        guard !needed.isEmpty else { return items }
+        var result = items
+        var missing: [Int] = []
+        let batch = try await translations(of: needed.map { items[$0] }, kind: kind, into: target, names: names)
+        if batch.count == needed.count {
+            for (index, item) in zip(needed, batch) {
+                if LanguageCheck.isWrong(item.text, for: target) {
+                    missing.append(index)
+                } else {
+                    result[index] = Self.translated(items[index], to: item, kind: kind)
+                }
+            }
+        } else {
+            // A model that merged or dropped a line would pair translations with the wrong citations.
+            missing = needed
+        }
+        for index in missing {
+            if let item = try await translations(of: [items[index]], kind: kind, into: target, names: names).first,
+               !LanguageCheck.isWrong(item.text, for: target)
+            {
+                result[index] = Self.translated(items[index], to: item, kind: kind)
+            }
+            // One that still fails stays as it was: a point in the wrong language is better than a missing one.
+        }
+        return result
+    }
+
+    private func translations(
+        of items: [SummaryItem],
+        kind: SectionKind,
+        into language: String,
+        names: [String],
+    ) async throws -> [SummaryItem] {
+        let lines = items.map { SummaryParser.line(for: $0, kind: kind) }
+        let text = try await generate(SummaryPrompts.translation(lines, into: language, names: names))
+        return text.split(whereSeparator: \.isNewline)
+            .compactMap { SummaryParser.items(from: String($0), kind: kind).first }
+    }
+
+    /// The words change. The citation, the owner, and whether it needs review stay those of the original.
+    private static func translated(_ original: SummaryItem, to translation: SummaryItem, kind: SectionKind)
+        -> SummaryItem
+    {
+        var item = original
+        item.text = translation.text
+        if kind == .tasks, original.due != nil {
+            item.due = translation.due ?? original.due
+        }
+        return item
     }
 
     /// A short meeting goes straight to the model, since every summarizing step loses detail.
@@ -332,6 +407,27 @@ extension SummaryCoordinator {
         // A canceled stream ends quietly, and a partial answer must not pass for a finished one.
         try Task.checkCancellation()
         return text
+    }
+
+    /// What the model wrote that cannot be a point of this section.
+    private static func belongs(
+        _ item: SummaryItem,
+        in section: TemplateSection,
+        segments: [TranscriptSegment],
+        speakers: [Speaker],
+    ) -> Bool {
+        if section.kind == .tasks, SummaryValidator.isEchoedExample(item, segments: segments) {
+            return false
+        }
+        // A statement in a section of questions is the decision or a task, listed again.
+        if SectionGuide.asksQuestions(section), !SectionGuide.isQuestion(item.text) {
+            return false
+        }
+        // "Pedro?" alone says nothing.
+        let letters = item.text.filter { $0.isLetter || $0.isNumber }
+        return !speakers.compactMap(TranscriptFormatter.displayName(of:)).contains {
+            $0.filter { $0.isLetter || $0.isNumber } == letters
+        }
     }
 
     private static func tokenized(_ item: SummaryItem, speakers: [Speaker]) -> SummaryItem {
