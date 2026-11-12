@@ -29,30 +29,46 @@ public struct SpeechWindowReader: AudioWindowSource {
         return Double(audio.length) / audio.processingFormat.sampleRate
     }
 
+    /// Reads a window only when the one before it was taken. A stream that reads ahead must buffer or drop what it
+    /// read: buffering puts the whole meeting in memory, and dropping lost every window after the second, since a
+    /// window is read in a second and takes far longer to transcribe.
     public func windows(of file: URL, from start: TimeInterval) -> AsyncThrowingStream<AudioWindow, any Error> {
         let windowDuration = windowDuration
         let searchDuration = searchDuration
         let conditioner = conditioner
-        return AsyncThrowingStream(bufferingPolicy: .bufferingOldest(1)) { continuation in
-            let task = Task.detached(priority: .utility) {
-                do {
-                    var reader = try Reader(file: file, start: start)
-                    while let window = try reader.next(window: windowDuration, search: searchDuration) {
-                        try Task.checkCancellation()
-                        guard let conditioner else {
-                            continuation.yield(window)
-                            continue
-                        }
-                        continuation.yield(AudioWindow(
-                            start: window.start, end: window.end, samples: conditioner.process(window.samples),
-                        ))
-                    }
-                    continuation.finish()
-                } catch {
-                    continuation.finish(throwing: error)
+        let cursor = Cursor(file: file, start: start)
+        return AsyncThrowingStream {
+            // Reading and cleaning a window takes a moment of CPU, so it runs off the caller's actor.
+            try await Task.detached(priority: .utility) {
+                try Task.checkCancellation()
+                guard let window = try cursor.next(window: windowDuration, search: searchDuration) else { return nil }
+                guard let conditioner else { return window }
+                return AudioWindow(start: window.start, end: window.end, samples: conditioner.process(window.samples))
+            }.value
+        }
+    }
+
+    /// Opens the file on the first read, and keeps the reader between reads. A stream asks for its next element
+    /// only after the last one arrived, so reads never overlap. The lock makes that a guarantee instead of an
+    /// assumption, which is why this can be Sendable while holding an AVAudioFile.
+    private final class Cursor: @unchecked Sendable {
+        private let file: URL
+        private let start: TimeInterval
+        private let lock = NSLock()
+        private var reader: Reader?
+
+        init(file: URL, start: TimeInterval) {
+            self.file = file
+            self.start = start
+        }
+
+        func next(window: TimeInterval, search: TimeInterval) throws -> AudioWindow? {
+            try lock.withLock {
+                if reader == nil {
+                    reader = try Reader(file: file, start: start)
                 }
+                return try reader?.next(window: window, search: search)
             }
-            continuation.onTermination = { _ in task.cancel() }
         }
     }
 

@@ -129,6 +129,8 @@ public actor FakeTranscriptStore: TranscriptStore, ModelUsageStore {
 public final class FakeWindowSource: AudioWindowSource, @unchecked Sendable {
     public var windowLength: TimeInterval = 180
     public var totalDuration: TimeInterval
+    /// Stops the windows here, as a file cut short or a stream that ended too soon.
+    public var endsAt: TimeInterval?
     private let lock = NSLock()
     private var starts: [TimeInterval] = []
 
@@ -146,7 +148,7 @@ public final class FakeWindowSource: AudioWindowSource, @unchecked Sendable {
 
     public func windows(of _: URL, from start: TimeInterval) -> AsyncThrowingStream<AudioWindow, any Error> {
         lock.withLock { starts.append(start) }
-        let total = totalDuration
+        let total = endsAt ?? totalDuration
         let length = windowLength
         return AsyncThrowingStream { continuation in
             var position = start
@@ -168,6 +170,8 @@ public actor FakeTranscriptionEngine: TranscriptionEngine {
     public var prepareError: (any Error)?
     /// Fails from this window on.
     public var failAfter: Int?
+    /// The next this many calls fail the way a real engine does, as when iOS refuses the hardware.
+    public var failures = 0
     /// How long loading and each window take, so a screen can be seen while work runs.
     private let delay: Duration
 
@@ -179,6 +183,10 @@ public actor FakeTranscriptionEngine: TranscriptionEngine {
         failAfter = value
     }
 
+    public func setFailures(_ value: Int) {
+        failures = value
+    }
+
     public func prepare(model: ModelDescriptor, folder _: URL?) async throws {
         if let prepareError {
             throw prepareError
@@ -187,11 +195,21 @@ public actor FakeTranscriptionEngine: TranscriptionEngine {
         prepared.append(model.id)
     }
 
-    public func transcribe(_ window: AudioWindow, language: String?, hints: [String]) async throws -> WindowResult {
+    public func transcribe(
+        _ window: AudioWindow,
+        language: String?,
+        hints: [String],
+        progress: @escaping @Sendable (Double) -> Void,
+    ) async throws -> WindowResult {
         if let failAfter, windows.count >= failAfter {
             throw CancellationError()
         }
+        if failures > 0 {
+            failures -= 1
+            throw TranscriptionError.engineFailed
+        }
         try await Task.sleep(for: delay)
+        progress(0.5)
         windows.append(window.start)
         self.hints.append(hints)
         return WindowResult(

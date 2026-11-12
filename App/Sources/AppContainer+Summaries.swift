@@ -146,6 +146,15 @@ extension AppContainer {
                     await arbiter.release()
                 }
             }
+            if let flag = arguments.firstIndex(of: "--transcribe-probe"), arguments.indices.contains(flag + 1),
+               let id = RecordingID(string: arguments[flag + 1])
+            {
+                // Preparing the model must happen in the foreground. The probe sends the app away on purpose later.
+                UIApplication.shared.isIdleTimerDisabled = true
+                Task {
+                    await TranscriptionProbe.run(id: id, services: services, arbiter: arbiter, modelID: "whisper-turbo")
+                }
+            }
             if arguments.contains("--summary-probe"), let model {
                 // The phone must not lock during a run that lasts many minutes.
                 UIApplication.shared.isIdleTimerDisabled = true

@@ -23,7 +23,12 @@ public actor AppleSpeechEngine: TranscriptionEngine {
 
     public func unload() async {}
 
-    public func transcribe(_ window: AudioWindow, language: String?, hints: [String]) async throws -> WindowResult {
+    public func transcribe(
+        _ window: AudioWindow,
+        language: String?,
+        hints: [String],
+        progress _: @escaping @Sendable (Double) -> Void,
+    ) async throws -> WindowResult {
         let locale = AppleLocale.locale(for: language)
         let transcriber = SpeechTranscriber(
             locale: locale,

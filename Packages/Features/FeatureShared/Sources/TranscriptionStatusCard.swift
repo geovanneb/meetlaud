@@ -76,6 +76,8 @@ public struct TranscriptionStatusCard: View {
         case .waitingForDevice:
             Waiting(title: L10n.Transcript.waitingForDevice, tone: .attention, symbol: "thermometer.medium")
         case .waitingForPower: Waiting(title: L10n.Transcript.waitingForPower, tone: .attention, symbol: "bolt.fill")
+        case .interrupted:
+            Waiting(title: L10n.Transcript.interrupted, tone: .attention, symbol: "exclamationmark.triangle.fill")
         case .preparing, .transcribing, .separatingSpeakers: nil
         }
     }
@@ -85,6 +87,7 @@ public struct TranscriptionStatusCard: View {
         case .queued: L10n.Transcript.queuedNote
         case .waitingForDevice: L10n.Transcript.deviceNote
         case .waitingForPower: L10n.Transcript.powerNote
+        case .interrupted: L10n.Transcript.interruptedNote
         case .preparing: L10n.Transcript.prepareNote
         case .separatingSpeakers: L10n.Transcript.speakersNote
         case .transcribing: L10n.Transcript.leaveNote
@@ -148,6 +151,7 @@ public extension JobProgress {
         case .queued: StatusBadge(statusText, tone: .waiting, symbol: "hourglass")
         case .waitingForDevice: StatusBadge(statusText, tone: .attention, symbol: "thermometer.medium")
         case .waitingForPower: StatusBadge(statusText, tone: .attention, symbol: "bolt.fill")
+        case .interrupted: StatusBadge(statusText, tone: .attention, symbol: "exclamationmark.triangle.fill")
         }
     }
 }

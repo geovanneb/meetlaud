@@ -15429,6 +15429,64 @@
         }
       }
     },
+    "transcript.interrupted" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paused after a problem"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "問題が起きたため一時停止中"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pausado após um problema"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En pausa tras un problema"
+          }
+        }
+      }
+    },
+    "transcript.interrupted_note" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The text so far is kept. It tries again when you open the app."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ここまでのテキストは保存されています。アプリを開くと再開します。"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O texto até aqui está salvo. Ele tenta de novo quando você abrir o app."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El texto hasta aquí se guarda. Lo intenta de nuevo cuando abras la app."
+          }
+        }
+      }
+    },
     "transcript.leave_note" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -15638,25 +15696,25 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The first time, the model is set up for this device. This can take a minute."
+            "value" : "After an install or update, the model is set up for this device. This can take a few minutes, so keep the app open until this step is done."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "初回は、このデバイス向けにモデルを最適化します。1分ほどかかることがあります。"
+            "value" : "インストールやアップデートの後は、このデバイス向けにモデルを最適化します。数分かかることがあるため、この手順が終わるまでアプリを開いたままにしてください。"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Na primeira vez, o modelo é ajustado para este aparelho. Isso pode levar um minuto."
+            "value" : "Depois de instalar ou atualizar, o modelo é ajustado para este aparelho. Isso pode levar alguns minutos, então mantenha o app aberto até esta etapa terminar."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La primera vez, el modelo se ajusta a este dispositivo. Puede tardar un minuto."
+            "value" : "Tras instalar o actualizar, el modelo se ajusta a este dispositivo. Puede tardar unos minutos, así que mantén la app abierta hasta que termine este paso."
           }
         }
       }

@@ -44,6 +44,8 @@ public extension L10n.Transcript {
     static var deviceNote: String { L10n.text("transcript.device_note") }
     static var powerNote: String { L10n.text("transcript.power_note") }
     static var leaveNote: String { L10n.text("transcript.leave_note") }
+    static var interrupted: String { L10n.text("transcript.interrupted") }
+    static var interruptedNote: String { L10n.text("transcript.interrupted_note") }
 }
 
 /// Separating voices again with a known count.

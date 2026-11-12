@@ -248,8 +248,10 @@ final class AppContainer {
         let queue = summaryQueue
         let askQueue = askQueue
         let indexer = knowledgeIndexer
+        let transcriptions = transcriptions
         Task {
             if isActive {
+                await transcriptions.retryHeld()
                 await queue.resume()
                 await indexer.run()
             } else {
