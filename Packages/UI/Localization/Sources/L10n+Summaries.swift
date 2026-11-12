@@ -113,6 +113,9 @@ public extension L10n {
         public static var aiGenerate: String { text("templates.ai_generate") }
         public static var aiFailed: String { text("templates.ai_failed") }
         public static var needsModel: String { text("templates.needs_model") }
+        public static var builtIn: String { text("templates.built_in") }
+        public static var categories: String { text("templates.categories") }
+        public static var seeAll: String { text("templates.see_all") }
 
         public static func copyName(_ name: String) -> String {
             String(format: text("templates.copy_name"), name)

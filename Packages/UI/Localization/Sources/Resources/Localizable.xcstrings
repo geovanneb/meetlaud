@@ -14066,6 +14066,35 @@
         }
       }
     },
+    "templates.built_in" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Built-in"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "標準"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incluído"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incluida"
+          }
+        }
+      }
+    },
     "templates.cat_call" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -14207,6 +14236,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Charlas y clases"
+          }
+        }
+      }
+    },
+    "templates.categories" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Categories"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カテゴリ"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Categorias"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Categorías"
           }
         }
       }
@@ -14816,6 +14874,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Secciones"
+          }
+        }
+      }
+    },
+    "templates.see_all" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shows every template in this category"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このカテゴリのテンプレートをすべて表示します"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra todos os templates desta categoria"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muestra todas las plantillas de esta categoría"
           }
         }
       }

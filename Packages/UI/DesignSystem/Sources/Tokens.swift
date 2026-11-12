@@ -30,6 +30,15 @@ public extension Color {
         Color(light: 0xB36B00, dark: 0xF0A94A),
         Color(light: 0x7A7A7A, dark: 0x9A9A9E),
     ]
+    /// Marks that tell kinds apart, such as template categories. The series hues, darker where needed so that each
+    /// one reaches 4.5:1 on the background and on a surface, in both themes.
+    static let dsAccents: [Color] = [
+        dsAction,
+        Color(light: 0x14756E, dark: 0x4CC7BD),
+        Color(light: 0x8A5CC7, dark: 0xB494EE),
+        Color(light: 0x995C00, dark: 0xF0A94A),
+        Color(light: 0x6B6B6B, dark: 0xA8A8AD),
+    ]
 
     private init(light: UInt32, dark: UInt32) {
         self.init(uiColor: UIColor { traits in
