@@ -313,3 +313,66 @@ struct TranscriptionCoordinatorTests {
         #expect(await harness.store.segments(for: harness.id).count == 3)
     }
 }
+
+struct TranscriptionFailureTests {
+    @Test func `an engine failure is tried again, and the transcript still finishes`() async throws {
+        let harness = Harness()
+        await harness.engine.setFailures(1)
+        try await harness.coordinator.enqueue(harness.id, modelID: "m", language: "en")
+        await harness.finished()
+        #expect(await harness.store.segments(for: harness.id).map(\.start) == [1, 181, 361])
+        #expect(await harness.store.transcript(for: harness.id)?.isComplete == true)
+    }
+
+    @Test func `a window that keeps failing holds the job instead of finishing it`() async throws {
+        let harness = Harness()
+        await harness.engine.setFailures(2)
+        try await harness.coordinator.enqueue(harness.id, modelID: "m", language: "en")
+        for _ in 0 ..< 500 where await harness.coordinator.currentProgress[harness.id]?.phase != .interrupted {
+            try await Task.sleep(for: .milliseconds(2))
+        }
+        #expect(await harness.coordinator.currentProgress[harness.id]?.phase == .interrupted)
+        #expect(await harness.store.job(for: harness.id) != nil, "The job is kept, to go on later")
+        #expect(await harness.store.transcript(for: harness.id)?.isComplete == false)
+
+        await harness.coordinator.retryHeld()
+        await harness.finished()
+        #expect(await harness.store.segments(for: harness.id).count == 3)
+        #expect(await harness.store.transcript(for: harness.id)?.isComplete == true)
+    }
+
+    @Test func `audio that ends early is never called a complete transcript`() async throws {
+        let harness = Harness(duration: 500)
+        harness.source.endsAt = 200
+        try await harness.coordinator.enqueue(harness.id, modelID: "m", language: "en")
+        for _ in 0 ..< 500 where await harness.coordinator.currentProgress[harness.id]?.phase != .interrupted {
+            try await Task.sleep(for: .milliseconds(2))
+        }
+        #expect(await harness.store.transcript(for: harness.id)?.isComplete == false)
+        #expect(await harness.store.job(for: harness.id)?.checkpoint == 200)
+    }
+
+    /// Progress from inside a window arrives a moment late. It must never pull the bar back.
+    @Test func `progress never goes back`() async throws {
+        let harness = Harness(duration: 360)
+        let updates = harness.coordinator.updates
+        let watcher = Task {
+            var fractions: [Double] = []
+            for await update in updates {
+                if let value = update[harness.id], value.phase == .transcribing {
+                    fractions.append(value.fraction)
+                }
+                if update[harness.id] == nil, !fractions.isEmpty {
+                    break
+                }
+            }
+            return fractions
+        }
+        try await harness.coordinator.enqueue(harness.id, modelID: "m", language: "en")
+        await harness.finished()
+        try await Task.sleep(for: .milliseconds(20))
+        watcher.cancel()
+        let seen = await watcher.value
+        #expect(seen == seen.sorted(), "Progress never goes back")
+    }
+}

@@ -129,6 +129,25 @@ struct SpeechWindowReaderTests {
         #expect(abs((windows.last?.end ?? 0) - 25) < 0.1)
     }
 
+    /// A window is read in a moment and takes far longer to transcribe. The stream once dropped every window that
+    /// arrived while one was waiting, so a meeting ended after its second window and was marked as done.
+    @Test func `a slow reader still gets every window, to the end`() async throws {
+        let url = try speechLike(seconds: 50)
+        var windows: [AudioWindow] = []
+        for try await window in SpeechWindowReader(windowDuration: 10, searchDuration: 2).windows(of: url, from: 0) {
+            windows.append(window)
+            if windows.count == 1 {
+                // Long enough for a stream that reads ahead to read the whole file while this one is busy.
+                try await Task.sleep(for: .seconds(1))
+            }
+        }
+        #expect(windows.count >= 5)
+        #expect(abs((windows.last?.end ?? 0) - 50) < 0.1)
+        for (previous, next) in zip(windows, windows.dropFirst()) {
+            #expect(previous.end == next.start)
+        }
+    }
+
     @Test func `a window ends at the silence, not in the middle of a word`() async throws {
         let url = try speechLike(seconds: 25, quietAt: 8.5)
         let windows = try await read(SpeechWindowReader(windowDuration: 10, searchDuration: 3), url)

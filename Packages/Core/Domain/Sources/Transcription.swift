@@ -109,16 +109,30 @@ public enum TranscriptionError: Error, Equatable {
     case missingModelFiles
     case languageNotSupported
     case audioUnavailable
+    /// The engine could not turn part of a window into text. Nothing is saved for that window.
+    case engineFailed
 }
 
 /// Turns speech into text. Every engine in the app sits behind this, and passes the same contract tests.
 public protocol TranscriptionEngine: ModelRunner {
-    /// - Parameter hints: Names and terms likely to be said, such as the person's vocabulary. Engines use them to
-    ///   lean toward the right spelling. They are a nudge, never inserted as text.
-    func transcribe(_ window: AudioWindow, language: String?, hints: [String]) async throws -> WindowResult
+    /// - Parameters:
+    ///   - hints: Names and terms likely to be said, such as the person's vocabulary. Engines use them to lean
+    ///     toward the right spelling. They are a nudge, never inserted as text.
+    ///   - progress: How much of this window is done, from 0 to 1, for engines that can tell. A window can take a
+    ///     minute, and a screen that moves only between windows looks stuck.
+    func transcribe(
+        _ window: AudioWindow,
+        language: String?,
+        hints: [String],
+        progress: @escaping @Sendable (Double) -> Void,
+    ) async throws -> WindowResult
 }
 
 public extension TranscriptionEngine {
+    func transcribe(_ window: AudioWindow, language: String?, hints: [String]) async throws -> WindowResult {
+        try await transcribe(window, language: language, hints: hints) { _ in }
+    }
+
     func transcribe(_ window: AudioWindow, language: String?) async throws -> WindowResult {
         try await transcribe(window, language: language, hints: [])
     }
@@ -206,6 +220,9 @@ public protocol BackgroundWorkLease: Sendable {
 public struct JobProgress: Hashable, Sendable {
     public enum Phase: Hashable, Sendable {
         case queued, preparing, transcribing, separatingSpeakers, waitingForDevice, waitingForPower
+        /// The engine failed on part of the audio, twice. The text so far is kept, and the rest is tried again
+        /// when the person opens the app.
+        case interrupted
     }
 
     public let phase: Phase

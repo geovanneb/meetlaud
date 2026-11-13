@@ -9,26 +9,29 @@ public actor TranscriptionCoordinator {
     let store: any TranscriptStore
     private let usage: any ModelUsageStore
     private let recordings: any RecordingStore
-    private let files: any RecordingFiles
-    private let source: any AudioWindowSource
+    let files: any RecordingFiles
+    let source: any AudioWindowSource
     private let device: any DeviceMonitor
-    private let lease: any BackgroundWorkLease
-    private let arbiter: ModelArbiter
-    private let speakers: SpeakerPipeline?
+    let lease: any BackgroundWorkLease
+    let arbiter: ModelArbiter
+    let speakers: SpeakerPipeline?
     private let onFinished: @Sendable (RecordingID) async -> Void
-    private let models: ModelResolver
+    let models: ModelResolver
     private let engines: EngineResolver
     let now: @Sendable () -> Date
 
-    private var progress: [RecordingID: JobProgress] = [:] {
+    var progress: [RecordingID: JobProgress] = [:] {
         didSet { continuation.yield(progress) }
     }
 
     private var worker: Task<Void, Never>?
     private var deviceWatcher: Task<Void, Never>?
-    private var loaded: (runtime: ModelRuntime, modelID: String)?
+    var loaded: (runtime: ModelRuntime, modelID: String)?
+    /// Jobs the engine failed on, even after a second try. They wait for `retryHeld()`, which the app calls when the
+    /// person comes back, so that a job that keeps failing does not run again on every battery change.
+    var held: Set<RecordingID> = []
     /// Whether the current job ends by separating voices, so screens can show that step from the start.
-    private var includesSpeakers = false
+    var includesSpeakers = false
 
     public nonisolated let updates: AsyncStream<[RecordingID: JobProgress]>
     private let continuation: AsyncStream<[RecordingID: JobProgress]>.Continuation
@@ -96,6 +99,7 @@ public actor TranscriptionCoordinator {
     }
 
     public func cancel(_ id: RecordingID) async throws {
+        held.remove(id)
         try await store.deleteJob(for: id)
         progress[id] = nil
     }
@@ -138,9 +142,12 @@ public actor TranscriptionCoordinator {
                 try await run(job)
             } catch is CancellationError {
                 break
-            } catch {
+            } catch TranscriptionError.modelNotInstalled, TranscriptionError.missingModelFiles {
+                // Nothing can bring the model back by itself. The text saved so far stays.
                 try? await store.deleteJob(for: job.recordingID)
                 progress[job.recordingID] = nil
+            } catch {
+                await hold(job)
             }
         }
         await unloadEngine()
@@ -155,7 +162,7 @@ public actor TranscriptionCoordinator {
 
     private func nextJob() async -> TranscriptionJob? {
         let waiting = await (try? store.jobs()) ?? []
-        return waiting.first { $0.state == .queued || $0.state == .running }
+        return waiting.first { ($0.state == .queued || $0.state == .running) && !held.contains($0.recordingID) }
     }
 
     // MARK: - Running
@@ -187,6 +194,9 @@ public actor TranscriptionCoordinator {
         let startPosition = job.checkpoint
         guard let finished = try await transcribeWindows(of: job, engine: engine, file: file, duration: duration)
         else { return }
+        // Done means the text reaches the end of the audio. Anything less is a job to finish, never a transcript
+        // to call complete.
+        guard finished.checkpoint >= duration - 1 else { throw TranscriptionError.audioUnavailable }
 
         try await separateSpeakers(id: id, file: file)
         try await store.save(Transcript(
@@ -234,7 +244,10 @@ public actor TranscriptionCoordinator {
         for try await window in source.windows(of: file, from: job.checkpoint) {
             try Task.checkCancellation()
             guard try await store.job(for: id) != nil else { return nil }
-            let result = try await engine.transcribe(window, language: job.language, hints: hints)
+            // The model is ready once the first window starts, so the screen moves on from preparing now, not a
+            // whole window later.
+            report(id, .transcribing, fraction(job, duration))
+            let result = try await transcribe(window, of: job, engine: engine, hints: hints, duration: duration)
 
             job.checkpoint = window.end
             job.language = job.language ?? result.language
@@ -255,7 +268,7 @@ public actor TranscriptionCoordinator {
 
     /// The one place progress changes. A phase keeps its start time while it lasts, so screens can show elapsed
     /// time and, once there is enough to measure, the time left.
-    private func report(_ id: RecordingID, _ phase: JobProgress.Phase, _ value: Double) {
+    func report(_ id: RecordingID, _ phase: JobProgress.Phase, _ value: Double) {
         let previous = progress[id]
         let continues = previous?.phase == phase
         progress[id] = JobProgress(
@@ -267,11 +280,11 @@ public actor TranscriptionCoordinator {
         )
     }
 
-    private func fraction(_ job: TranscriptionJob, _ duration: TimeInterval) -> Double {
+    func fraction(_ job: TranscriptionJob, _ duration: TimeInterval) -> Double {
         duration > 0 ? min(job.checkpoint / duration, 1) : 0
     }
 
-    private func unloadEngine() async {
+    func unloadEngine() async {
         if let loaded {
             await engines(loaded.runtime)?.unload()
         }
@@ -316,7 +329,7 @@ extension TranscriptionCoordinator {
     }
 
     /// Jobs waiting for a charger come back too, once there is one and the device is not hot.
-    private func resumePausedIfPossible() async {
+    func resumePausedIfPossible() async {
         let condition = await device.condition()
         let rightNow = RightNow.evaluate(condition)
         guard rightNow.allowsHeavyWork else {
@@ -337,37 +350,6 @@ extension TranscriptionCoordinator {
             try? await store.save(job)
         }
         startWorkerIfNeeded()
-    }
-}
-
-// MARK: - Speakers again
-
-public extension TranscriptionCoordinator {
-    /// Whether voices can be separated at all: a speaker model is installed.
-    func canSeparateSpeakers() async -> Bool {
-        await speakers?.isAvailable() ?? false
-    }
-
-    /// Separates voices again on a finished transcript, for example with the number of people the person knows
-    /// spoke. The text stays as it is. Names come back as suggestions from saved voices, since the old speakers no
-    /// longer line up with the new ones.
-    func redetectSpeakers(_ id: RecordingID, count: SpeakerCount) async throws {
-        guard let speakers, await speakers.isAvailable() else { return }
-        // A transcription still running for this meeting will separate voices itself.
-        guard try await store.job(for: id) == nil else { return }
-        // Waits for any other heavy model, so that two are never loaded at once.
-        await arbiter.acquire()
-        includesSpeakers = true
-        report(id, .separatingSpeakers, 1)
-        do {
-            try await speakers.run(id: id, file: files.audioFile(for: id), speakers: count)
-        } catch {
-            progress[id] = nil
-            await arbiter.release()
-            throw error
-        }
-        progress[id] = nil
-        await arbiter.release()
     }
 }
 

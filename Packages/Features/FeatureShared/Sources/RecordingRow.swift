@@ -50,6 +50,7 @@ public extension JobProgress {
         case .separatingSpeakers: L10n.Transcript.separatingSpeakers
         case .waitingForDevice: L10n.Transcript.waitingForDevice
         case .waitingForPower: L10n.Transcript.waitingForPower
+        case .interrupted: L10n.Transcript.interrupted
         }
     }
 }
