@@ -48,8 +48,7 @@ final class LibraryTests: XCTestCase {
         openLibrary()
         app.buttons["library.search"].tapWhenReady()
         let field = app.searchFields.firstMatch
-        XCTAssertTrue(field.waitForExistence(timeout: 3))
-        field.typeText("Pricing")
+        field.typeWhenFocused("Pricing")
         XCTAssertTrue(text("Pricing decision"))
     }
 
@@ -57,8 +56,7 @@ final class LibraryTests: XCTestCase {
         openLibrary()
         app.buttons["library.search"].tapWhenReady()
         let field = app.searchFields.firstMatch
-        XCTAssertTrue(field.waitForExistence(timeout: 3))
-        field.typeText("Pricing")
+        field.typeWhenFocused("Pricing")
         XCTAssertTrue(text("Pricing decision"))
         field.buttons.firstMatch.tapWhenReady()
         let result = app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "Pricing decision")).firstMatch

@@ -9,6 +9,29 @@ extension XCUIElement {
     }
 }
 
+extension XCUIElement {
+    /// Types once the field has the keyboard. A search field that opens focused takes the keyboard a moment after
+    /// it appears, and on a slow CI machine `typeText` got there first: "Neither element nor any descendant has
+    /// keyboard focus". If focus never comes by itself, a tap asks for it.
+    func typeWhenFocused(
+        _ text: String,
+        timeout: TimeInterval = 5,
+        file: StaticString = #filePath,
+        line: UInt = #line,
+    ) {
+        XCTAssertTrue(waitForExistence(timeout: timeout), "\(self) did not appear", file: file, line: line)
+        let focused = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "hasKeyboardFocus == true"),
+            object: self,
+        )
+        if XCTWaiter().wait(for: [focused], timeout: timeout) != .completed {
+            tap()
+            _ = XCTWaiter().wait(for: [focused], timeout: timeout)
+        }
+        typeText(text)
+    }
+}
+
 extension XCUIApplication {
     /// Scrolls until the element sits fully on screen. `isHittable` alone is not enough: a row showing a few points
     /// at the bottom edge counts as hittable, and a tap on its center lands off the screen.
