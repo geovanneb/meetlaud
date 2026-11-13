@@ -270,3 +270,11 @@ Anything that takes longer than a moment uses the feedback components in `Design
 - Japanese is the hardest test: no italics, correct line breaking, and different text lengths.
 - Dates and durations always use `FormatStyle`.
 - The app language is independent of the meeting language. The summary uses the chosen language, defaulting to the spoken language.
+
+### Empty lists and export failures
+
+Ask history and Memory place `EmptyState(inline: true)` inside their lists. The shared
+component uses its natural height there, allowing the parent list to scroll at large
+text sizes; full-screen empty states retain their own scrolling container. Export
+preparation failures show an explanation and a retry action using the shared type,
+color, and button tokens. Separate export sheets own separate temporary directories.

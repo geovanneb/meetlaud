@@ -174,11 +174,18 @@ final class SummaryTests: XCTestCase {
         let name = app.textFields["template.name"]
         XCTAssertTrue(name.waitForExistence(timeout: 3))
         XCTAssertFalse(app.buttons["template.save"].isEnabled, "An empty template must not save")
+        let hint = app.descendants(matching: .any)["template.saveHint"]
+        XCTAssertTrue(hint.exists, "A Save button that is off must say what is missing")
         name.tap()
         name.typeText("Sprint review")
         let section = app.textFields["template.section"].firstMatch
         section.tapWhenReady()
-        section.typeText("Shipped")
+        // One key at a time, like a person: the row once became a new row with every letter and lost the keyboard.
+        for letter in "Shipped" {
+            section.typeText(String(letter))
+        }
+        XCTAssertEqual(section.value as? String, "Shipped")
+        XCTAssertTrue(hint.waitForNonExistence(timeout: 2))
         app.buttons["template.save"].tapWhenReady()
         XCTAssertTrue(templateCard("Sprint review").waitForExistence(timeout: 3))
         XCTAssertTrue(app.staticTexts["My templates"].exists)

@@ -38,6 +38,21 @@ final class ShellSmokeTests: XCTestCase {
         XCTAssertTrue(app.buttons["drawer.toggle"].isHittable)
     }
 
+    /// The drawer watches every sideways drag. It must leave alone the ones it does not use, or a segmented
+    /// control can be tapped but not dragged.
+    func testDraggingAcrossTabsChangesTheTab() {
+        openDrawer()
+        app.buttons["drawer.item.tools"].tapWhenReady()
+        let tabs = app.segmentedControls["tools.tabs"]
+        XCTAssertTrue(tabs.waitForExistence(timeout: 3))
+        let first = tabs.buttons.element(boundBy: 0)
+        let last = tabs.buttons.element(boundBy: 2)
+        XCTAssertTrue(first.isSelected)
+        first.press(forDuration: 0.3, thenDragTo: last, withVelocity: .slow, thenHoldForDuration: 0.2)
+        XCTAssertTrue(last.isSelected)
+        XCTAssertTrue(app.descendants(matching: .any)["screen.tools"].exists)
+    }
+
     func testTappingOutsideClosesTheDrawer() {
         openDrawer()
         let library = app.buttons["drawer.item.library"]

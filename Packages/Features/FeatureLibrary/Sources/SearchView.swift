@@ -56,7 +56,10 @@ public struct SearchView: View {
             // Waits for a pause in typing, and is canceled by the next keystroke.
             try? await Task.sleep(for: .milliseconds(150))
             guard !Task.isCancelled else { return }
-            hits = await library.search(query)
+            let results = await library.search(query)
+            // Database work may finish after SwiftUI cancels this search.
+            guard !Task.isCancelled else { return }
+            hits = results
         }
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("screen.search")

@@ -51,7 +51,13 @@ final class IPadTests: XCTestCase {
 
     func testSettingsOpenInTheNextColumn() {
         select("settings")
-        app.buttons["settings.about"].tapWhenReady()
+        // In landscape the list is longer than the screen, and a row below the fold does not exist yet.
+        let about = app.buttons["settings.about"]
+        let list = app.descendants(matching: .any)["screen.settings"]
+        for _ in 0 ..< 6 where !about.isHittable {
+            list.swipeUp()
+        }
+        about.tapWhenReady()
         XCTAssertTrue(app.descendants(matching: .any)["screen.about"].waitForExistence(timeout: 3))
         XCTAssertTrue(app.descendants(matching: .any)["screen.settings"].exists)
     }

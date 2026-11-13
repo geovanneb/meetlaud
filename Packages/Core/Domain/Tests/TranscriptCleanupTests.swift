@@ -28,6 +28,24 @@ struct TranscriptCleanupTests {
         #expect(TranscriptCleanup.markRepeats(looped) == "ありがとう [×7]")
     }
 
+    @Test(arguments: [
+        ("no", "nobody"), ("sim", "simples"), ("sí", "síntesis"),
+    ])
+    func `a repeated prefix never consumes the next word`(word: String, next: String) {
+        let text = Array(repeating: word, count: 5).joined(separator: " ") + " " + next
+        #expect(TranscriptCleanup.markRepeats(text) == text)
+    }
+
+    @Test func `a real loop ends before a word with the same prefix`() {
+        let text = Array(repeating: "no", count: 7).joined(separator: " ") + " nobody agreed"
+        #expect(TranscriptCleanup.markRepeats(text) == "no [×7] nobody agreed")
+    }
+
+    @Test func `the silence annotation is not meeting text`() {
+        #expect(!TranscriptCleanup.hasWords("  [BLANK_AUDIO]\n"))
+        #expect(TranscriptCleanup.hasWords("The annotation says [BLANK_AUDIO]."))
+    }
+
     @Test func `punctuation alone is no speech`() {
         #expect(!TranscriptCleanup.hasWords(" , . … "))
         #expect(TranscriptCleanup.hasWords("ok"))

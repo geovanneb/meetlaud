@@ -33,6 +33,25 @@ final class SpeakersTests: XCTestCase {
         field.typeText(name)
     }
 
+    func testDraggingAcrossTheDetailTabsChangesTheTab() {
+        openTranscript()
+        let tabs = app.segmentedControls["detail.tabs"]
+        XCTAssertTrue(tabs.waitForExistence(timeout: 3))
+        let selected = tabs.buttons.allElementsBoundByIndex.firstIndex { $0.isSelected }
+        let target = tabs.buttons.element(boundBy: selected == 2 ? 0 : 2)
+        tabs.buttons.element(boundBy: selected ?? 0)
+            .press(forDuration: 0.3, thenDragTo: target, withVelocity: .slow, thenHoldForDuration: 0.2)
+        XCTAssertTrue(target.isSelected)
+    }
+
+    func testTranscriptExportPreparesAFile() {
+        openTranscript()
+        app.buttons["detail.more"].tapWhenReady()
+        app.buttons["detail.export"].tapWhenReady()
+        XCTAssertTrue(app.buttons["export.share"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.descendants(matching: .any)["export.failure"].exists)
+    }
+
     func testTranscriptShowsSpeakersByNumber() {
         openTranscript()
         XCTAssertTrue(chip("Speaker 1").exists)

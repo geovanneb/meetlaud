@@ -164,3 +164,13 @@ A story is done only when:
 - It was tested on a real iPhone, if it touches capture, background, or models.
 - Performance targets hold.
 - `CHANGELOG.md` is updated for anything a person would notice.
+
+## Reproducible offline speech evaluation
+
+`make eval-transcription` generates fictional speech on macOS and runs the app's actual
+Whisper Small adapter, audio conditioning, window reader, and cleanup. Model setup is
+explicit; inference runs with network operations denied. It reports WER/CER, window
+coverage, silence hallucinations, and processing time. See
+[TranscriptionEval](../Evals/TranscriptionEval/README.md) for prerequisites and metric
+limitations, and the [quality review](reviews/offline-quality.md) for remaining release
+gates. Generated audio and raw transcripts stay in ignored `build/`.

@@ -275,6 +275,8 @@ private struct CalendarMonthStrip: View {
     let selected: Date
     let onSelect: (Date) -> Void
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     private let calendar = Calendar.current
 
     var body: some View {
@@ -296,7 +298,7 @@ private struct CalendarMonthStrip: View {
             .scrollIndicators(.hidden)
             .onAppear { proxy.scrollTo(selected, anchor: .center) }
             .onChange(of: selected) { _, month in
-                withAnimation(Motion.standard) { proxy.scrollTo(month, anchor: .center) }
+                withAnimation(reduceMotion ? nil : Motion.standard) { proxy.scrollTo(month, anchor: .center) }
             }
         }
     }

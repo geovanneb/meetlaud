@@ -8,7 +8,7 @@ XCODEFLAGS ?=
 ## A few UI tests per area, listed in Tools/ui-smoke-tests.txt. Pull requests run these; main runs every UI test.
 SMOKE_TESTS := $(addprefix -only-testing:MeetlaudUITests/,$(shell cat Tools/ui-smoke-tests.txt))
 
-.PHONY: bootstrap generate format lint check test-tools test test-ui test-ui-smoke build ci screenshots eval-summary
+.PHONY: bootstrap generate format lint check test-tools test test-ui test-ui-smoke build ci screenshots eval-summary eval-transcription
 
 bootstrap:
 	brew bundle --file=Brewfile
@@ -75,3 +75,16 @@ eval-summary:
 	mkdir -p $(dir $(EVAL_OUT))
 	$(DERIVED)/eval/Build/Products/Release/SummaryEval $(EVAL_MODEL) $(EVAL_OUT) $(EVAL_ARGS)
 	python3 -I Evals/SummaryEval/score.py $(EVAL_OUT)
+
+## Generated speech in four languages, through the real offline Whisper pipeline on this Mac.
+ASR_EVAL_DIR ?= $(CURDIR)/build/transcription-eval
+ASR_EVAL_MODEL ?= whisper-small
+eval-transcription:
+	python3 -I Evals/SummaryEval/fetch-model.py $(ASR_EVAL_MODEL) $(ASR_EVAL_DIR)/model
+	python3 -I Evals/TranscriptionEval/generate.py $(ASR_EVAL_DIR)/fixtures
+	cd Evals/TranscriptionEval && xcodebuild -scheme TranscriptionEval -destination 'platform=macOS,arch=arm64' \
+		-derivedDataPath $(ASR_EVAL_DIR)/build -configuration Release -quiet build
+	sandbox-exec -p '(version 1)(allow default)(deny network*)' \
+		$(ASR_EVAL_DIR)/build/Build/Products/Release/TranscriptionEval $(ASR_EVAL_DIR)/model \
+		$(ASR_EVAL_DIR)/fixtures/fixtures.json $(ASR_EVAL_DIR)/results.json $(ASR_EVAL_MODEL)
+	python3 -I Evals/TranscriptionEval/score.py $(ASR_EVAL_DIR)/results.json

@@ -16,8 +16,8 @@ struct TranscriptView: View {
 
     var body: some View {
         LazyVStack(alignment: .leading, spacing: Spacing.small) {
-            ForEach(model.segments) { segment in
-                row(segment)
+            ForEach(Array(model.segments.enumerated()), id: \.element.id) { index, segment in
+                row(segment, at: index)
                     .id(segment.id)
             }
         }
@@ -48,10 +48,10 @@ struct TranscriptView: View {
         }
     }
 
-    private func row(_ segment: TranscriptSegment) -> some View {
+    private func row(_ segment: TranscriptSegment, at index: Int) -> some View {
         let isActive = model.activeSegmentID == segment.id
         return VStack(alignment: .leading, spacing: 0) {
-            if let speaker = model.speaker(of: segment), startsTurn(segment, speaker: speaker) {
+            if let speaker = model.speaker(of: segment), startsTurn(at: index, speaker: speaker) {
                 Button {
                     selectedSpeaker = speaker
                 } label: {
@@ -71,8 +71,8 @@ struct TranscriptView: View {
     }
 
     /// The name repeats only when the speaker changes, like a script.
-    private func startsTurn(_ segment: TranscriptSegment, speaker: Speaker) -> Bool {
-        guard let index = model.segments.firstIndex(where: { $0.id == segment.id }), index > 0 else { return true }
+    private func startsTurn(at index: Int, speaker: Speaker) -> Bool {
+        guard index > 0 else { return true }
         return model.segments[index - 1].speaker != speaker.id.uuidString
     }
 

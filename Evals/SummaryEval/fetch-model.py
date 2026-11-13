@@ -17,10 +17,12 @@ model = next(m for m in models if m["id"] == model_id)
 folder.mkdir(parents=True, exist_ok=True)
 for file in model["files"]:
     target = folder / file["path"]
+    target.parent.mkdir(parents=True, exist_ok=True)
     if not (target.exists() and target.stat().st_size == file["size"]):
         print(f"downloading {file['path']}")
         urllib.request.urlretrieve(file["url"], target)
-    digest = hashlib.sha256(target.read_bytes()).hexdigest()
+    with target.open("rb") as source:
+        digest = hashlib.file_digest(source, "sha256").hexdigest()
     if digest != file["sha256"]:
         sys.exit(f"{file['path']}: SHA-256 does not match the catalog")
 print(f"{model_id} ready in {folder}")

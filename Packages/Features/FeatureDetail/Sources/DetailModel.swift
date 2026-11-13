@@ -23,6 +23,8 @@ public final class DetailModel {
     public internal(set) var summaries: [Summary] = []
     public var selectedSummaryID: UUID?
 
+    @ObservationIgnored private var activeSegmentIndex: Int?
+
     @ObservationIgnored let id: RecordingID
     @ObservationIgnored let startTime: TimeInterval?
     @ObservationIgnored private let store: any RecordingStore
@@ -107,6 +109,8 @@ public final class DetailModel {
     func refreshTranscript() async {
         transcript = try? await transcripts.transcript(for: id)
         segments = await (try? transcripts.segments(for: id)) ?? []
+        activeSegmentIndex = nil
+        updateActiveSegment()
         speakers = await (try? speakerStore.speakers(for: id)) ?? []
     }
 
@@ -167,12 +171,14 @@ public final class DetailModel {
 
     private func updateActiveSegment() {
         // Near the same place almost always, and a transcript can hold thousands of phrases.
-        if let current = segments.first(where: { $0.id == activeSegmentID }), current.start <= time,
-           time < current.end
-        {
-            return
+        if let index = activeSegmentIndex, segments.indices.contains(index) {
+            let current = segments[index]
+            if current.start <= time, time < current.end {
+                return
+            }
         }
-        activeSegmentID = segments.last { $0.start <= time && time < $0.end + 0.5 }?.id
+        activeSegmentIndex = segments.lastIndex { $0.start <= time && time < $0.end + 0.5 }
+        activeSegmentID = activeSegmentIndex.map { segments[$0].id }
     }
 
     var progress: JobProgress? {
@@ -243,6 +249,7 @@ public final class DetailModel {
     func seek(to target: TimeInterval) {
         player.seek(to: target)
         time = player.currentTime
+        updateActiveSegment()
     }
 
     func play(from target: TimeInterval) {

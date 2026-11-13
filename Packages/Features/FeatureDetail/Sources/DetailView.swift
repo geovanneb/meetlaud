@@ -184,8 +184,13 @@ public struct DetailView: View {
                 }
             }
             .scrollEdgeEffectHidden(true, for: .bottom)
-            // Only a drag by the person stops following. Automatic scrolling must not count.
-            .simultaneousGesture(DragGesture(minimumDistance: 8).onChanged { _ in isFollowing = false })
+            // Only scrolling by the person stops following. Automatic scrolling must not count. Asked of the
+            // scroll view itself: a drag gesture here took the touch from the tabs, which then could not be dragged.
+            .onScrollPhaseChange { _, phase in
+                if phase == .interacting {
+                    isFollowing = false
+                }
+            }
             .overlay(alignment: .bottomTrailing) {
                 Group {
                     if showsBackToCurrent {
@@ -224,6 +229,7 @@ public struct DetailView: View {
         .padding(.horizontal, Spacing.medium)
         .padding(.vertical, Spacing.small)
         .background(Color.dsBackground)
+        .accessibilityIdentifier("detail.tabs")
     }
 
     @ViewBuilder private func tabContent(_ proxy: ScrollViewProxy) -> some View {

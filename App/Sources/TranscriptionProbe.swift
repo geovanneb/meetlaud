@@ -41,13 +41,15 @@
                 let file = services.files.audioFile(for: id)
                 let duration = try await SpeechWindowReader().duration(of: file)
                 var language: String?
+                // The same hints a real job gets, so the probe takes the path the app takes.
+                let hints = TranscriptionHints.from(VocabularyPreferences.load())
                 for try await window in SpeechWindowReader().windows(of: file, from: 0) {
                     let begin = Date()
                     var count = 0
                     var last: Double?
                     var failure: String?
                     do {
-                        let result = try await engine.transcribe(window, language: language, hints: [])
+                        let result = try await engine.transcribe(window, language: language, hints: hints)
                         language = language ?? result.language
                         count = result.segments.count
                         last = result.segments.last.map { window.start + $0.end }

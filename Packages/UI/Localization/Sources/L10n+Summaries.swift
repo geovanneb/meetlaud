@@ -104,6 +104,7 @@ public extension L10n {
         public static var sections: String { text("templates.sections") }
         public static var addSection: String { text("templates.add_section") }
         public static var sectionTitle: String { text("templates.section_title") }
+        public static var saveHint: String { text("templates.save_hint") }
         public static var sectionKind: String { text("templates.section_kind") }
         public static var kindBullets: String { text("templates.kind_bullets") }
         public static var kindTasks: String { text("templates.kind_tasks") }

@@ -116,6 +116,18 @@ final class AskTests: XCTestCase {
         XCTAssertFalse(item.waitForExistence(timeout: 1))
     }
 
+    func testEmptyHistoryAtLargestTextSizeKeepsComposerReachable() {
+        app.terminate()
+        app.launchArguments += ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
+        app.launch()
+        app.buttons["drawer.toggle"].tapWhenReady()
+        app.buttons["drawer.item.ask"].tapWhenReady()
+        XCTAssertTrue(app.staticTexts["Ask your meetings"].waitForExistence(timeout: 5))
+        let prompt = app.textFields["ask.prompt"]
+        XCTAssertTrue(prompt.waitForExistence(timeout: 3))
+        XCTAssertTrue(prompt.isHittable)
+    }
+
     func testAskOpensFromHome() {
         openAskFromHome()
         XCTAssertTrue(app.descendants(matching: .any)["screen.ask"].exists)

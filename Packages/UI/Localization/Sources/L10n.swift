@@ -74,6 +74,8 @@ public enum L10n {
     }
 
     public enum Detail {
+        public static var exportFailed: String { text("detail.export_failed") }
+        public static var exportRetry: String { text("detail.export_retry") }
         public static var export: String { text("detail.export") }
         public static var speakers: String { text("detail.speakers") }
         /// "12:04 spoken · turns: 8 · longest: 3:10"
