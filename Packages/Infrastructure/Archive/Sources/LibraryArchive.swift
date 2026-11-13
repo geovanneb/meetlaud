@@ -56,6 +56,7 @@ public struct LibraryArchive: LibraryArchiver {
         let database = work.appending(path: Self.databaseEntry)
         guard FileManager.default.fileExists(atPath: database.path) else { throw ArchiveError.damaged }
 
+        try Task.checkCancellation()
         try await snapshots.restoreSnapshot(from: database)
         let live = root.appending(path: Self.recordingsFolder)
         try? FileManager.default.removeItem(at: live)
@@ -105,6 +106,7 @@ public struct LibraryArchive: LibraryArchiver {
         let handle = try FileHandle(forReadingFrom: url)
         defer { try? handle.close() }
         while let chunk = try handle.read(upToCount: copySize), !chunk.isEmpty {
+            try Task.checkCancellation()
             try writer.write(chunk)
             copied(Int64(chunk.count))
         }
@@ -119,13 +121,19 @@ public struct LibraryArchive: LibraryArchiver {
         let reader = try SealedReader(url: url, password: password)
         defer { reader.close() }
         let total = max(1, size(of: url))
+        var destinations = Set<String>()
         while true {
+            try Task.checkCancellation()
             let length: UInt32 = try decode(reader.read(4))
-            guard length > 0 else { return }
+            guard length > 0 else {
+                try reader.requireEnd()
+                return
+            }
             guard length <= 4096, let name = try String(data: reader.read(Int(length)), encoding: .utf8) else {
                 throw ArchiveError.damaged
             }
             let target = try destination(of: name, in: folder)
+            guard destinations.insert(target.path).inserted else { throw ArchiveError.damaged }
             var remaining: UInt64 = try decode(reader.read(8))
             try FileManager.default.createDirectory(
                 at: target.deletingLastPathComponent(), withIntermediateDirectories: true,
@@ -134,6 +142,7 @@ public struct LibraryArchive: LibraryArchiver {
             let output = try FileHandle(forWritingTo: target)
             defer { try? output.close() }
             while remaining > 0 {
+                try Task.checkCancellation()
                 let step = Int(min(remaining, UInt64(copySize)))
                 try output.write(contentsOf: reader.read(step))
                 remaining -= UInt64(step)
@@ -146,8 +155,10 @@ public struct LibraryArchive: LibraryArchiver {
     /// written any path, and nothing may land outside the side folder.
     static func destination(of name: String, in folder: URL) throws -> URL {
         let parts = name.split(separator: "/", omittingEmptySubsequences: false).map(String.init)
-        let isAllowed = name == databaseEntry || parts.first == recordingsFolder
-        guard isAllowed, !name.hasPrefix("/"), !parts.contains(where: { $0 == ".." || $0 == "." || $0.isEmpty }) else {
+        let isAllowed = name == databaseEntry || (parts.first == recordingsFolder && parts.count > 1)
+        guard isAllowed, !name.contains("\0"), !name.hasPrefix("/"),
+              !parts.contains(where: { $0 == ".." || $0 == "." || $0.isEmpty })
+        else {
             throw ArchiveError.damaged
         }
         return parts.reduce(folder) { $0.appending(path: $1) }

@@ -1,4 +1,4 @@
-import ASRWhisperKit
+@testable import ASRWhisperKit
 import AudioEditing
 import Domain
 import Foundation
@@ -28,6 +28,35 @@ struct WhisperKitEngineTests {
 
     private func window(_ samples: [Float]) -> AudioWindow {
         AudioWindow(start: 0, end: Double(samples.count) / 16000, samples: samples)
+    }
+
+    @Test func `only audio with no signal counts as silent`() {
+        #expect(WhisperKitEngine.isSilent([Float](repeating: 0, count: 16000)))
+        #expect(WhisperKitEngine.isSilent([0.0004, -0.0009, 0]))
+        // A very quiet voice or a quiet room is still audio for the model to judge.
+        #expect(!WhisperKitEngine.isSilent([0, 0.002, 0]))
+        #expect(!WhisperKitEngine.isSilent([0, -0.3, 0]))
+    }
+
+    @Test func `hints never empty the transcript`() async throws {
+        guard let folder else { return }
+        let engine = WhisperKitEngine()
+        try await engine.prepare(model: model, folder: folder)
+        let audio = try await samples()
+        let plain = try await engine.transcribe(window(audio), language: "en")
+        let hinted = try await engine.transcribe(window(audio), language: "en", hints: ["Garden Project", "Marlow"])
+        #expect(!plain.segments.isEmpty)
+        #expect(!hinted.segments.isEmpty)
+        await engine.unload()
+    }
+
+    @Test func `silence gives no text`() async throws {
+        guard let folder else { return }
+        let engine = WhisperKitEngine()
+        try await engine.prepare(model: model, folder: folder)
+        let result = try await engine.transcribe(window([Float](repeating: 0, count: 160_000)), language: "en")
+        #expect(result.segments.isEmpty)
+        await engine.unload()
     }
 
     @Test(arguments: [30.0, 30.02, 31, 35, 62, 180])

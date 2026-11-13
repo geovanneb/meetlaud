@@ -137,9 +137,30 @@ struct TemplateDetailView: View {
 }
 
 struct TemplateEditor: View {
-    @State var template: SummaryTemplate
+    /// A section in the form. Its identity must not come from its text: a row named by its title became another
+    /// row with every letter typed, and the field lost the keyboard.
+    private struct Row: Identifiable {
+        let id = UUID()
+        var section: TemplateSection
+    }
+
+    @State private var template: SummaryTemplate
+    @State private var rows: [Row]
     let onSave: (SummaryTemplate) -> Void
     @Environment(\.dismiss) private var dismiss
+
+    init(template: SummaryTemplate, onSave: @escaping (SummaryTemplate) -> Void) {
+        _template = State(initialValue: template)
+        _rows = State(initialValue: template.sections.map { Row(section: $0) })
+        self.onSave = onSave
+    }
+
+    /// What would be saved right now.
+    private var draft: SummaryTemplate {
+        var draft = template
+        draft.sections = rows.map(\.section)
+        return draft
+    }
 
     var body: some View {
         NavigationStack {
@@ -155,23 +176,31 @@ struct TemplateEditor: View {
                     TextField(L10n.Templates.instructionsHint, text: $template.instructions, axis: .vertical)
                         .lineLimit(3 ... 8)
                 }
-                Section(L10n.Templates.sections) {
-                    ForEach($template.sections, id: \.self) { $section in
+                Section {
+                    ForEach($rows) { $row in
                         VStack(alignment: .leading) {
-                            TextField(L10n.Templates.sectionTitle, text: $section.title)
+                            TextField(L10n.Templates.sectionTitle, text: $row.section.title)
                                 .accessibilityIdentifier("template.section")
-                            Picker(L10n.Templates.sectionKind, selection: $section.kind) {
+                            Picker(L10n.Templates.sectionKind, selection: $row.section.kind) {
                                 Text(L10n.Templates.kindBullets).tag(SectionKind.bullets)
                                 Text(L10n.Templates.kindTasks).tag(SectionKind.tasks)
                             }
                         }
                     }
-                    .onDelete { template.sections.remove(atOffsets: $0) }
-                    .onMove { template.sections.move(fromOffsets: $0, toOffset: $1) }
+                    .onDelete { rows.remove(atOffsets: $0) }
+                    .onMove { rows.move(fromOffsets: $0, toOffset: $1) }
                     Button(L10n.Templates.addSection, systemImage: "plus") {
-                        template.sections.append(TemplateSection(title: ""))
+                        rows.append(Row(section: TemplateSection(title: "")))
                     }
-                    .disabled(template.sections.count >= TemplateCodec.Limits.sections)
+                    .disabled(rows.count >= TemplateCodec.Limits.sections)
+                } header: {
+                    Text(L10n.Templates.sections)
+                } footer: {
+                    // Save stays off until this is true, and a button that is off explains nothing by itself.
+                    if !TemplateCodec.isValid(draft) {
+                        Text(L10n.Templates.saveHint)
+                            .accessibilityIdentifier("template.saveHint")
+                    }
                 }
             }
             .navigationTitle(L10n.Templates.new)
@@ -182,10 +211,10 @@ struct TemplateEditor: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button(L10n.Common.save) {
-                        onSave(template)
+                        onSave(draft)
                         dismiss()
                     }
-                    .disabled(!TemplateCodec.isValid(template))
+                    .disabled(!TemplateCodec.isValid(draft))
                     .accessibilityIdentifier("template.save")
                 }
             }

@@ -144,10 +144,22 @@ final class SealedReader {
         return result
     }
 
+    /// The archive terminator is valid only at the authenticated end of the stream.
+    func requireEnd() throws {
+        guard pending.isEmpty else { throw ArchiveError.damaged }
+        if !finished {
+            _ = try nextBlock()
+        }
+        guard finished, pending.isEmpty,
+              try handle.read(upToCount: 1)?.isEmpty != false
+        else { throw ArchiveError.damaged }
+    }
+
     private func nextBlock() throws -> Bool {
         guard !finished else { return false }
         guard let head = try handle.read(upToCount: 5), head.count == 5 else { throw ArchiveError.damaged }
         let start = head.startIndex
+        guard head[start] <= 1 else { throw ArchiveError.damaged }
         let isLast = head[start] == 1
         let size = head[(start + 1)...].reduce(UInt32(0)) { $0 << 8 | UInt32($1) }
         guard Int(size) <= SealedFormat.blockSize + 64,

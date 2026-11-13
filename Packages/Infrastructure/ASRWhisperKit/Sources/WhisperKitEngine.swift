@@ -49,12 +49,19 @@ public actor WhisperKitEngine: TranscriptionEngine {
     public func transcribe(
         _ window: AudioWindow,
         language: String?,
-        hints: [String],
+        hints _: [String],
         progress: @escaping @Sendable (Double) -> Void,
     ) async throws -> WindowResult {
         guard let whisper else { throw TranscriptionError.modelNotInstalled }
-        let options = Self.options(language: language, hints: hints, tokenizer: whisper.tokenizer)
+        let options = Self.options(language: language)
+        // Whisper invents words for audio with nothing in it ("Thank you." is its favorite), so a piece with no
+        // signal never reaches it. A muted microphone and a gap in an imported file look like this.
         let pieces = try await Self.pieces(of: window.samples, options: options)
+            .filter { !Self.isSilent($0.audioSamples) }
+        guard !pieces.isEmpty else {
+            progress(1)
+            return WindowResult(segments: [], language: nil)
+        }
         var results: [TranscriptionResult] = []
         var done = 0
         for batch in stride(from: 0, to: pieces.count, by: Self.concurrentPieces) {
@@ -97,15 +104,20 @@ public actor WhisperKitEngine: TranscriptionEngine {
         )
     }
 
-    private static func options(
-        language: String?,
-        hints: [String],
-        tokenizer: (any WhisperTokenizer)?,
-    ) -> DecodingOptions {
-        // Whisper reads a prompt only with the prefill, which needs a language. With "detect", the first window
-        // finds it, and every window after that gets the hints.
-        let prompt = language == nil ? nil : promptTokens(hints, tokenizer: tokenizer)
-        return DecodingOptions(
+    /// Nothing above −60 dBFS. Far below any voice once the window has been leveled, and far below room noise, so
+    /// a quiet room still goes to the model. Only true silence is skipped.
+    static func isSilent(_ samples: [Float]) -> Bool {
+        !samples.contains { abs($0) >= 0.001 }
+    }
+
+    /// The hints are not given to Whisper as a prompt. WhisperKit 0.18 ends a piece as soon as the model predicts
+    /// "end of text" while the prompt is still being fed in, which it does for most prompts: the piece comes back
+    /// with no text and no error. Every window that had hints was saved empty, so a meeting kept only its first
+    /// three minutes, the one window that runs without a prompt while the language is detected. Fixed upstream
+    /// in 1.1 (argmax-oss-swift #514); until this app moves to it, spellings are corrected in the text instead,
+    /// by `VocabularyCorrector`.
+    private static func options(language: String?) -> DecodingOptions {
+        DecodingOptions(
             verbose: false,
             task: .transcribe,
             language: language,
@@ -113,17 +125,8 @@ public actor WhisperKitEngine: TranscriptionEngine {
             detectLanguage: language == nil,
             skipSpecialTokens: true,
             wordTimestamps: false,
-            promptTokens: prompt,
             concurrentWorkerCount: concurrentPieces,
         )
-    }
-
-    /// The terms as a comma-separated list, the way Whisper was shown spellings in training.
-    private static func promptTokens(_ hints: [String], tokenizer: (any WhisperTokenizer)?) -> [Int]? {
-        guard !hints.isEmpty, let tokenizer else { return nil }
-        let tokens = tokenizer.encode(text: " " + hints.joined(separator: ", "))
-            .filter { $0 < tokenizer.specialTokens.specialTokenBegin }
-        return tokens.isEmpty ? nil : tokens
     }
 
     public func unload() async {

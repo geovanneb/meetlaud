@@ -17,6 +17,11 @@ public struct MemoryView: View {
 
     public var body: some View {
         List {
+            if controller.memories.isEmpty {
+                EmptyState(title: L10n.Ask.memory, message: L10n.Ask.memoryHint, symbol: "brain", inline: true)
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
+            }
             ForEach(controller.memories) { memory in
                 Button {
                     text = memory.text
@@ -43,11 +48,6 @@ public struct MemoryView: View {
             }
         }
         .screenList()
-        .overlay {
-            if controller.memories.isEmpty {
-                EmptyState(title: L10n.Ask.memory, message: L10n.Ask.memoryHint, symbol: "brain")
-            }
-        }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .screenBackground()
         .navigationTitle(L10n.Ask.memory)

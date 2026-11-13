@@ -103,6 +103,41 @@ struct LibraryArchiveTests {
         }
     }
 
+    @Test func `trailing data cannot replace the existing library`() async throws {
+        let old = try Workspace()
+        _ = try await old.addRecording("Replacement")
+        let url = try await old.export()
+        defer { try? FileManager.default.removeItem(at: url) }
+        let output = try FileHandle(forWritingTo: url)
+        try output.seekToEnd()
+        try output.write(contentsOf: Data([42]))
+        try output.close()
+        let new = try Workspace()
+        let mine = try await new.addRecording("Original")
+        await #expect(throws: ArchiveError.damaged) {
+            try await new.archive.restore(from: url, password: "correct horse") { _ in }
+        }
+        #expect(try await new.store.recordings(status: .ready).map(\.id) == [mine.id])
+        #expect(try Data(contentsOf: new.files.audioFile(for: mine.id)) == Data("sound".utf8))
+    }
+
+    @Test func `duplicate entries are rejected before restoring the database`() async throws {
+        let url = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: url) }
+        let writer = try SealedWriter(url: url, password: "correct horse")
+        let name = Data("database.sqlite".utf8)
+        let entry = withUnsafeBytes(of: UInt32(name.count).bigEndian) { Data($0) }
+            + name + Data(repeating: 0, count: 8)
+        try writer.write(entry + entry + Data(repeating: 0, count: 4))
+        try writer.finish()
+        let workspace = try Workspace()
+        let mine = try await workspace.addRecording("Original")
+        await #expect(throws: ArchiveError.damaged) {
+            try await workspace.archive.restore(from: url, password: "correct horse") { _ in }
+        }
+        #expect(try await workspace.store.recordings(status: .ready).map(\.id) == [mine.id])
+    }
+
     @Test func `a file that is not an archive is refused`() async throws {
         let url = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
         try Data("not an archive at all, just some text in a file".utf8).write(to: url)
@@ -114,6 +149,7 @@ struct LibraryArchiveTests {
 
     @Test(arguments: [
         "../outside", "recordings/../../outside", "/etc/passwd", "recordings/a/./b", "other/file", "recordings//b", "",
+        "recordings", "recordings/a\0/b",
     ])
     func `no path from a file can escape the folder`(name: String) {
         let folder = URL(filePath: "/tmp/work")

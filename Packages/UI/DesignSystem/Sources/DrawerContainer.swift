@@ -47,7 +47,7 @@ public struct DrawerContainer<Menu: View, Content: View>: View {
             }
             .animation(settling, value: progress)
             .contentShape(.rect)
-            .simultaneousGesture(dragGesture(menuWidth: width))
+            .gesture(dragGesture(menuWidth: width))
             .onChange(of: isOpen) { _, open in follow(open) }
         }
         .background(Color.dsBackground.ignoresSafeArea())
@@ -132,42 +132,105 @@ public struct DrawerContainer<Menu: View, Content: View>: View {
             }
     }
 
-    private func dragGesture(menuWidth: CGFloat) -> some Gesture {
-        DragGesture(minimumDistance: 12, coordinateSpace: .global)
-            .onChanged { value in
-                guard isDragging || canBeginDrag(from: value) else { return }
+    private func dragGesture(menuWidth: CGFloat) -> DrawerPan {
+        DrawerPan(
+            canBegin: canBeginDrag,
+            onChanged: { distance in
                 if !isDragging {
-                    dragOrigin = value.translation.width
+                    dragOrigin = distance
                     isDragging = true
                 }
-                translation = value.translation.width - dragOrigin
-            }
-            .onEnded { value in
+                translation = distance - dragOrigin
+            },
+            onEnded: { distance, predicted in
                 defer {
                     translation = 0
                     isDragging = false
                 }
-                guard isDragging else { return }
+                guard isDragging, let distance, let predicted else { return }
                 let settled = DrawerGeometry.settles(
                     openFrom: isOpen,
-                    translation: value.translation.width,
-                    predictedTranslation: value.predictedEndTranslation.width,
+                    translation: distance,
+                    predictedTranslation: predicted,
                     menuWidth: menuWidth,
                 )
                 // Together, because the translation resets here: a finger leaves nothing to build first.
                 isShown = settled
                 isOpen = settled
-            }
+            },
+        )
     }
 
-    private func canBeginDrag(from value: DragGesture.Value) -> Bool {
-        guard abs(value.translation.width) > abs(value.translation.height) else { return false }
+    private func canBeginDrag(translation: CGSize, startX: CGFloat) -> Bool {
+        guard abs(translation.width) > abs(translation.height) else { return false }
         if isOpen {
-            return value.translation.width < 0
+            return translation.width < 0
         }
         return isEdgeGestureEnabled
-            && value.translation.width > 0
-            && value.startLocation.x <= DrawerGeometry.edgeActivationWidth
+            && translation.width > 0
+            && startX <= DrawerGeometry.edgeActivationWidth
+    }
+}
+
+/// The drawer's drag, as a UIKit pan. A SwiftUI `DragGesture` over the whole screen takes every sideways touch as
+/// soon as it moves, also the ones the drawer then ignores: a segmented control under the finger lost its touch, so
+/// its selection could be tapped but not dragged. A pan that refuses to begin leaves the touch where it was.
+private struct DrawerPan: UIGestureRecognizerRepresentable {
+    /// The movement so far, and where on the screen the finger started.
+    let canBegin: (_ translation: CGSize, _ startX: CGFloat) -> Bool
+    let onChanged: (_ distance: CGFloat) -> Void
+    /// The distance and where a flick would carry it, or nil when the system took the touch away.
+    let onEnded: (_ distance: CGFloat?, _ predicted: CGFloat?) -> Void
+
+    /// How far a flick carries on, in seconds of its speed. Close to what `DragGesture` predicts.
+    private static let flickReach: CGFloat = 0.25
+
+    func makeCoordinator(converter _: CoordinateSpaceConverter) -> Coordinator {
+        Coordinator()
+    }
+
+    func makeUIGestureRecognizer(context: Context) -> UIPanGestureRecognizer {
+        let recognizer = UIPanGestureRecognizer()
+        recognizer.maximumNumberOfTouches = 1
+        recognizer.delegate = context.coordinator
+        context.coordinator.canBegin = canBegin
+        return recognizer
+    }
+
+    func updateUIGestureRecognizer(_: UIPanGestureRecognizer, context: Context) {
+        context.coordinator.canBegin = canBegin
+    }
+
+    func handleUIGestureRecognizerAction(_ recognizer: UIPanGestureRecognizer, context _: Context) {
+        let distance = recognizer.translation(in: nil).x
+        switch recognizer.state {
+        case .began, .changed:
+            onChanged(distance)
+        case .ended:
+            onEnded(distance, distance + recognizer.velocity(in: nil).x * Self.flickReach)
+        case .cancelled, .failed:
+            onEnded(nil, nil)
+        default:
+            break
+        }
+    }
+
+    final class Coordinator: NSObject, UIGestureRecognizerDelegate {
+        var canBegin: (CGSize, CGFloat) -> Bool = { _, _ in false }
+
+        func gestureRecognizerShouldBegin(_ recognizer: UIGestureRecognizer) -> Bool {
+            guard let pan = recognizer as? UIPanGestureRecognizer else { return false }
+            let moved = pan.translation(in: nil)
+            return canBegin(CGSize(width: moved.x, height: moved.y), pan.location(in: nil).x - moved.x)
+        }
+
+        /// Lists keep scrolling while the drawer watches, as they did before.
+        func gestureRecognizer(
+            _: UIGestureRecognizer,
+            shouldRecognizeSimultaneouslyWith _: UIGestureRecognizer,
+        ) -> Bool {
+            true
+        }
     }
 }
 

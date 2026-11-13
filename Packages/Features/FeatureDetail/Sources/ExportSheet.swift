@@ -17,9 +17,9 @@ struct ExportSheet: View {
     @State private var choice = ExportChoice.transcript(.txt)
     @State private var options = ExportOptions()
     @State private var file: URL?
+    @State private var failed = false
+    @State private var folder = FileManager.default.temporaryDirectory.appending(path: "export-\(UUID().uuidString)")
     @Environment(\.dismiss) private var dismiss
-
-    private static let folder = FileManager.default.temporaryDirectory.appending(path: "exports")
 
     private var choices: [(ExportChoice, String)] {
         var result: [(ExportChoice, String)] = []
@@ -78,6 +78,16 @@ struct ExportSheet: View {
                         }
                         .primaryAction()
                         .accessibilityIdentifier("export.share")
+                    } else if failed {
+                        VStack(spacing: Spacing.small) {
+                            Text(L10n.Detail.exportFailed)
+                                .font(.dsMeta)
+                                .foregroundStyle(Color.dsSecondaryText)
+                                .multilineTextAlignment(.center)
+                            Button(L10n.Detail.exportRetry) { Task { await prepare() } }
+                                .primaryAction()
+                        }
+                        .accessibilityIdentifier("export.failure")
                     } else {
                         ProgressView()
                             .frame(minHeight: 44)
@@ -99,17 +109,18 @@ struct ExportSheet: View {
             }
         }
         .task(id: [AnyHashable(choice), AnyHashable(options)]) { await prepare() }
-        .onDisappear { try? FileManager.default.removeItem(at: Self.folder) }
+        .onDisappear { try? FileManager.default.removeItem(at: folder) }
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("screen.export")
     }
 
     private func prepare() async {
         file = nil
-        try? FileManager.default.removeItem(at: Self.folder)
-        try? FileManager.default.createDirectory(at: Self.folder, withIntermediateDirectories: true)
+        try? FileManager.default.removeItem(at: folder)
+        failed = false
         let title = model.recording?.title ?? ""
         do {
+            try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
             switch choice {
             case .audio:
                 let target = target(title, "m4a")
@@ -126,11 +137,13 @@ struct ExportSheet: View {
             }
         } catch {
             file = nil
+            failed = true
+            try? FileManager.default.removeItem(at: folder)
         }
     }
 
     private func target(_ title: String, _ fileExtension: String) -> URL {
-        Self.folder.appending(path: ExportFileName.safe(title, fileExtension: fileExtension))
+        folder.appending(path: ExportFileName.safe(title, fileExtension: fileExtension))
     }
 
     private func write(_ text: String, _ title: String, _ fileExtension: String) throws -> URL {

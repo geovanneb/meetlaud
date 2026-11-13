@@ -29,7 +29,11 @@ public enum TranscriptCleanup {
     /// Whether the text holds a word: a letter or a digit, in any script. A model that does not know the language
     /// can return only "," or "…", which is no speech at all.
     public static func hasWords(_ text: String) -> Bool {
-        text.unicodeScalars.contains { CharacterSet.letters.contains($0) || CharacterSet.decimalDigits.contains($0) }
+        // Whisper can emit this annotation for silence; it is not something a participant said.
+        guard text.trimmingCharacters(in: .whitespacesAndNewlines) != "[BLANK_AUDIO]" else { return false }
+        return text.unicodeScalars.contains {
+            CharacterSet.letters.contains($0) || CharacterSet.decimalDigits.contains($0)
+        }
     }
 
     private struct Run {
@@ -72,8 +76,15 @@ public enum TranscriptCleanup {
         while position + piece.count <= characters.count,
               characters[position ..< position + piece.count].elementsEqual(piece)
         {
+            let next = position + piece.count
+            // A matching prefix is not a repeated word: five "no"s followed by "nobody" must stay intact.
+            if next < characters.count, let last = piece.last,
+               isSpacedLetter(last), isSpacedLetter(characters[next])
+            {
+                break
+            }
             count += 1
-            position += piece.count
+            position = next
             end = position
             while position < characters.count, isBetween(characters[position]) {
                 position += 1

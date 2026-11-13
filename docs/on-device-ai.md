@@ -56,7 +56,7 @@ Each transcription window is cleaned in memory first (`SpeechConditioner`, D-076
 - **High-pass at 80 Hz.** Removes rumble from air conditioning, traffic, and the phone touching the table.
 - **Speech leveling.** Raises quiet speech toward -23 dBFS, by up to 18 dB, and leaves silence alone. A phone on a table hears the near person much louder than the far one, and Whisper scales each 30 seconds by its loudest moment, so the far voice gets lost.
 - **Splitting at pauses.** WhisperKit cuts each window at silences into pieces of up to 30 seconds (VAD), two at a time. Long pieces with silence are where Whisper invents or repeats text.
-- **Hints.** Vocabulary spellings go to the engine as a Whisper prompt or Apple contextual strings, up to 40 terms, and are still corrected afterwards.
+- **Hints.** Vocabulary spellings go to the engine, up to 40 terms, and are still corrected afterwards. Apple Speech takes them as contextual strings. Whisper does not take them as a prompt for now: WhisperKit 0.18 returns no text for a piece that has a prompt (fixed upstream in 1.1, argmax-oss-swift #514), so with Whisper the spellings are only corrected in the text.
 
 Next, with its own decision: a neural noise suppressor (such as DeepFilterNet or RNNoise) as a downloadable model, for loud rooms.
 

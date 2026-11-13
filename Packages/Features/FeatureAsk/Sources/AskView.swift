@@ -71,6 +71,11 @@ public struct AskView: View {
 
     private var history: some View {
         List {
+            if controller.conversations.isEmpty, controller.indexing == nil {
+                EmptyState(title: L10n.Ask.emptyTitle, message: L10n.Ask.emptyMessage, symbol: "sparkles", inline: true)
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
+            }
             if let progress = controller.indexing {
                 IndexingRow(progress: progress)
                     .listRowBackground(Color.clear)
@@ -111,11 +116,6 @@ public struct AskView: View {
             }
         }
         .screenList()
-        .overlay {
-            if controller.conversations.isEmpty, controller.indexing == nil {
-                EmptyState(title: L10n.Ask.emptyTitle, message: L10n.Ask.emptyMessage, symbol: "sparkles")
-            }
-        }
         .safeAreaInset(edge: .bottom) {
             ChatComposer(placeholder: L10n.Ask.placeholder, isBusy: false, onStop: {}) { question in
                 let model = controller.newChat(scope: .library)
