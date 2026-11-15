@@ -6,19 +6,19 @@ A connector hands meeting material to another app. Connectors are plug-ins: each
 
 | Piece | Where | Knows about |
 |---|---|---|
-| `Connectors` | `Packages/Core/Connectors` | Foundation only |
-| A connector, such as `ConnectorGTD` | `Packages/Connectors/<Name>` | `Connectors` and Foundation only |
+| `Connectors` | `ios/Packages/Core/Connectors` | Foundation only |
+| A connector, such as `ConnectorGTD` | `ios/Packages/Connectors/<Name>` | `Connectors` and Foundation only |
 | Connectors tab | `FeatureTools` | `ConnectorRegistry`, never a specific connector |
-| Registration | `App/Sources/AppContainer.swift` | The list of connectors in this build |
+| Registration | `ios/App/Sources/AppContainer.swift` | The list of connectors in this build |
 
-`Tools/check-architecture` enforces this table. A connector cannot import `Domain`, a feature, or the database, so it only ever sees the `ConnectorPackage` it is given.
+`ios/Tools/check-architecture` enforces this table. A connector cannot import `Domain`, a feature, or the database, so it only ever sees the `ConnectorPackage` it is given.
 
 ## Add a connector
 
-1. Create `Packages/Connectors/ConnectorName/Sources`, with one type that implements `Connector`.
+1. Create `ios/Packages/Connectors/ConnectorName/Sources`, with one type that implements `Connector`.
 2. Put its icon in the target's `Resources` folder, and return it as `.image(url)` from `Bundle.module`, or use `.symbol(name)`.
-3. Add the target to `Packages/Package.swift`, and to `Tools/architecture.json` with only `Foundation` and `Connectors`.
-4. Add it to the `ConnectorRegistry` in `AppContainer`, and link it in `project.yml`.
+3. Add the target to `ios/Packages/Package.swift`, and to `ios/Tools/architecture.json` with only `Foundation` and `Connectors`.
+4. Add it to the `ConnectorRegistry` in `AppContainer`, and link it in `ios/project.yml`.
 5. Record its license in `THIRD_PARTY_NOTICES.md`.
 
 Nothing else changes. The tab lists it under its category. A new category or transport needs a case in the manifest and a title in `ConnectorsTab`.
@@ -27,7 +27,7 @@ Nothing else changes. The tab lists it under its category. A new category or tra
 
 - A connector runs only from a person's explicit action, one meeting at a time.
 - `availability` stays `.comingSoon` until sending works. The registry refuses to send to one that is not available.
-- Opening a connection is not allowed yet. `Tools/check-privacy` applies to connectors like any other code, and allowing local Wi-Fi needs its own decision first (D-067).
+- Opening a connection is not allowed yet. `ios/Tools/check-privacy` applies to connectors like any other code, and allowing local Wi-Fi needs its own decision first (D-067).
 
 ## Syncing with Get Things Done
 

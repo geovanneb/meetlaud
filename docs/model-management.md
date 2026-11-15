@@ -405,7 +405,7 @@ Features
 }
 ```
 
-Values are placeholders. Real numbers come from `Evals/`.
+Values are placeholders. Real numbers come from `ios/Evals/`.
 
 ## Targets
 

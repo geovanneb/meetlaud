@@ -1,0 +1,37 @@
+#!/usr/bin/env python3
+"""Prints the CHANGELOG.md section of one version, for its GitHub release (docs/releasing.md).
+
+Usage: release-notes <version, e.g. 1.2.0> [changelog path]
+
+Fails when the version has no section, so a release can never go out without its notes. The section is everything
+between "## [1.2.0]" (a date may follow) and the next "## " heading.
+"""
+import re
+import sys
+from pathlib import Path
+
+
+def section(text, version):
+    heading = re.compile(r"^## \[" + re.escape(version) + r"\](\s.*)?$")
+    lines = text.splitlines()
+    start = next((i for i, line in enumerate(lines) if heading.match(line)), None)
+    if start is None:
+        return None
+    end = next((i for i in range(start + 1, len(lines)) if lines[i].startswith("## ")), len(lines))
+    body = "\n".join(lines[start + 1:end]).strip()
+    return body or None
+
+
+def main():
+    if len(sys.argv) not in (2, 3):
+        raise SystemExit(__doc__)
+    version = sys.argv[1].removeprefix("v")
+    path = Path(sys.argv[2] if len(sys.argv) == 3 else Path(__file__).resolve().parent.parent / "CHANGELOG.md")
+    body = section(path.read_text(), version)
+    if body is None:
+        raise SystemExit(f"release-notes: CHANGELOG.md has no section for {version}. Move Unreleased under ## [{version}]")
+    print(body)
+
+
+if __name__ == "__main__":
+    main()

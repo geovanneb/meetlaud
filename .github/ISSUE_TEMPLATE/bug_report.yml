@@ -23,11 +23,21 @@ body:
         2. Tap ...
     validations:
       required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - iPhone or iPad
+        - Android
+        - Both
+    validations:
+      required: true
   - type: input
     id: device
     attributes:
-      label: Device and iOS version
-      placeholder: iPhone 16 Pro, iOS 26.1
+      label: Device and system version
+      placeholder: iPhone 16 Pro, iOS 26.1 / Pixel 8, Android 15
     validations:
       required: true
   - type: input

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- What a device backup or a move to a new phone may carry, when Settings allows it (D-002). Never the models. -->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="file" path="Meetlaud/models/" />
+        <exclude domain="file" path="Showcase/" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="file" path="Meetlaud/models/" />
+        <exclude domain="file" path="Showcase/" />
+    </device-transfer>
+</data-extraction-rules>

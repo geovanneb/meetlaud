@@ -1,0 +1,49 @@
+{
+  "_comment": "Changes to this file are changes to the privacy promise, and need a reviewer's approval. Each dependency's license is recorded in THIRD_PARTY_NOTICES.md.",
+  "networkPackages": [
+    "infra.modeldelivery",
+    "connector.gtd"
+  ],
+  "dependencies": [
+    "org.jetbrains.kotlinx:kotlinx-coroutines-core",
+    "org.jetbrains.kotlinx:kotlinx-coroutines-android",
+    "org.jetbrains.kotlinx:kotlinx-coroutines-test",
+    "org.jetbrains.kotlinx:kotlinx-serialization-json",
+    "androidx.core:core-ktx",
+    "androidx.activity:activity-compose",
+    "androidx.lifecycle:lifecycle-runtime-compose",
+    "androidx.lifecycle:lifecycle-process",
+    "androidx.compose:compose-bom",
+    "androidx.compose.ui:ui",
+    "androidx.compose.foundation:foundation",
+    "androidx.compose.material3:material3",
+    "androidx.compose.ui:ui-tooling-preview",
+    "androidx.compose.ui:ui-test-junit4",
+    "androidx.compose.ui:ui-test-manifest",
+    "androidx.sqlite:sqlite-bundled",
+    "junit:junit",
+    "androidx.test:runner",
+    "androidx.test.ext:junit",
+    "androidx.test.uiautomator:uiautomator",
+    "com.android.application",
+    "com.android.library",
+    "org.jetbrains.kotlin.jvm",
+    "org.jetbrains.kotlin.plugin.compose",
+    "org.jetbrains.kotlin.plugin.serialization",
+    "com.ibm.icu:icu4j",
+    "com.microsoft.onnxruntime:onnxruntime-android",
+    "com.microsoft.onnxruntime:onnxruntime"
+  ],
+  "permissions": [
+    "android.permission.ACCESS_NETWORK_STATE",
+    "android.permission.FOREGROUND_SERVICE",
+    "android.permission.FOREGROUND_SERVICE_DATA_SYNC",
+    "android.permission.FOREGROUND_SERVICE_MEDIA_PROCESSING",
+    "android.permission.FOREGROUND_SERVICE_MICROPHONE",
+    "android.permission.INTERNET",
+    "android.permission.POST_NOTIFICATIONS",
+    "android.permission.READ_CALENDAR",
+    "android.permission.RECORD_AUDIO",
+    "android.permission.USE_BIOMETRIC"
+  ]
+}

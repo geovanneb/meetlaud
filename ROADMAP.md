@@ -4,7 +4,7 @@ Where Meetlaud is going. No dates: this is a volunteer project, and things ship 
 
 ## Now: getting to 1.0
 
-Every 1.0 feature is built and tested in the simulator. What is left is proving it on real devices and real meetings.
+Every 1.0 feature is built, on iPhone and on Android. What is left is proving it on real devices and real meetings.
 
 - [ ] Real-device runs: 3-hour recordings with the screen locked, phone calls and AirPods interrupting, power loss
 - [ ] Summaries of real long meetings, in all four languages (synthetic 1-hour and 3-hour runs already pass on iPhone 17)
@@ -12,20 +12,23 @@ Every 1.0 feature is built and tested in the simulator. What is left is proving 
 - [ ] Manual VoiceOver and Reduce Motion passes
 - [ ] Native review of the Japanese, Portuguese, and Spanish text
 - [ ] Siri on a device, and Lock Screen controls for the player
-- [ ] Public TestFlight, then the App Store with the "Data Not Collected" label
+- [ ] Android on more phones: from 4 GB entry-level to recent flagships, and Xiaomi, Samsung, and Pixel system quirks
+- [ ] Android's counterparts of the iOS extras: Home Screen widgets, a Quick Settings tile, app shortcuts, and system search
+- [ ] The Get Things Done connector on Android
+- [ ] Public TestFlight and a Google Play open test, then the App Store and Google Play with the "no data collected" labels
 
 ## Next
 
 - **Live transcription**, while you record
 - **Import your own model** from Files, clearly marked as untested
-- **Apple Watch**: start and stop recording from the wrist
+- **Watch apps**: start and stop recording from the wrist, on Apple Watch and Wear OS
 - **Connectors that wake up**: deliver to your computer even when the app is closed
 - More summary templates, written by people who use them
 
 ## Later
 
-- **Android**, as a separate native app sharing formats and prompts with this one. See [Bringing Meetlaud to Android](docs/porting-android.md)
-- **Mac app** for video-call meetings
+- **Desktop apps** for video-call meetings
+- **Faster AI on Android** with each phone's GPU or NPU, where it helps
 - More interface languages
 
 ## Not planned

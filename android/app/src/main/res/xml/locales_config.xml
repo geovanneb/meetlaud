@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The interface languages, the same four as iOS. Android lists them in the app's language setting. -->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <locale android:name="en" />
+    <locale android:name="ja" />
+    <locale android:name="pt-BR" />
+    <locale android:name="es" />
+</locale-config>

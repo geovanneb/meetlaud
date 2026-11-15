@@ -1,0 +1,109 @@
+#!/usr/bin/env python3
+"""The Android app's privacy, architecture, and localization rules, the same promises the iOS checks keep (D-084).
+
+Usage: check-android [android dir]
+
+- domain is pure Kotlin: java, kotlin, and kotlinx only, as ios Domain imports only Foundation.
+- Features do not import features (feature.shared excepted), nor any adapter in infra. They talk through domain and
+  the router, as on iOS.
+- Only the packages in android/privacy-allowlist.json may open a network connection.
+- Every library in gradle/libs.versions.toml is in the allowlist, which records its license review.
+- No UI text in code: Text("...") with a literal fails. Text comes from L10n, built from the String Catalogs.
+- Every SfIcon("symbol") has its drawable, made by Tools/android-icons.
+- No (?U) in a regular expression: the JVM accepts it, Android crashes on it.
+"""
+import json
+import re
+import sys
+from pathlib import Path
+
+APP = "app/src/main/kotlin/com/meetlaud/app"
+DOMAIN = "domain/src/main/kotlin"
+DOMAIN_IMPORTS = re.compile(r"^import (java\.|kotlin\.|kotlinx\.coroutines|kotlinx\.serialization)")
+NETWORK = re.compile(r"java\.net\.(URL|HttpURLConnection|Socket|ServerSocket|DatagramSocket)\b|okhttp|ktor|javax\.net\.|"
+                     r"android\.net\.(nsd|wifi)|java\.nio\.channels\.(Socket|DatagramChannel)")
+UI_LITERAL = re.compile(r'(?<![\w.])(Text|TextAction|PrimaryAction|SecondaryAction|EmptyState|SectionHeader|LargeTitle|'
+                        r'NavigationBar|Screen|RowLabel)\(\s*"(?!")')
+ICON = re.compile(r'SfIcon\(\s*"([a-z0-9.]+)"|GlassCircleButton\(\s*"([a-z0-9.]+)"|symbol\s*=\s*"([a-z0-9.]+)"')
+
+
+def is_ui_text(code):
+    """A literal with words in it. "${count}" or "${title} · ${time}" only lays out data, and needs no translation."""
+    for match in UI_LITERAL.finditer(code):
+        literal = re.match(r'"((?:[^"\\]|\\.)*)"', code[match.end() - 1:])
+        words = re.sub(r"\$\{[^}]*\}|\$\w+", "", literal.group(1)) if literal else "x"
+        if re.search(r"[A-Za-z]", words):
+            return True
+    return False
+
+
+def kotlin_files(root, base):
+    folder = root / base
+    return sorted(folder.rglob("*.kt")) if folder.exists() else []
+
+
+def package_of(path, app_root):
+    return ".".join(path.relative_to(app_root).parts[:-1])
+
+
+def main(root):
+    errors = []
+    allowlist = json.loads((root / "privacy-allowlist.json").read_text())
+
+    for file in kotlin_files(root, DOMAIN) + kotlin_files(root, APP):
+        for number, line in enumerate(file.read_text().splitlines(), 1):
+            if line.startswith("import ") and file.is_relative_to(root / DOMAIN) and not DOMAIN_IMPORTS.match(line):
+                errors.append(f"{file.relative_to(root)}:{number}: domain must stay pure Kotlin ({line.strip()})")
+            # Unit tests run on the JVM, which accepts these. Android's regex engine throws, at class load.
+            if "(?U)" in line or "UNICODE_CHARACTER_CLASS" in line:
+                errors.append(f"{file.relative_to(root)}:{number}: Android's regex engine rejects (?U). Spell the class out")
+
+    app_root = root / APP
+    drawables = {p.stem for p in (root / "app/src/main/res/drawable").glob("sf_*.xml")}
+    for file in kotlin_files(root, APP):
+        relative = file.relative_to(root)
+        package = package_of(file, app_root)
+        code = file.read_text()
+        is_feature = package.startswith("feature.") or package == "feature"
+        own_feature = package.split(".")[1] if is_feature and "." in package else None
+        for number, line in enumerate(code.splitlines(), 1):
+            if line.startswith("import com.meetlaud.app."):
+                target = line.split()[1][len("com.meetlaud.app."):]
+                if is_feature and target.startswith("feature."):
+                    other = target.split(".")[1]
+                    if other not in (own_feature, "shared"):
+                        errors.append(f"{relative}:{number}: features do not import features ({target})")
+                if is_feature and target.startswith("infra."):
+                    errors.append(f"{relative}:{number}: features do not import adapters ({target})")
+            if NETWORK.search(line) and not any(package.startswith(p) for p in allowlist["networkPackages"]):
+                errors.append(f"{relative}:{number}: network use outside {allowlist['networkPackages']}")
+            if (package.startswith(("feature", "designsystem", "shell")) and is_ui_text(line.split("//", 1)[0])
+                    and "@Preview" not in code[: code.find(line)][-200:]):
+                errors.append(f"{relative}:{number}: UI text outside the String Catalog")
+            for match in ICON.finditer(line):
+                symbol = next(group for group in match.groups() if group)
+                if "sf_" + re.sub(r"[^a-z0-9]", "_", symbol) not in drawables:
+                    errors.append(f"{relative}:{number}: no icon for '{symbol}'. Add it to Tools/android-icons")
+
+    catalog = (root / "gradle/libs.versions.toml").read_text()
+    for module in re.findall(r'(?:module|id) = "([^"]+)"', catalog):
+        if module not in allowlist["dependencies"]:
+            errors.append(f"gradle/libs.versions.toml: dependency '{module}' is not in privacy-allowlist.json")
+
+    manifest = (root / "app/src/main/AndroidManifest.xml").read_text()
+    for permission in re.findall(r'uses-permission[^>]*android:name="([^"]+)"', manifest):
+        if permission not in allowlist["permissions"]:
+            errors.append(f"AndroidManifest.xml: permission '{permission}' is not in privacy-allowlist.json")
+
+    # A stand-in for an adapter never ships: the port was finished without them (D-085).
+    if (root / "app/src/main/kotlin/com/meetlaud/app/infra/Pending.kt").exists():
+        errors.append("app/src/main/kotlin/com/meetlaud/app/infra/Pending.kt: stand-in adapters are not allowed")
+
+    for error in errors:
+        print(f"error: {error}")
+    print(f"check-android: {len(errors)} problem(s)")
+    return 1 if errors else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(Path(sys.argv[1] if len(sys.argv) > 1 else "android").resolve()))

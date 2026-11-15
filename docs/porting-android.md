@@ -1,52 +1,24 @@
 # Bringing Meetlaud to Android
 
-Meetlaud is native on purpose: recording reliability, background rules, and on-device AI all depend on what each platform offers. So Android gets its own native app, not a cross-platform port. This page explains how the two apps stay one product.
+Meetlaud is native on purpose: recording reliability, background rules, and on-device AI all depend on what each platform offers. So Android has its own native app, not a cross-platform port.
 
-## How the repositories are organized
+## What was planned, and what was decided
 
-| Repository | What it holds | Status |
-|---|---|---|
-| `meetlaud-ios` (this one) | The iPhone and iPad app, in Swift | Active |
-| `meetlaud-android` | The Android app, in Kotlin and Jetpack Compose | Planned |
-| `meetlaud-spec` | What both apps must agree on: formats, protocols, prompts, strings, and test fixtures | Created when Android work starts |
+The first plan was three repositories: one per app, plus a shared specification. The owner chose one repository instead (D-084): `ios/` and `android/` side by side, so one pull request can change both apps, and generated text and shared contracts cannot drift.
 
-Why separate repositories instead of one monorepo:
+The Android app now lives in `android/`. How it is built, how it stays identical to iOS, and what is left to port are in [The Android app](android.md). The engines it runs are in D-085.
 
-- **Different toolchains.** Xcode and Gradle, different CI runners, different release cycles. One repository would make every pull request wait on both.
-- **Different contributors.** Most people know one platform well. A focused repository is easier to enter.
-- **Proven pattern.** Mature open-source apps with native clients on both platforms, such as Signal and Element, keep one repository per platform.
+## What both apps share
 
-What keeps them one product is `meetlaud-spec`, versioned with semantic versions. Each app pins a spec version, and a change to the spec is reviewed by maintainers of both apps.
-
-## What moves to the shared spec
-
-Until `meetlaud-spec` exists, these live here. Each one is already platform-neutral, or close to it.
-
-| Contract | Where it lives today | Why it must be shared |
-|---|---|---|
-| Model catalog (ids, sources, hashes, memory needs, licenses) | `Packages/Infrastructure/ModelDelivery/Sources/Resources/models.json`, built by `Tools/generate-model-catalog` | Same models, same pinned versions, same license review |
-| Interface text in en, ja, pt-BR, and es | `Packages/UI/Localization/Sources/Resources/Localizable.xcstrings` (JSON) | One translation effort. A script converts it to Android `strings.xml` |
-| Summary templates and prompts | `Packages/Core/Domain/Sources/SummaryPrompts.swift` and `BuiltInTemplates.swift` | Same summary on both phones for the same meeting |
-| Connector protocol, with crypto test vectors | [Connectors](connectors.md) | Any computer that pairs with one app pairs with the other |
-| Encrypted library export | `Packages/Infrastructure/Archive` | Someone who changes phones takes their meetings along |
-| Evaluation sets and quality rubric | [Testing](testing.md), [On-device AI](on-device-ai.md) | Quality is measured the same way |
-| Privacy rules | `Tools/check-privacy`, [Privacy](PRIVACY.md) | The promise is identical on both platforms |
-
-The move is simple: copy the file into the spec repository, give it a version, and have each app read it from there at build time.
-
-## A likely Android stack
-
-These are starting points for the Android maintainers to confirm with their own spikes, as the iOS app did ([Research](research/)).
-
-| Need | iOS uses | Android candidates |
-|---|---|---|
-| Interface | SwiftUI | Jetpack Compose, Material 3 |
-| Reliable background recording | Audio background mode, Live Activity | Foreground service with a persistent notification |
-| Transcription | WhisperKit (Core ML), Apple Speech | whisper.cpp, sherpa-onnx |
-| Speaker separation and voice prints | FluidAudio (pyannote, Core ML) | sherpa-onnx speaker diarization (ONNX) |
-| Summaries and chat | MLX Swift with Qwen 3.5 2B | llama.cpp, MediaPipe LLM Inference |
-| Database and search | GRDB, SQLite FTS5 | Room, SQLite FTS5 |
-| Long jobs | Background tasks | WorkManager |
+| Contract | Where it lives |
+|---|---|
+| Interface text in en, ja, pt-BR, and es | The iOS String Catalogs, converted at build time by `Tools/android-strings` |
+| Domain rules, summary prompts, and templates | `ios/Packages/Core/Domain`, ported line by line to `android/domain`, checked by `Tools/parity` |
+| Database schema and encodings | The GRDB migrations on iOS, mirrored in `android/app/.../infra/persistence/Schema.kt` |
+| Encrypted library export | `ios/Packages/Infrastructure/Archive`, mirrored byte for byte in `infra/archive` |
+| Connector protocol, with crypto test vectors | [Connectors](connectors.md) |
+| Model catalogs | One per platform, with the same ids where the model is the same |
+| Privacy rules | `ios/Tools/check-privacy` and `Tools/check-android` |
 
 ## Rules both apps share
 

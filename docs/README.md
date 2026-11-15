@@ -11,7 +11,11 @@
 | [Connectors](connectors.md) | How to plug other apps in, and the Get Things Done protocol |
 | [Testing](testing.md) | Tests, CI, and the automated quality rules |
 | [Decisions](decisions.md) | Why things are the way they are, and the known risks |
-| [Bringing Meetlaud to Android](porting-android.md) | How the Android app and this one will share one product |
+| [The Android app](android.md) | How the Android app is built, kept identical to iOS, and tested |
+| [Releasing](releasing.md) | How both apps are released together, and what each release contains |
+| [Bringing Meetlaud to Android](porting-android.md) | Why one repository holds both apps, and what they share |
 | [Research](research/) | Measurements on real devices: language models, voice prints, recording resilience, search, and the license audit |
+
+Architecture, On-device AI, Model management, and UX design describe the iOS app, which every feature starts from. [The Android app](android.md) maps each part to its Android counterpart, and [Decisions](decisions.md) records where they differ (D-084, D-085).
 
 Start with the [Architecture](architecture.md) if you want to change code, and with [CONTRIBUTING.md](../CONTRIBUTING.md) before your first pull request.

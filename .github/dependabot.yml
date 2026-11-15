@@ -5,8 +5,14 @@ updates:
     schedule:
       interval: weekly
   - package-ecosystem: swift
-    directory: /Packages
+    directory: /ios/Packages
     schedule:
       interval: weekly
     # Every new version needs a license and privacy check, so updates arrive as pull requests to review.
+    open-pull-requests-limit: 5
+  - package-ecosystem: gradle
+    directory: /android
+    schedule:
+      interval: weekly
+    # The same review as Swift: a license and privacy check, and android/privacy-allowlist.json.
     open-pull-requests-limit: 5

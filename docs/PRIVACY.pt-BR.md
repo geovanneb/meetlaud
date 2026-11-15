@@ -2,7 +2,7 @@
 
 [English](PRIVACY.md) · [日本語](PRIVACY.ja.md) · Português · [Español](PRIVACY.es.md)
 
-Esta página explica em linguagem simples o que o código faz. A própria compilação garante a maior parte disso: veja `Tools/check-privacy` e `Tools/privacy-allowlist.json`. Se houver diferença entre esta tradução e a [versão em inglês](PRIVACY.md), vale a versão em inglês.
+Esta página explica em linguagem simples o que o código faz, no app de iPhone e no app de Android. A própria compilação garante a maior parte disso: veja `ios/Tools/check-privacy` e `Tools/check-android`, e as listas `ios/Tools/privacy-allowlist.json` e `android/privacy-allowlist.json`. Se houver diferença entre esta tradução e a [versão em inglês](PRIVACY.md), vale a versão em inglês.
 
 ## O que sai do seu aparelho
 
@@ -12,7 +12,7 @@ O app faz dois tipos de conexão. O segundo é opcional e fica desligado até vo
 
 1. **Downloads de modelos de IA que você inicia.** Vêm do Hugging Face, em versões fixas e com hash verificado. Ajustes > Atividade de rede lista cada um, com data, endereço e tamanho. Você pode limpar essa lista; depois disso, a tela avisa que o histórico foi limpo, em vez de dizer que nada saiu.
 
-O iOS pode baixar os próprios modelos de idioma para o Apple Speech e para a busca. Quem faz isso é o iOS, não o app, e nenhum conteúdo de reunião está envolvido.
+No iPhone, o iOS pode baixar os próprios modelos de idioma para o Apple Speech e para a busca. Quem faz isso é o iOS, não o app, e nenhum conteúdo de reunião está envolvido. O Android não tem esses modelos, então o app de Android baixa o próprio modelo de busca, como os outros.
 
 2. **Conectores que você pareia.** Se você conectar o Get Things Done, as novas reuniões vão para aquele único computador, na sua própria rede, criptografadas para ele. Por padrão, só o áudio vai. Transcrições e fotos têm cada uma o seu próprio botão. Nada passa pela internet, e cada envio aparece em Atividade de rede.
 
@@ -22,20 +22,20 @@ Sem contas. Sem analytics. Sem serviço de relatório de falhas. Sem publicidade
 
 ## O que fica no aparelho, e onde
 
-| Dado | Onde | Entra no backup do iOS? |
+| Dado | Onde | Entra no backup do aparelho? |
 |---|---|---|
 | Gravações, transcrições, resumos, conversas, memória, impressões de voz | Armazenamento privado do app | Não, a menos que você ative em Armazenamento e backup |
 | Modelos de IA | Armazenamento privado do app | Nunca |
 | Próximo evento e nomes de reuniões recentes | Um arquivo compartilhado com o widget do app | Não. Só é gravado se você ativar "Mostrar nomes de reuniões nos widgets", e é apagado quando você desativa |
 
-Se você ativar o backup, suas gravações seguem as configurações de backup do seu iPhone, o que pode significar o iCloud.
+Se você ativar o backup, suas gravações seguem as configurações de backup do seu celular, o que pode significar o iCloud no iPhone ou o backup do Google no Android.
 
 ## Seus controles
 
-- **Bloquear o app:** pede Face ID ou o código, e esconde o conteúdo no alternador de apps.
+- **Bloquear o app:** pede Face ID, digital ou o bloqueio de tela, e esconde o conteúdo no alternador de apps.
 - **Exportar a biblioteca:** um único arquivo protegido pela sua senha (AES-256-GCM). Sem a senha, ninguém consegue abrir, e não há como recuperá-la. As impressões de voz ficam de fora, a não ser que você as inclua.
 - **Apagar uma gravação:** remove o áudio, a transcrição, os resumos, os dados de busca, as conversas sobre ela e qualquer resposta que a cite.
-- **Apagar tudo:** remove tudo isso, mais os modelos e os ajustes. Os modelos de idioma do próprio iOS ficam, já que pertencem ao iOS.
+- **Apagar tudo:** remove tudo isso, mais os modelos e os ajustes. No iPhone, os modelos de idioma do próprio iOS ficam, já que pertencem ao iOS.
 
 ## Impressões de voz
 

@@ -1,0 +1,6116 @@
+[
+ {
+  "id": "markRepeats-1",
+  "fn": "markRepeats",
+  "args": {
+   "text": "no no no no no no nobody came"
+  }
+ },
+ {
+  "id": "markRepeats-2",
+  "fn": "markRepeats",
+  "args": {
+   "text": "thank you thank you thank you thank you thank you thank you thank you."
+  }
+ },
+ {
+  "id": "markRepeats-3",
+  "fn": "markRepeats",
+  "args": {
+   "text": "はいはいはいはいはいはいはい"
+  }
+ },
+ {
+  "id": "markRepeats-4",
+  "fn": "markRepeats",
+  "args": {
+   "text": "1 2 3 4 5 6 7 8 9"
+  }
+ },
+ {
+  "id": "markRepeats-5",
+  "fn": "markRepeats",
+  "args": {
+   "text": "ok, ok, ok, ok, ok, ok, ok then"
+  }
+ },
+ {
+  "id": "markRepeats-6",
+  "fn": "markRepeats",
+  "args": {
+   "text": "Let's go. Let's go. Let's go. Let's go. Let's go. Let's go."
+  }
+ },
+ {
+  "id": "markRepeats-7",
+  "fn": "markRepeats",
+  "args": {
+   "text": "normal sentence with nothing repeated"
+  }
+ },
+ {
+  "id": "markRepeats-8",
+  "fn": "markRepeats",
+  "args": {
+   "text": "ありがとう、ありがとう、ありがとう、ありがとう、ありがとう、ありがとう。"
+  }
+ },
+ {
+  "id": "markRepeats-9",
+  "fn": "markRepeats",
+  "args": {
+   "text": "banana banana banana banana banana banana bananas"
+  }
+ },
+ {
+  "id": "hasWords-1",
+  "fn": "hasWords",
+  "args": {
+   "text": ","
+  }
+ },
+ {
+  "id": "hasWords-2",
+  "fn": "hasWords",
+  "args": {
+   "text": "…"
+  }
+ },
+ {
+  "id": "hasWords-3",
+  "fn": "hasWords",
+  "args": {
+   "text": "[BLANK_AUDIO]"
+  }
+ },
+ {
+  "id": "hasWords-4",
+  "fn": "hasWords",
+  "args": {
+   "text": " [BLANK_AUDIO] "
+  }
+ },
+ {
+  "id": "hasWords-5",
+  "fn": "hasWords",
+  "args": {
+   "text": "ok"
+  }
+ },
+ {
+  "id": "hasWords-6",
+  "fn": "hasWords",
+  "args": {
+   "text": "42"
+  }
+ },
+ {
+  "id": "hasWords-7",
+  "fn": "hasWords",
+  "args": {
+   "text": "えー"
+  }
+ },
+ {
+  "id": "hasWords-8",
+  "fn": "hasWords",
+  "args": {
+   "text": "...!?"
+  }
+ },
+ {
+  "id": "vocabulary-1",
+  "fn": "vocabulary",
+  "args": {
+   "entries": [
+    {
+     "heard": "ana",
+     "written": "Ana"
+    },
+    {
+     "heard": "lumen",
+     "written": "Lumen Bikes"
+    },
+    {
+     "heard": "kenji",
+     "written": "Kenji Sato",
+     "folder": "CCCCCCCC-0000-0000-0000-000000000001"
+    },
+    {
+     "heard": "さとう",
+     "written": "佐藤"
+    },
+    {
+     "heard": "Jose",
+     "written": "José"
+    }
+   ],
+   "text": "ana said banana to lumen",
+   "folder": null
+  }
+ },
+ {
+  "id": "vocabulary-2",
+  "fn": "vocabulary",
+  "args": {
+   "entries": [
+    {
+     "heard": "ana",
+     "written": "Ana"
+    },
+    {
+     "heard": "lumen",
+     "written": "Lumen Bikes"
+    },
+    {
+     "heard": "kenji",
+     "written": "Kenji Sato",
+     "folder": "CCCCCCCC-0000-0000-0000-000000000001"
+    },
+    {
+     "heard": "さとう",
+     "written": "佐藤"
+    },
+    {
+     "heard": "Jose",
+     "written": "José"
+    }
+   ],
+   "text": "ANA and Ána met kenji",
+   "folder": null
+  }
+ },
+ {
+  "id": "vocabulary-3",
+  "fn": "vocabulary",
+  "args": {
+   "entries": [
+    {
+     "heard": "ana",
+     "written": "Ana"
+    },
+    {
+     "heard": "lumen",
+     "written": "Lumen Bikes"
+    },
+    {
+     "heard": "kenji",
+     "written": "Kenji Sato",
+     "folder": "CCCCCCCC-0000-0000-0000-000000000001"
+    },
+    {
+     "heard": "さとう",
+     "written": "佐藤"
+    },
+    {
+     "heard": "Jose",
+     "written": "José"
+    }
+   ],
+   "text": "ana and kenji",
+   "folder": "CCCCCCCC-0000-0000-0000-000000000001"
+  }
+ },
+ {
+  "id": "vocabulary-4",
+  "fn": "vocabulary",
+  "args": {
+   "entries": [
+    {
+     "heard": "ana",
+     "written": "Ana"
+    },
+    {
+     "heard": "lumen",
+     "written": "Lumen Bikes"
+    },
+    {
+     "heard": "kenji",
+     "written": "Kenji Sato",
+     "folder": "CCCCCCCC-0000-0000-0000-000000000001"
+    },
+    {
+     "heard": "さとう",
+     "written": "佐藤"
+    },
+    {
+     "heard": "Jose",
+     "written": "José"
+    }
+   ],
+   "text": "さとうさんが来ました",
+   "folder": null
+  }
+ },
+ {
+  "id": "vocabulary-5",
+  "fn": "vocabulary",
+  "args": {
+   "entries": [
+    {
+     "heard": "ana",
+     "written": "Ana"
+    },
+    {
+     "heard": "lumen",
+     "written": "Lumen Bikes"
+    },
+    {
+     "heard": "kenji",
+     "written": "Kenji Sato",
+     "folder": "CCCCCCCC-0000-0000-0000-000000000001"
+    },
+    {
+     "heard": "さとう",
+     "written": "佐藤"
+    },
+    {
+     "heard": "Jose",
+     "written": "José"
+    }
+   ],
+   "text": "jose and josé",
+   "folder": null
+  }
+ },
+ {
+  "id": "polish-1",
+  "fn": "polish",
+  "args": {
+   "text": "um, so we start"
+  }
+ },
+ {
+  "id": "polish-2",
+  "fn": "polish",
+  "args": {
+   "text": "Uh, uh, okay."
+  }
+ },
+ {
+  "id": "polish-3",
+  "fn": "polish",
+  "args": {
+   "text": "um"
+  }
+ },
+ {
+  "id": "polish-4",
+  "fn": "polish",
+  "args": {
+   "text": "えーと、今日は会議です"
+  }
+ },
+ {
+  "id": "polish-5",
+  "fn": "polish",
+  "args": {
+   "text": "ãh vamos começar"
+  }
+ },
+ {
+  "id": "polish-6",
+  "fn": "polish",
+  "args": {
+   "text": "hmm... right, so"
+  }
+ },
+ {
+  "id": "languageWrong-1",
+  "fn": "languageWrong",
+  "args": {
+   "text": "The team will send the budget by Friday.",
+   "language": "en"
+  }
+ },
+ {
+  "id": "languageWrong-2",
+  "fn": "languageWrong",
+  "args": {
+   "text": "A equipe vai enviar o orçamento até sexta-feira.",
+   "language": "en"
+  }
+ },
+ {
+  "id": "languageWrong-3",
+  "fn": "languageWrong",
+  "args": {
+   "text": "A equipe vai enviar o orçamento até sexta-feira.",
+   "language": "pt"
+  }
+ },
+ {
+  "id": "languageWrong-4",
+  "fn": "languageWrong",
+  "args": {
+   "text": "El equipo va a enviar el presupuesto hasta el viernes.",
+   "language": "pt"
+  }
+ },
+ {
+  "id": "languageWrong-5",
+  "fn": "languageWrong",
+  "args": {
+   "text": "チームは金曜日までに予算を送ります。",
+   "language": "en"
+  }
+ },
+ {
+  "id": "languageWrong-6",
+  "fn": "languageWrong",
+  "args": {
+   "text": "The team sends it.",
+   "language": "ja"
+  }
+ },
+ {
+  "id": "languageWrong-7",
+  "fn": "languageWrong",
+  "args": {
+   "text": "佐藤さんがLumen Bikesに連絡します。",
+   "language": "ja"
+  }
+ },
+ {
+  "id": "languageWrong-8",
+  "fn": "languageWrong",
+  "args": {
+   "text": "Ana will call 佐藤 tomorrow about the plan.",
+   "language": "en"
+  }
+ },
+ {
+  "id": "languageWrong-9",
+  "fn": "languageWrong",
+  "args": {
+   "text": "Kenji",
+   "language": "pt"
+  }
+ },
+ {
+  "id": "queryTerms-1",
+  "fn": "queryTerms",
+  "args": {
+   "text": "What did Ana say about the budget?"
+  }
+ },
+ {
+  "id": "queryTerms-2",
+  "fn": "queryTerms",
+  "args": {
+   "text": "予算について何が決まりましたか"
+  }
+ },
+ {
+  "id": "queryTerms-3",
+  "fn": "queryTerms",
+  "args": {
+   "text": "Quem vai fazer o roteiro?"
+  }
+ },
+ {
+  "id": "queryTerms-4",
+  "fn": "queryTerms",
+  "args": {
+   "text": "a an of to be or"
+  }
+ },
+ {
+  "id": "queryTerms-5",
+  "fn": "queryTerms",
+  "args": {
+   "text": "Lumen Bikes, Lumen bikes, LUMEN"
+  }
+ },
+ {
+  "id": "answerParse-1",
+  "fn": "answerParse",
+  "args": {
+   "text": "The campaign leads with short videos [1]. Print ads are gone [2].",
+   "excerpts": [
+    {
+     "recording": "11111111-1111-1111-1111-111111111111",
+     "title": "Spring campaign kickoff",
+     "time": 0,
+     "end": 33,
+     "text": "Ana Ribeiro: Thanks for joining. Kenji: I shared the draft. The main idea is short videos first, then email."
+    },
+    {
+     "recording": "11111111-1111-1111-1111-111111111111",
+     "title": "Spring campaign kickoff",
+     "time": 41,
+     "end": 65,
+     "text": "Kenji: Print ads brought almost no sign-ups last year, so we drop them. Ana Ribeiro: No print ads. Their budget moves to video."
+    },
+    {
+     "recording": "11111111-1111-1111-1111-111111111112",
+     "title": "Budget review",
+     "time": 12,
+     "end": null,
+     "text": "Speaker 2: The video budget doubles next quarter."
+    }
+   ]
+  }
+ },
+ {
+  "id": "answerParse-2",
+  "fn": "answerParse",
+  "args": {
+   "text": "Videos come first [1, 2]. Budget doubles [3].",
+   "excerpts": [
+    {
+     "recording": "11111111-1111-1111-1111-111111111111",
+     "title": "Spring campaign kickoff",
+     "time": 0,
+     "end": 33,
+     "text": "Ana Ribeiro: Thanks for joining. Kenji: I shared the draft. The main idea is short videos first, then email."
+    },
+    {
+     "recording": "11111111-1111-1111-1111-111111111111",
+     "title": "Spring campaign kickoff",
+     "time": 41,
+     "end": 65,
+     "text": "Kenji: Print ads brought almost no sign-ups last year, so we drop them. Ana Ribeiro: No print ads. Their budget moves to video."
+    },
+    {
+     "recording": "11111111-1111-1111-1111-111111111112",
+     "title": "Budget review",
+     "time": 12,
+     "end": null,
+     "text": "Speaker 2: The video budget doubles next quarter."
+    }
+   ]
+  }
+ },
+ {
+  "id": "answerParse-3",
+  "fn": "answerParse",
+  "args": {
+   "text": "Videos come first [7].",
+   "excerpts": [
+    {
+     "recording": "11111111-1111-1111-1111-111111111111",
+     "title": "Spring campaign kickoff",
+     "time": 0,
+     "end": 33,
+     "text": "Ana Ribeiro: Thanks for joining. Kenji: I shared the draft. The main idea is short videos first, then email."
+    },
+    {
+     "recording": "11111111-1111-1111-1111-111111111111",
+     "title": "Spring campaign kickoff",
+     "time": 41,
+     "end": 65,
+     "text": "Kenji: Print ads brought almost no sign-ups last year, so we drop them. Ana Ribeiro: No print ads. Their budget moves to video."
+    },
+    {
+     "recording": "11111111-1111-1111-1111-111111111112",
+     "title": "Budget review",
+     "time": 12,
+     "end": null,
+     "text": "Speaker 2: The video budget doubles next quarter."
+    }
+   ]
+  }
+ },
+ {
+  "id": "answerParse-4",
+  "fn": "answerParse",
+  "args": {
+   "text": "NOT_FOUND",
+   "excerpts": [
+    {
+     "recording": "11111111-1111-1111-1111-111111111111",
+     "title": "Spring campaign kickoff",
+     "time": 0,
+     "end": 33,
+     "text": "Ana Ribeiro: Thanks for joining. Kenji: I shared the draft. The main idea is short videos first, then email."
+    },
+    {
+     "recording": "11111111-1111-1111-1111-111111111111",
+     "title": "Spring campaign kickoff",
+     "time": 41,
+     "end": 65,
+     "text": "Kenji: Print ads brought almost no sign-ups last year, so we drop them. Ana Ribeiro: No print ads. Their budget moves to video."
+    },
+    {
+     "recording": "11111111-1111-1111-1111-111111111112",
+     "title": "Budget review",
+     "time": 12,
+     "end": null,
+     "text": "Speaker 2: The video budget doubles next quarter."
+    }
+   ]
+  }
+ },
+ {
+  "id": "answerParse-5",
+  "fn": "answerParse",
+  "args": {
+   "text": "Print ads were dropped. NOT_FOUND",
+   "excerpts": [
+    {
+     "recording": "11111111-1111-1111-1111-111111111111",
+     "title": "Spring campaign kickoff",
+     "time": 0,
+     "end": 33,
+     "text": "Ana Ribeiro: Thanks for joining. Kenji: I shared the draft. The main idea is short videos first, then email."
+    },
+    {
+     "recording": "11111111-1111-1111-1111-111111111111",
+     "title": "Spring campaign kickoff",
+     "time": 41,
+     "end": 65,
+     "text": "Kenji: Print ads brought almost no sign-ups last year, so we drop them. Ana Ribeiro: No print ads. Their budget moves to video."
+    },
+    {
+     "recording": "11111111-1111-1111-1111-111111111112",
+     "title": "Budget review",
+     "time": 12,
+     "end": null,
+     "text": "Speaker 2: The video budget doubles next quarter."
+    }
+   ]
+  }
+ },
+ {
+  "id": "answerParse-6",
+  "fn": "answerParse",
+  "args": {
+   "text": "The main idea is short videos first, then email. Print ads brought almost no sign-ups last year.",
+   "excerpts": [
+    {
+     "recording": "11111111-1111-1111-1111-111111111111",
+     "title": "Spring campaign kickoff",
+     "time": 0,
+     "end": 33,
+     "text": "Ana Ribeiro: Thanks for joining. Kenji: I shared the draft. The main idea is short videos first, then email."
+    },
+    {
+     "recording": "11111111-1111-1111-1111-111111111111",
+     "title": "Spring campaign kickoff",
+     "time": 41,
+     "end": 65,
+     "text": "Kenji: Print ads brought almost no sign-ups last year, so we drop them. Ana Ribeiro: No print ads. Their budget moves to video."
+    },
+    {
+     "recording": "11111111-1111-1111-1111-111111111112",
+     "title": "Budget review",
+     "time": 12,
+     "end": null,
+     "text": "Speaker 2: The video budget doubles next quarter."
+    }
+   ]
+  }
+ },
+ {
+  "id": "answerParse-7",
+  "fn": "answerParse",
+  "args": {
+   "text": "Something nobody said at all.",
+   "excerpts": [
+    {
+     "recording": "11111111-1111-1111-1111-111111111111",
+     "title": "Spring campaign kickoff",
+     "time": 0,
+     "end": 33,
+     "text": "Ana Ribeiro: Thanks for joining. Kenji: I shared the draft. The main idea is short videos first, then email."
+    },
+    {
+     "recording": "11111111-1111-1111-1111-111111111111",
+     "title": "Spring campaign kickoff",
+     "time": 41,
+     "end": 65,
+     "text": "Kenji: Print ads brought almost no sign-ups last year, so we drop them. Ana Ribeiro: No print ads. Their budget moves to video."
+    },
+    {
+     "recording": "11111111-1111-1111-1111-111111111112",
+     "title": "Budget review",
+     "time": 12,
+     "end": null,
+     "text": "Speaker 2: The video budget doubles next quarter."
+    }
+   ]
+  }
+ },
+ {
+  "id": "answerParse-8",
+  "fn": "answerParse",
+  "args": {
+   "text": "Videos first [1].\n[2] Kenji: Print ads brought almost no sign-ups",
+   "excerpts": [
+    {
+     "recording": "11111111-1111-1111-1111-111111111111",
+     "title": "Spring campaign kickoff",
+     "time": 0,
+     "end": 33,
+     "text": "Ana Ribeiro: Thanks for joining. Kenji: I shared the draft. The main idea is short videos first, then email."
+    },
+    {
+     "recording": "11111111-1111-1111-1111-111111111111",
+     "title": "Spring campaign kickoff",
+     "time": 41,
+     "end": 65,
+     "text": "Kenji: Print ads brought almost no sign-ups last year, so we drop them. Ana Ribeiro: No print ads. Their budget moves to video."
+    },
+    {
+     "recording": "11111111-1111-1111-1111-111111111112",
+     "title": "Budget review",
+     "time": 12,
+     "end": null,
+     "text": "Speaker 2: The video budget doubles next quarter."
+    }
+   ]
+  }
+ },
+ {
+  "id": "answerParse-9",
+  "fn": "answerParse",
+  "args": {
+   "text": "Videos come first [1、2].",
+   "excerpts": [
+    {
+     "recording": "11111111-1111-1111-1111-111111111111",
+     "title": "Spring campaign kickoff",
+     "time": 0,
+     "end": 33,
+     "text": "Ana Ribeiro: Thanks for joining. Kenji: I shared the draft. The main idea is short videos first, then email."
+    },
+    {
+     "recording": "11111111-1111-1111-1111-111111111111",
+     "title": "Spring campaign kickoff",
+     "time": 41,
+     "end": 65,
+     "text": "Kenji: Print ads brought almost no sign-ups last year, so we drop them. Ana Ribeiro: No print ads. Their budget moves to video."
+    },
+    {
+     "recording": "11111111-1111-1111-1111-111111111112",
+     "title": "Budget review",
+     "time": 12,
+     "end": null,
+     "text": "Speaker 2: The video budget doubles next quarter."
+    }
+   ]
+  }
+ },
+ {
+  "id": "answerVisible-1",
+  "fn": "answerVisible",
+  "args": {
+   "text": "The answer is here NOT_FO"
+  }
+ },
+ {
+  "id": "answerVisible-2",
+  "fn": "answerVisible",
+  "args": {
+   "text": "Videos first [1].\n["
+  }
+ },
+ {
+  "id": "answerVisible-3",
+  "fn": "answerVisible",
+  "args": {
+   "text": "Videos first [1].\n[2"
+  }
+ },
+ {
+  "id": "answerVisible-4",
+  "fn": "answerVisible",
+  "args": {
+   "text": "NOT"
+  }
+ },
+ {
+  "id": "answerVisible-5",
+  "fn": "answerVisible",
+  "args": {
+   "text": "Answer. NOT_FOUND."
+  }
+ },
+ {
+  "id": "copyingStart-1",
+  "fn": "copyingStart",
+  "args": {
+   "text": "Videos first [1].\n[2] Kenji: Print ads"
+  }
+ },
+ {
+  "id": "copyingStart-2",
+  "fn": "copyingStart",
+  "args": {
+   "text": "Videos first [1]."
+  }
+ },
+ {
+  "id": "copyingStart-3",
+  "fn": "copyingStart",
+  "args": {
+   "text": "- [3] copied line\nmore"
+  }
+ },
+ {
+  "id": "copyingStart-4",
+  "fn": "copyingStart",
+  "args": {
+   "text": "  • [1] x"
+  }
+ },
+ {
+  "id": "claim-1",
+  "fn": "claim",
+  "args": {
+   "number": 2,
+   "body": "Videos first [1]. Print ads were dropped because nobody signed up [2]."
+  }
+ },
+ {
+  "id": "claim-2",
+  "fn": "claim",
+  "args": {
+   "number": 1,
+   "body": "ビデオが先です[1]。"
+  }
+ },
+ {
+  "id": "claim-3",
+  "fn": "claim",
+  "args": {
+   "number": 4,
+   "body": "No marker here."
+  }
+ },
+ {
+  "id": "phrase-1",
+  "fn": "phrase",
+  "args": {
+   "claim": "Print ads brought almost no sign-ups",
+   "segments": [
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000001",
+     "start": 0,
+     "end": 8.5,
+     "text": "Thanks for joining. Let's lock the plan for the spring campaign today.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000002",
+     "start": 9,
+     "end": 20,
+     "text": "I shared the draft. The main idea is short videos first, then email.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000003",
+     "start": 21,
+     "end": 33,
+     "text": "Customers asked for real stories, so I'd lead with two customer videos.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000004",
+     "start": 34,
+     "end": 40,
+     "text": "Agreed. What does that do to the budget?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000005",
+     "start": 41,
+     "end": 54,
+     "text": "Print ads brought almost no sign-ups last year, so we drop them.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000006",
+     "start": 55,
+     "end": 65,
+     "text": "No print ads. Their budget moves to video.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000007",
+     "start": 66,
+     "end": 77,
+     "text": "Kenji will write the first video script by Friday, March 6.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000008",
+     "start": 78,
+     "end": 86,
+     "text": "I can invite Lumen Bikes as the first story.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000009",
+     "start": 87,
+     "end": 97,
+     "text": "Launch stays on March 3. Any questions?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000010",
+     "start": 98,
+     "end": 104,
+     "text": "Who approves the final cut?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000011",
+     "start": 105,
+     "end": 111,
+     "text": "um, uh, I think that's it.",
+     "speaker": null
+    }
+   ]
+  }
+ },
+ {
+  "id": "phrase-2",
+  "fn": "phrase",
+  "args": {
+   "claim": "nothing shared",
+   "segments": [
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000001",
+     "start": 0,
+     "end": 8.5,
+     "text": "Thanks for joining. Let's lock the plan for the spring campaign today.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000002",
+     "start": 9,
+     "end": 20,
+     "text": "I shared the draft. The main idea is short videos first, then email.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000003",
+     "start": 21,
+     "end": 33,
+     "text": "Customers asked for real stories, so I'd lead with two customer videos.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000004",
+     "start": 34,
+     "end": 40,
+     "text": "Agreed. What does that do to the budget?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000005",
+     "start": 41,
+     "end": 54,
+     "text": "Print ads brought almost no sign-ups last year, so we drop them.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000006",
+     "start": 55,
+     "end": 65,
+     "text": "No print ads. Their budget moves to video.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000007",
+     "start": 66,
+     "end": 77,
+     "text": "Kenji will write the first video script by Friday, March 6.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000008",
+     "start": 78,
+     "end": 86,
+     "text": "I can invite Lumen Bikes as the first story.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000009",
+     "start": 87,
+     "end": 97,
+     "text": "Launch stays on March 3. Any questions?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000010",
+     "start": 98,
+     "end": 104,
+     "text": "Who approves the final cut?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000011",
+     "start": 105,
+     "end": 111,
+     "text": "um, uh, I think that's it.",
+     "speaker": null
+    }
+   ]
+  }
+ },
+ {
+  "id": "memory-1",
+  "fn": "memory",
+  "args": {
+   "text": "Remember that Ana leads the video work."
+  }
+ },
+ {
+  "id": "memory-2",
+  "fn": "memory",
+  "args": {
+   "text": "remember Kenji prefers email"
+  }
+ },
+ {
+  "id": "memory-3",
+  "fn": "memory",
+  "args": {
+   "text": "Do you remember what Ana said?"
+  }
+ },
+ {
+  "id": "memory-4",
+  "fn": "memory",
+  "args": {
+   "text": "Lembre que o orçamento é 20 mil."
+  }
+ },
+ {
+  "id": "memory-5",
+  "fn": "memory",
+  "args": {
+   "text": "Recuerda que la reunión es el lunes"
+  }
+ },
+ {
+  "id": "memory-6",
+  "fn": "memory",
+  "args": {
+   "text": "予算は2万円だと覚えておいて"
+  }
+ },
+ {
+  "id": "memory-7",
+  "fn": "memory",
+  "args": {
+   "text": "Remember that"
+  }
+ },
+ {
+  "id": "memory-8",
+  "fn": "memory",
+  "args": {
+   "text": "What is the plan?"
+  }
+ },
+ {
+  "id": "askPrompt-1",
+  "fn": "askPrompt",
+  "args": {
+   "question": "Who writes the first script?",
+   "excerpts": [
+    {
+     "recording": "11111111-1111-1111-1111-111111111111",
+     "title": "Spring campaign kickoff",
+     "time": 0,
+     "end": 33,
+     "text": "Ana Ribeiro: Thanks for joining. Kenji: I shared the draft. The main idea is short videos first, then email."
+    },
+    {
+     "recording": "11111111-1111-1111-1111-111111111111",
+     "title": "Spring campaign kickoff",
+     "time": 41,
+     "end": 65,
+     "text": "Kenji: Print ads brought almost no sign-ups last year, so we drop them. Ana Ribeiro: No print ads. Their budget moves to video."
+    },
+    {
+     "recording": "11111111-1111-1111-1111-111111111112",
+     "title": "Budget review",
+     "time": 12,
+     "end": null,
+     "text": "Speaker 2: The video budget doubles next quarter."
+    }
+   ],
+   "history": [
+    {
+     "role": "user",
+     "body": "What was decided about print?"
+    },
+    {
+     "role": "assistant",
+     "body": "Print ads were dropped [2].",
+     "state": "complete"
+    },
+    {
+     "role": "user",
+     "body": "Why?"
+    },
+    {
+     "role": "assistant",
+     "body": "",
+     "state": "noBasis"
+    }
+   ],
+   "memories": [
+    "Kenji prefers email"
+   ],
+   "profile": "I run marketing at a small bike shop.",
+   "skill": "Answer as a brief."
+  }
+ },
+ {
+  "id": "askPrompt-2",
+  "fn": "askPrompt",
+  "args": {
+   "question": "O que foi decidido?",
+   "excerpts": [
+    {
+     "recording": "11111111-1111-1111-1111-111111111111",
+     "title": "Spring campaign kickoff",
+     "time": 0,
+     "end": 33,
+     "text": "Ana Ribeiro: Thanks for joining. Kenji: I shared the draft. The main idea is short videos first, then email."
+    },
+    {
+     "recording": "11111111-1111-1111-1111-111111111111",
+     "title": "Spring campaign kickoff",
+     "time": 41,
+     "end": 65,
+     "text": "Kenji: Print ads brought almost no sign-ups last year, so we drop them. Ana Ribeiro: No print ads. Their budget moves to video."
+    }
+   ],
+   "history": [],
+   "memories": [],
+   "profile": null,
+   "skill": null
+  }
+ },
+ {
+  "id": "notesPrompt-1",
+  "fn": "notesPrompt",
+  "args": {
+   "lines": [
+    "[0] Ana Ribeiro: Thanks for joining.",
+    "[9] Kenji: I shared the draft."
+   ],
+   "language": null
+  }
+ },
+ {
+  "id": "notesPrompt-2",
+  "fn": "notesPrompt",
+  "args": {
+   "lines": [
+    "[0] Ana Ribeiro: Thanks for joining.",
+    "[9] Kenji: I shared the draft."
+   ],
+   "language": "en"
+  }
+ },
+ {
+  "id": "notesPrompt-3",
+  "fn": "notesPrompt",
+  "args": {
+   "lines": [
+    "[0] Ana Ribeiro: Thanks for joining.",
+    "[9] Kenji: I shared the draft."
+   ],
+   "language": "ja"
+  }
+ },
+ {
+  "id": "notesPrompt-4",
+  "fn": "notesPrompt",
+  "args": {
+   "lines": [
+    "[0] Ana Ribeiro: Thanks for joining.",
+    "[9] Kenji: I shared the draft."
+   ],
+   "language": "pt"
+  }
+ },
+ {
+  "id": "notesPrompt-5",
+  "fn": "notesPrompt",
+  "args": {
+   "lines": [
+    "[0] Ana Ribeiro: Thanks for joining.",
+    "[9] Kenji: I shared the draft."
+   ],
+   "language": "es"
+  }
+ },
+ {
+  "id": "notesPrompt-6",
+  "fn": "notesPrompt",
+  "args": {
+   "lines": [
+    "[0] Ana Ribeiro: Thanks for joining.",
+    "[9] Kenji: I shared the draft."
+   ],
+   "language": "fr"
+  }
+ },
+ {
+  "id": "sectionPrompt-1",
+  "fn": "sectionPrompt",
+  "args": {
+   "template": "builtin.summary",
+   "section": 0,
+   "notes": [
+    "[9] Short videos first, then email.",
+    "[41] Print ads dropped.",
+    "[66] Kenji writes the script by Friday."
+   ],
+   "language": null,
+   "spoken": null,
+   "profile": null,
+   "limit": null
+  }
+ },
+ {
+  "id": "sectionPrompt-2",
+  "fn": "sectionPrompt",
+  "args": {
+   "template": "builtin.summary",
+   "section": 1,
+   "notes": [
+    "[9] Short videos first, then email.",
+    "[41] Print ads dropped.",
+    "[66] Kenji writes the script by Friday."
+   ],
+   "language": "en",
+   "spoken": "en",
+   "profile": "I lead marketing.",
+   "limit": null
+  }
+ },
+ {
+  "id": "sectionPrompt-3",
+  "fn": "sectionPrompt",
+  "args": {
+   "template": "builtin.summary",
+   "section": 2,
+   "notes": [
+    "[9] Short videos first, then email.",
+    "[41] Print ads dropped.",
+    "[66] Kenji writes the script by Friday."
+   ],
+   "language": "ja",
+   "spoken": "en",
+   "profile": null,
+   "limit": null
+  }
+ },
+ {
+  "id": "sectionPrompt-4",
+  "fn": "sectionPrompt",
+  "args": {
+   "template": "builtin.summary",
+   "section": 2,
+   "notes": [
+    "[9] Short videos first, then email.",
+    "[41] Print ads dropped.",
+    "[66] Kenji writes the script by Friday."
+   ],
+   "language": "pt",
+   "spoken": "pt",
+   "profile": null,
+   "limit": 3
+  }
+ },
+ {
+  "id": "sectionPrompt-5",
+  "fn": "sectionPrompt",
+  "args": {
+   "template": "builtin.discussion",
+   "section": 2,
+   "notes": [
+    "[9] Short videos first, then email.",
+    "[41] Print ads dropped.",
+    "[66] Kenji writes the script by Friday."
+   ],
+   "language": "es",
+   "spoken": null,
+   "profile": null,
+   "limit": null
+  }
+ },
+ {
+  "id": "sectionPrompt-6",
+  "fn": "sectionPrompt",
+  "args": {
+   "template": "builtin.interview",
+   "section": 0,
+   "notes": [
+    "[9] Short videos first, then email.",
+    "[41] Print ads dropped.",
+    "[66] Kenji writes the script by Friday."
+   ],
+   "language": null,
+   "spoken": "ja",
+   "profile": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+   "limit": null
+  }
+ },
+ {
+  "id": "sectionPrompt-7",
+  "fn": "sectionPrompt",
+  "args": {
+   "template": "builtin.call",
+   "section": 2,
+   "notes": [
+    "[9] Short videos first, then email.",
+    "[41] Print ads dropped.",
+    "[66] Kenji writes the script by Friday."
+   ],
+   "language": "es",
+   "spoken": "es",
+   "profile": null,
+   "limit": null
+  }
+ },
+ {
+  "id": "translationPrompt-1",
+  "fn": "translationPrompt",
+  "args": {
+   "lines": [
+    "[9] Videos first.",
+    "[66] Kenji | Write the script | Friday"
+   ],
+   "language": "ja",
+   "names": [
+    "Kenji",
+    "Ana Ribeiro"
+   ]
+  }
+ },
+ {
+  "id": "translationPrompt-2",
+  "fn": "translationPrompt",
+  "args": {
+   "lines": [
+    "[9] Videos first."
+   ],
+   "language": "pt",
+   "names": []
+  }
+ },
+ {
+  "id": "draftPrompt-1",
+  "fn": "draftPrompt",
+  "args": {
+   "description": "A template for weekly sales calls with next steps",
+   "language": "pt"
+  }
+ },
+ {
+  "id": "draftPrompt-2",
+  "fn": "draftPrompt",
+  "args": {
+   "description": "Retro notes",
+   "language": null
+  }
+ },
+ {
+  "id": "summaryItems-1",
+  "fn": "summaryItems",
+  "args": {
+   "text": "- [9] Short videos come first.\n- [41] Print ads are dropped.\n## Heading\nKey points:\n[1:15] Launch stays on March 3.\n**[55]** No print ads.\n* [9] short videos come first",
+   "kind": "bullets"
+  }
+ },
+ {
+  "id": "summaryItems-2",
+  "fn": "summaryItems",
+  "args": {
+   "text": "[66] Kenji | Write the first video script | Friday\n[78] owner | task | due date\n[78] Owner | Sofía | Invite Lumen Bikes | -\n- Ana | Approve budget\n[1:2:3] Unknown | Plan | none",
+   "kind": "tasks"
+  }
+ },
+ {
+  "id": "summaryItems-3",
+  "fn": "summaryItems",
+  "args": {
+   "text": "Item: [9] Videos first.\n[9] Item: Videos first again\n[12] note",
+   "kind": "bullets"
+  }
+ },
+ {
+  "id": "summaryItems-4",
+  "fn": "summaryItems",
+  "args": {
+   "text": "[10] ok ok ok ok ok ok ok ok\n[11] fine",
+   "kind": "bullets"
+  }
+ },
+ {
+  "id": "summaryItems-5",
+  "fn": "summaryItems",
+  "args": {
+   "text": "[1] Point number 1\n[2] Point number 2\n[3] Point number 3\n[4] Point number 4\n[5] Point number 5\n[6] Point number 6\n[7] Point number 7\n[8] Point number 8\n[9] Point number 9",
+   "kind": "bullets"
+  }
+ },
+ {
+  "id": "summaryItems-6",
+  "fn": "summaryItems",
+  "args": {
+   "text": "[1] P1 | Task 1 | -\n[2] P2 | Task 2 | -\n[3] P3 | Task 3 | -\n[4] P4 | Task 4 | -\n[5] P5 | Task 5 | -\n[6] P6 | Task 6 | -\n[7] P7 | Task 7 | -\n[8] P8 | Task 8 | -",
+   "kind": "tasks"
+  }
+ },
+ {
+  "id": "summaryNotes-1",
+  "fn": "summaryNotes",
+  "args": {
+   "text": "- [9] Short videos first\n* [41.5] Print dropped\nno time here\n[x] bad time\n[1:05] Launch"
+  }
+ },
+ {
+  "id": "balanced-1",
+  "fn": "balanced",
+  "args": {
+   "parts": [
+    [
+     {
+      "id": "DDDDDDDD-0000-0000-0000-000000000001",
+      "text": "Videos first",
+      "sourceTime": 9,
+      "owner": null,
+      "due": null,
+      "isDone": false,
+      "needsReview": false
+     },
+     {
+      "id": "DDDDDDDD-0000-0000-0000-000000000002",
+      "text": "Email second",
+      "sourceTime": 12,
+      "owner": null,
+      "due": null,
+      "isDone": false,
+      "needsReview": false
+     },
+     {
+      "id": "DDDDDDDD-0000-0000-0000-000000000003",
+      "text": "Budget talk",
+      "sourceTime": 34,
+      "owner": null,
+      "due": null,
+      "isDone": false,
+      "needsReview": false
+     }
+    ],
+    [
+     {
+      "id": "DDDDDDDD-0000-0000-0000-000000000004",
+      "text": "Print dropped",
+      "sourceTime": 41,
+      "owner": null,
+      "due": null,
+      "isDone": false,
+      "needsReview": false
+     },
+     {
+      "id": "DDDDDDDD-0000-0000-0000-000000000005",
+      "text": "videos first!",
+      "sourceTime": 50,
+      "owner": null,
+      "due": null,
+      "isDone": false,
+      "needsReview": false
+     }
+    ],
+    [
+     {
+      "id": "DDDDDDDD-0000-0000-0000-000000000006",
+      "text": "Launch March 3",
+      "sourceTime": 87,
+      "owner": null,
+      "due": null,
+      "isDone": false,
+      "needsReview": false
+     },
+     {
+      "id": "DDDDDDDD-0000-0000-0000-000000000007",
+      "text": "Approval open",
+      "sourceTime": 98,
+      "owner": null,
+      "due": null,
+      "isDone": false,
+      "needsReview": false
+     },
+     {
+      "id": "DDDDDDDD-0000-0000-0000-000000000008",
+      "text": "Extra",
+      "sourceTime": 100,
+      "owner": null,
+      "due": null,
+      "isDone": false,
+      "needsReview": false
+     },
+     {
+      "id": "DDDDDDDD-0000-0000-0000-000000000009",
+      "text": "More",
+      "sourceTime": 105,
+      "owner": null,
+      "due": null,
+      "isDone": false,
+      "needsReview": false
+     }
+    ]
+   ],
+   "kind": "bullets"
+  }
+ },
+ {
+  "id": "balanced-2",
+  "fn": "balanced",
+  "args": {
+   "parts": [
+    [
+     {
+      "id": "DDDDDDDD-0000-0000-0000-000000000001",
+      "text": "Videos first",
+      "sourceTime": 9,
+      "owner": null,
+      "due": null,
+      "isDone": false,
+      "needsReview": false
+     },
+     {
+      "id": "DDDDDDDD-0000-0000-0000-000000000002",
+      "text": "Email second",
+      "sourceTime": 12,
+      "owner": null,
+      "due": null,
+      "isDone": false,
+      "needsReview": false
+     },
+     {
+      "id": "DDDDDDDD-0000-0000-0000-000000000003",
+      "text": "Budget talk",
+      "sourceTime": 34,
+      "owner": null,
+      "due": null,
+      "isDone": false,
+      "needsReview": false
+     }
+    ],
+    [
+     {
+      "id": "DDDDDDDD-0000-0000-0000-000000000004",
+      "text": "Print dropped",
+      "sourceTime": 41,
+      "owner": null,
+      "due": null,
+      "isDone": false,
+      "needsReview": false
+     },
+     {
+      "id": "DDDDDDDD-0000-0000-0000-000000000005",
+      "text": "videos first!",
+      "sourceTime": 50,
+      "owner": null,
+      "due": null,
+      "isDone": false,
+      "needsReview": false
+     }
+    ],
+    [
+     {
+      "id": "DDDDDDDD-0000-0000-0000-000000000006",
+      "text": "Launch March 3",
+      "sourceTime": 87,
+      "owner": null,
+      "due": null,
+      "isDone": false,
+      "needsReview": false
+     },
+     {
+      "id": "DDDDDDDD-0000-0000-0000-000000000007",
+      "text": "Approval open",
+      "sourceTime": 98,
+      "owner": null,
+      "due": null,
+      "isDone": false,
+      "needsReview": false
+     },
+     {
+      "id": "DDDDDDDD-0000-0000-0000-000000000008",
+      "text": "Extra",
+      "sourceTime": 100,
+      "owner": null,
+      "due": null,
+      "isDone": false,
+      "needsReview": false
+     },
+     {
+      "id": "DDDDDDDD-0000-0000-0000-000000000009",
+      "text": "More",
+      "sourceTime": 105,
+      "owner": null,
+      "due": null,
+      "isDone": false,
+      "needsReview": false
+     }
+    ]
+   ],
+   "kind": "tasks"
+  }
+ },
+ {
+  "id": "summaryLine-1",
+  "fn": "summaryLine",
+  "args": {
+   "items": [
+    {
+     "id": "DDDDDDDD-0000-0000-0000-000000000010",
+     "text": "Write script",
+     "sourceTime": 66,
+     "owner": "Kenji",
+     "due": "Friday",
+     "isDone": false,
+     "needsReview": false
+    },
+    {
+     "id": "DDDDDDDD-0000-0000-0000-000000000011",
+     "text": "No time",
+     "sourceTime": null,
+     "owner": null,
+     "due": null,
+     "isDone": false,
+     "needsReview": false
+    }
+   ],
+   "kind": "tasks"
+  }
+ },
+ {
+  "id": "summaryLine-2",
+  "fn": "summaryLine",
+  "args": {
+   "items": [
+    {
+     "id": "DDDDDDDD-0000-0000-0000-000000000010",
+     "text": "Write script",
+     "sourceTime": 66.9,
+     "owner": "Kenji",
+     "due": "Friday",
+     "isDone": false,
+     "needsReview": false
+    }
+   ],
+   "kind": "bullets"
+  }
+ },
+ {
+  "id": "validate-1",
+  "fn": "validate",
+  "args": {
+   "items": [
+    {
+     "id": "DDDDDDDD-0000-0000-0000-000000000020",
+     "text": "Kenji writes the script",
+     "sourceTime": 68,
+     "owner": "Kenji",
+     "due": "Friday",
+     "isDone": false,
+     "needsReview": false
+    },
+    {
+     "id": "DDDDDDDD-0000-0000-0000-000000000021",
+     "text": "Ghost task",
+     "sourceTime": 300,
+     "owner": "Kenji",
+     "due": "Monday",
+     "isDone": false,
+     "needsReview": false
+    },
+    {
+     "id": "DDDDDDDD-0000-0000-0000-000000000022",
+     "text": "Invite Lumen",
+     "sourceTime": 79,
+     "owner": "Sofía",
+     "due": "March 6",
+     "isDone": false,
+     "needsReview": false
+    },
+    {
+     "id": "DDDDDDDD-0000-0000-0000-000000000023",
+     "text": "Approve cut",
+     "sourceTime": 99,
+     "owner": "Marta",
+     "due": "-",
+     "isDone": false,
+     "needsReview": false
+    },
+    {
+     "id": "DDDDDDDD-0000-0000-0000-000000000024",
+     "text": "Speaker 3 invites",
+     "sourceTime": 80,
+     "owner": "speaker 3",
+     "due": null,
+     "isDone": false,
+     "needsReview": false
+    },
+    {
+     "id": "DDDDDDDD-0000-0000-0000-000000000025",
+     "text": "No time",
+     "sourceTime": null,
+     "owner": "Lumen Bikes",
+     "due": "6",
+     "isDone": false,
+     "needsReview": false
+    }
+   ],
+   "segments": [
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000001",
+     "start": 0,
+     "end": 8.5,
+     "text": "Thanks for joining. Let's lock the plan for the spring campaign today.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000002",
+     "start": 9,
+     "end": 20,
+     "text": "I shared the draft. The main idea is short videos first, then email.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000003",
+     "start": 21,
+     "end": 33,
+     "text": "Customers asked for real stories, so I'd lead with two customer videos.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000004",
+     "start": 34,
+     "end": 40,
+     "text": "Agreed. What does that do to the budget?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000005",
+     "start": 41,
+     "end": 54,
+     "text": "Print ads brought almost no sign-ups last year, so we drop them.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000006",
+     "start": 55,
+     "end": 65,
+     "text": "No print ads. Their budget moves to video.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000007",
+     "start": 66,
+     "end": 77,
+     "text": "Kenji will write the first video script by Friday, March 6.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000008",
+     "start": 78,
+     "end": 86,
+     "text": "I can invite Lumen Bikes as the first story.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000009",
+     "start": 87,
+     "end": 97,
+     "text": "Launch stays on March 3. Any questions?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000010",
+     "start": 98,
+     "end": 104,
+     "text": "Who approves the final cut?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000011",
+     "start": 105,
+     "end": 111,
+     "text": "um, uh, I think that's it.",
+     "speaker": null
+    }
+   ],
+   "speakers": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana Ribeiro",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000003",
+     "number": 3,
+     "name": null,
+     "talkTime": 9,
+     "embedding": [
+      0.2,
+      0.2,
+      0.9,
+      0.1
+     ]
+    }
+   ],
+   "sameLanguage": true
+  }
+ },
+ {
+  "id": "validate-2",
+  "fn": "validate",
+  "args": {
+   "items": [
+    {
+     "id": "DDDDDDDD-0000-0000-0000-000000000020",
+     "text": "Kenji writes the script",
+     "sourceTime": 68,
+     "owner": "Kenji",
+     "due": "Friday",
+     "isDone": false,
+     "needsReview": false
+    },
+    {
+     "id": "DDDDDDDD-0000-0000-0000-000000000021",
+     "text": "Ghost task",
+     "sourceTime": 300,
+     "owner": "Kenji",
+     "due": "Monday",
+     "isDone": false,
+     "needsReview": false
+    },
+    {
+     "id": "DDDDDDDD-0000-0000-0000-000000000022",
+     "text": "Invite Lumen",
+     "sourceTime": 79,
+     "owner": "Sofía",
+     "due": "March 6",
+     "isDone": false,
+     "needsReview": false
+    },
+    {
+     "id": "DDDDDDDD-0000-0000-0000-000000000023",
+     "text": "Approve cut",
+     "sourceTime": 99,
+     "owner": "Marta",
+     "due": "-",
+     "isDone": false,
+     "needsReview": false
+    },
+    {
+     "id": "DDDDDDDD-0000-0000-0000-000000000024",
+     "text": "Speaker 3 invites",
+     "sourceTime": 80,
+     "owner": "speaker 3",
+     "due": null,
+     "isDone": false,
+     "needsReview": false
+    },
+    {
+     "id": "DDDDDDDD-0000-0000-0000-000000000025",
+     "text": "No time",
+     "sourceTime": null,
+     "owner": "Lumen Bikes",
+     "due": "6",
+     "isDone": false,
+     "needsReview": false
+    }
+   ],
+   "segments": [
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000001",
+     "start": 0,
+     "end": 8.5,
+     "text": "Thanks for joining. Let's lock the plan for the spring campaign today.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000002",
+     "start": 9,
+     "end": 20,
+     "text": "I shared the draft. The main idea is short videos first, then email.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000003",
+     "start": 21,
+     "end": 33,
+     "text": "Customers asked for real stories, so I'd lead with two customer videos.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000004",
+     "start": 34,
+     "end": 40,
+     "text": "Agreed. What does that do to the budget?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000005",
+     "start": 41,
+     "end": 54,
+     "text": "Print ads brought almost no sign-ups last year, so we drop them.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000006",
+     "start": 55,
+     "end": 65,
+     "text": "No print ads. Their budget moves to video.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000007",
+     "start": 66,
+     "end": 77,
+     "text": "Kenji will write the first video script by Friday, March 6.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000008",
+     "start": 78,
+     "end": 86,
+     "text": "I can invite Lumen Bikes as the first story.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000009",
+     "start": 87,
+     "end": 97,
+     "text": "Launch stays on March 3. Any questions?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000010",
+     "start": 98,
+     "end": 104,
+     "text": "Who approves the final cut?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000011",
+     "start": 105,
+     "end": 111,
+     "text": "um, uh, I think that's it.",
+     "speaker": null
+    }
+   ],
+   "speakers": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana Ribeiro",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000003",
+     "number": 3,
+     "name": null,
+     "talkTime": 9,
+     "embedding": [
+      0.2,
+      0.2,
+      0.9,
+      0.1
+     ]
+    }
+   ],
+   "sameLanguage": false
+  }
+ },
+ {
+  "id": "echoedExample-1",
+  "fn": "echoedExample",
+  "args": {
+   "items": [
+    {
+     "id": "DDDDDDDD-0000-0000-0000-000000000030",
+     "text": "Send the report",
+     "sourceTime": null,
+     "owner": null,
+     "due": null,
+     "isDone": false,
+     "needsReview": false
+    },
+    {
+     "id": "DDDDDDDD-0000-0000-0000-000000000031",
+     "text": "Enviar o relatório",
+     "sourceTime": null,
+     "owner": null,
+     "due": null,
+     "isDone": false,
+     "needsReview": false
+    },
+    {
+     "id": "DDDDDDDD-0000-0000-0000-000000000032",
+     "text": "Real task",
+     "sourceTime": null,
+     "owner": null,
+     "due": null,
+     "isDone": false,
+     "needsReview": false
+    }
+   ],
+   "segments": [
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000001",
+     "start": 0,
+     "end": 8.5,
+     "text": "Thanks for joining. Let's lock the plan for the spring campaign today.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000002",
+     "start": 9,
+     "end": 20,
+     "text": "I shared the draft. The main idea is short videos first, then email.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000003",
+     "start": 21,
+     "end": 33,
+     "text": "Customers asked for real stories, so I'd lead with two customer videos.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000004",
+     "start": 34,
+     "end": 40,
+     "text": "Agreed. What does that do to the budget?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000005",
+     "start": 41,
+     "end": 54,
+     "text": "Print ads brought almost no sign-ups last year, so we drop them.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000006",
+     "start": 55,
+     "end": 65,
+     "text": "No print ads. Their budget moves to video.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000007",
+     "start": 66,
+     "end": 77,
+     "text": "Kenji will write the first video script by Friday, March 6.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000008",
+     "start": 78,
+     "end": 86,
+     "text": "I can invite Lumen Bikes as the first story.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000009",
+     "start": 87,
+     "end": 97,
+     "text": "Launch stays on March 3. Any questions?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000010",
+     "start": 98,
+     "end": 104,
+     "text": "Who approves the final cut?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000011",
+     "start": 105,
+     "end": 111,
+     "text": "um, uh, I think that's it.",
+     "speaker": null
+    }
+   ]
+  }
+ },
+ {
+  "id": "echoedExample-2",
+  "fn": "echoedExample",
+  "args": {
+   "items": [
+    {
+     "id": "DDDDDDDD-0000-0000-0000-000000000030",
+     "text": "Send the report",
+     "sourceTime": null,
+     "owner": null,
+     "due": null,
+     "isDone": false,
+     "needsReview": false
+    }
+   ],
+   "segments": [
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000040",
+     "start": 0,
+     "end": 3,
+     "text": "Please send the report today.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    }
+   ]
+  }
+ },
+ {
+  "id": "speakerTokens-1",
+  "fn": "speakerTokens",
+  "args": {
+   "text": "Ana Ribeiro and Kenji agreed. Speaker 3 invites.",
+   "speakers": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana Ribeiro",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000003",
+     "number": 3,
+     "name": null,
+     "talkTime": 9,
+     "embedding": [
+      0.2,
+      0.2,
+      0.9,
+      0.1
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000004",
+     "number": 4,
+     "name": "佐藤",
+     "talkTime": 12,
+     "embedding": []
+    }
+   ],
+   "renamed": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana R.",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "speakerTokens-2",
+  "fn": "speakerTokens",
+  "args": {
+   "text": "Kenji's plan, not Kenjiro's",
+   "speakers": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana Ribeiro",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000003",
+     "number": 3,
+     "name": null,
+     "talkTime": 9,
+     "embedding": [
+      0.2,
+      0.2,
+      0.9,
+      0.1
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000004",
+     "number": 4,
+     "name": "佐藤",
+     "talkTime": 12,
+     "embedding": []
+    }
+   ],
+   "renamed": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana R.",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "speakerTokens-3",
+  "fn": "speakerTokens",
+  "args": {
+   "text": "Speaker 30 is not Speaker 3",
+   "speakers": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana Ribeiro",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000003",
+     "number": 3,
+     "name": null,
+     "talkTime": 9,
+     "embedding": [
+      0.2,
+      0.2,
+      0.9,
+      0.1
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000004",
+     "number": 4,
+     "name": "佐藤",
+     "talkTime": 12,
+     "embedding": []
+    }
+   ],
+   "renamed": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana R.",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "speakerTokens-4",
+  "fn": "speakerTokens",
+  "args": {
+   "text": "佐藤さんとKenjiが確認する",
+   "speakers": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana Ribeiro",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000003",
+     "number": 3,
+     "name": null,
+     "talkTime": 9,
+     "embedding": [
+      0.2,
+      0.2,
+      0.9,
+      0.1
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000004",
+     "number": 4,
+     "name": "佐藤",
+     "talkTime": 12,
+     "embedding": []
+    }
+   ],
+   "renamed": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana R.",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "speakerTokens-5",
+  "fn": "speakerTokens",
+  "args": {
+   "text": "Ana RibeiroKenji",
+   "speakers": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana Ribeiro",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000003",
+     "number": 3,
+     "name": null,
+     "talkTime": 9,
+     "embedding": [
+      0.2,
+      0.2,
+      0.9,
+      0.1
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000004",
+     "number": 4,
+     "name": "佐藤",
+     "talkTime": 12,
+     "embedding": []
+    }
+   ],
+   "renamed": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana R.",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "parseDraft-1",
+  "fn": "parseDraft",
+  "args": {
+   "text": "Name: Sales call\nInstructions: Focus on the deal.\nSection: Context\nSection: Objections\nTask section: Next steps"
+  }
+ },
+ {
+  "id": "parseDraft-2",
+  "fn": "parseDraft",
+  "args": {
+   "text": "**Name:** Retro\n- Instructions: What went well\n# Section: Wins\n* Section: Misses"
+  }
+ },
+ {
+  "id": "parseDraft-3",
+  "fn": "parseDraft",
+  "args": {
+   "text": "Name: Empty"
+  }
+ },
+ {
+  "id": "parseDraft-4",
+  "fn": "parseDraft",
+  "args": {
+   "text": "Section: Only sections\nSection: Two"
+  }
+ },
+ {
+  "id": "parseDraft-5",
+  "fn": "parseDraft",
+  "args": {
+   "text": "Name: NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN\nSection: Long\nInstructions: iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii"
+  }
+ },
+ {
+  "id": "templateDecode-1",
+  "fn": "templateDecode",
+  "args": {
+   "text": "{\"schemaVersion\":1,\"name\":\"Shared\",\"category\":\"call\",\"instructions\":\"Keep it short\",\"sections\":[{\"title\":\"Purpose\",\"kind\":\"bullets\"},{\"title\":\"Next\",\"kind\":\"tasks\"}]}"
+  }
+ },
+ {
+  "id": "templateDecode-2",
+  "fn": "templateDecode",
+  "args": {
+   "text": "{\"schemaVersion\":2,\"name\":\"Future\",\"category\":\"call\",\"instructions\":\"\",\"sections\":[{\"title\":\"A\",\"kind\":\"bullets\"}]}"
+  }
+ },
+ {
+  "id": "templateDecode-3",
+  "fn": "templateDecode",
+  "args": {
+   "text": "{\"schemaVersion\":1,\"name\":\"\",\"category\":\"call\",\"instructions\":\"\",\"sections\":[{\"title\":\"A\",\"kind\":\"bullets\"}]}"
+  }
+ },
+ {
+  "id": "templateDecode-4",
+  "fn": "templateDecode",
+  "args": {
+   "text": "{\"schemaVersion\":1,\"name\":\"No sections\",\"category\":\"general\",\"instructions\":\"\",\"sections\":[]}"
+  }
+ },
+ {
+  "id": "templateDecode-5",
+  "fn": "templateDecode",
+  "args": {
+   "text": "not json"
+  }
+ },
+ {
+  "id": "skillDecode-1",
+  "fn": "skillDecode",
+  "args": {
+   "text": "{\"name\":\"Follow-up\",\"summary\":\"After calls\",\"instructions\":\"Write a short email.\"}"
+  }
+ },
+ {
+  "id": "skillDecode-2",
+  "fn": "skillDecode",
+  "args": {
+   "text": "{\"name\":\"Only name\",\"instructions\":\"  \"}"
+  }
+ },
+ {
+  "id": "skillDecode-3",
+  "fn": "skillDecode",
+  "args": {
+   "text": "{\"name\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\",\"instructions\":\"ok\"}"
+  }
+ },
+ {
+  "id": "skillDecode-4",
+  "fn": "skillDecode",
+  "args": {
+   "text": "{\"name\":\"Built\",\"instructions\":\"x\",\"isBuiltIn\":true,\"id\":\"builtin.brief\"}"
+  }
+ },
+ {
+  "id": "exportTranscript-1",
+  "fn": "exportTranscript",
+  "args": {
+   "title": "Spring campaign kickoff",
+   "segments": [
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000001",
+     "start": 0,
+     "end": 8.5,
+     "text": "Thanks for joining. Let's lock the plan for the spring campaign today.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000002",
+     "start": 9,
+     "end": 20,
+     "text": "I shared the draft. The main idea is short videos first, then email.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000003",
+     "start": 21,
+     "end": 33,
+     "text": "Customers asked for real stories, so I'd lead with two customer videos.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000004",
+     "start": 34,
+     "end": 40,
+     "text": "Agreed. What does that do to the budget?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000012",
+     "start": 3725.5,
+     "end": 3730.25,
+     "text": "Late line\nwith break",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    }
+   ],
+   "speakers": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana Ribeiro",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000003",
+     "number": 3,
+     "name": null,
+     "talkTime": 9,
+     "embedding": [
+      0.2,
+      0.2,
+      0.9,
+      0.1
+     ]
+    }
+   ],
+   "format": "txt"
+  }
+ },
+ {
+  "id": "exportTranscript-2",
+  "fn": "exportTranscript",
+  "args": {
+   "title": "Spring campaign kickoff",
+   "segments": [
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000001",
+     "start": 0,
+     "end": 8.5,
+     "text": "Thanks for joining. Let's lock the plan for the spring campaign today.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000002",
+     "start": 9,
+     "end": 20,
+     "text": "I shared the draft. The main idea is short videos first, then email.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000003",
+     "start": 21,
+     "end": 33,
+     "text": "Customers asked for real stories, so I'd lead with two customer videos.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000004",
+     "start": 34,
+     "end": 40,
+     "text": "Agreed. What does that do to the budget?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000012",
+     "start": 3725.5,
+     "end": 3730.25,
+     "text": "Late line\nwith break",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    }
+   ],
+   "speakers": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana Ribeiro",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000003",
+     "number": 3,
+     "name": null,
+     "talkTime": 9,
+     "embedding": [
+      0.2,
+      0.2,
+      0.9,
+      0.1
+     ]
+    }
+   ],
+   "format": "md"
+  }
+ },
+ {
+  "id": "exportTranscript-3",
+  "fn": "exportTranscript",
+  "args": {
+   "title": "Spring campaign kickoff",
+   "segments": [
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000001",
+     "start": 0,
+     "end": 8.5,
+     "text": "Thanks for joining. Let's lock the plan for the spring campaign today.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000002",
+     "start": 9,
+     "end": 20,
+     "text": "I shared the draft. The main idea is short videos first, then email.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000003",
+     "start": 21,
+     "end": 33,
+     "text": "Customers asked for real stories, so I'd lead with two customer videos.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000004",
+     "start": 34,
+     "end": 40,
+     "text": "Agreed. What does that do to the budget?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000012",
+     "start": 3725.5,
+     "end": 3730.25,
+     "text": "Late line\nwith break",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    }
+   ],
+   "speakers": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana Ribeiro",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000003",
+     "number": 3,
+     "name": null,
+     "talkTime": 9,
+     "embedding": [
+      0.2,
+      0.2,
+      0.9,
+      0.1
+     ]
+    }
+   ],
+   "format": "srt"
+  }
+ },
+ {
+  "id": "exportTranscript-4",
+  "fn": "exportTranscript",
+  "args": {
+   "title": "Spring campaign kickoff",
+   "segments": [
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000001",
+     "start": 0,
+     "end": 8.5,
+     "text": "Thanks for joining. Let's lock the plan for the spring campaign today.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000002",
+     "start": 9,
+     "end": 20,
+     "text": "I shared the draft. The main idea is short videos first, then email.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000003",
+     "start": 21,
+     "end": 33,
+     "text": "Customers asked for real stories, so I'd lead with two customer videos.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000004",
+     "start": 34,
+     "end": 40,
+     "text": "Agreed. What does that do to the budget?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000012",
+     "start": 3725.5,
+     "end": 3730.25,
+     "text": "Late line\nwith break",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    }
+   ],
+   "speakers": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana Ribeiro",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000003",
+     "number": 3,
+     "name": null,
+     "talkTime": 9,
+     "embedding": [
+      0.2,
+      0.2,
+      0.9,
+      0.1
+     ]
+    }
+   ],
+   "format": "vtt"
+  }
+ },
+ {
+  "id": "exportTranscript-5",
+  "fn": "exportTranscript",
+  "args": {
+   "title": "Spring",
+   "segments": [
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000001",
+     "start": 0,
+     "end": 8.5,
+     "text": "Thanks for joining. Let's lock the plan for the spring campaign today.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000002",
+     "start": 9,
+     "end": 20,
+     "text": "I shared the draft. The main idea is short videos first, then email.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000003",
+     "start": 21,
+     "end": 33,
+     "text": "Customers asked for real stories, so I'd lead with two customer videos.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    }
+   ],
+   "speakers": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana Ribeiro",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000003",
+     "number": 3,
+     "name": null,
+     "talkTime": 9,
+     "embedding": [
+      0.2,
+      0.2,
+      0.9,
+      0.1
+     ]
+    }
+   ],
+   "format": "txt",
+   "speakers_on": false,
+   "times_on": false
+  }
+ },
+ {
+  "id": "exportTranscript-6",
+  "fn": "exportTranscript",
+  "args": {
+   "title": "Spring",
+   "segments": [
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000001",
+     "start": 0,
+     "end": 8.5,
+     "text": "Thanks for joining. Let's lock the plan for the spring campaign today.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000002",
+     "start": 9,
+     "end": 20,
+     "text": "I shared the draft. The main idea is short videos first, then email.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000003",
+     "start": 21,
+     "end": 33,
+     "text": "Customers asked for real stories, so I'd lead with two customer videos.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    }
+   ],
+   "speakers": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana Ribeiro",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000003",
+     "number": 3,
+     "name": null,
+     "talkTime": 9,
+     "embedding": [
+      0.2,
+      0.2,
+      0.9,
+      0.1
+     ]
+    }
+   ],
+   "format": "md",
+   "speakers_on": false,
+   "times_on": true
+  }
+ },
+ {
+  "id": "exportSummary-1",
+  "fn": "exportSummary",
+  "args": {
+   "title": "Spring campaign kickoff",
+   "summary": {
+    "template": "Summary",
+    "language": "en",
+    "sections": [
+     {
+      "title": "Key points",
+      "kind": "bullets",
+      "items": [
+       {
+        "id": "DDDDDDDD-0000-0000-0000-000000000040",
+        "text": "Videos first, says {{speaker:AAAAAAAA-0000-0000-0000-000000000002|Kenji}}",
+        "sourceTime": 9,
+        "owner": null,
+        "due": null,
+        "isDone": false,
+        "needsReview": false
+       },
+       {
+        "id": "DDDDDDDD-0000-0000-0000-000000000041",
+        "text": "Empty time",
+        "sourceTime": null,
+        "owner": null,
+        "due": null,
+        "isDone": false,
+        "needsReview": false
+       }
+      ]
+     },
+     {
+      "title": "Decisions",
+      "kind": "bullets",
+      "items": []
+     },
+     {
+      "title": "Action items",
+      "kind": "tasks",
+      "items": [
+       {
+        "id": "DDDDDDDD-0000-0000-0000-000000000042",
+        "text": "Write the script",
+        "sourceTime": 66,
+        "owner": "{{speaker:AAAAAAAA-0000-0000-0000-000000000002|Kenji}}",
+        "due": "Friday",
+        "isDone": true,
+        "needsReview": false
+       },
+       {
+        "id": "DDDDDDDD-0000-0000-0000-000000000043",
+        "text": "Invite a customer",
+        "sourceTime": 78,
+        "owner": "{{speaker:AAAAAAAA-0000-0000-0000-000000000099|Old name}}",
+        "due": null,
+        "isDone": false,
+        "needsReview": false
+       }
+      ]
+     }
+    ]
+   },
+   "speakers": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana Ribeiro",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000003",
+     "number": 3,
+     "name": null,
+     "talkTime": 9,
+     "embedding": [
+      0.2,
+      0.2,
+      0.9,
+      0.1
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "mindMap-1",
+  "fn": "mindMap",
+  "args": {
+   "title": "Spring campaign kickoff",
+   "summary": {
+    "template": "Summary",
+    "language": "en",
+    "sections": [
+     {
+      "title": "Key points",
+      "kind": "bullets",
+      "items": [
+       {
+        "id": "DDDDDDDD-0000-0000-0000-000000000040",
+        "text": "Videos first, says {{speaker:AAAAAAAA-0000-0000-0000-000000000002|Kenji}}",
+        "sourceTime": 9,
+        "owner": null,
+        "due": null,
+        "isDone": false,
+        "needsReview": false
+       },
+       {
+        "id": "DDDDDDDD-0000-0000-0000-000000000041",
+        "text": "Empty time",
+        "sourceTime": null,
+        "owner": null,
+        "due": null,
+        "isDone": false,
+        "needsReview": false
+       }
+      ]
+     },
+     {
+      "title": "Decisions",
+      "kind": "bullets",
+      "items": []
+     },
+     {
+      "title": "Action items",
+      "kind": "tasks",
+      "items": [
+       {
+        "id": "DDDDDDDD-0000-0000-0000-000000000042",
+        "text": "Write the script",
+        "sourceTime": 66,
+        "owner": "{{speaker:AAAAAAAA-0000-0000-0000-000000000002|Kenji}}",
+        "due": "Friday",
+        "isDone": true,
+        "needsReview": false
+       },
+       {
+        "id": "DDDDDDDD-0000-0000-0000-000000000043",
+        "text": "Invite a customer",
+        "sourceTime": 78,
+        "owner": "{{speaker:AAAAAAAA-0000-0000-0000-000000000099|Old name}}",
+        "due": null,
+        "isDone": false,
+        "needsReview": false
+       }
+      ]
+     }
+    ]
+   }
+  }
+ },
+ {
+  "id": "fileName-1",
+  "fn": "fileName",
+  "args": {
+   "title": "Spring: kickoff/plan?",
+   "ext": "md"
+  }
+ },
+ {
+  "id": "fileName-2",
+  "fn": "fileName",
+  "args": {
+   "title": "   ...  ",
+   "ext": "txt"
+  }
+ },
+ {
+  "id": "fileName-3",
+  "fn": "fileName",
+  "args": {
+   "title": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "ext": "srt"
+  }
+ },
+ {
+  "id": "fileName-4",
+  "fn": "fileName",
+  "args": {
+   "title": "Line\nbreak\t\"quoted\"",
+   "ext": "vtt"
+  }
+ },
+ {
+  "id": "fileName-5",
+  "fn": "fileName",
+  "args": {
+   "title": "会議：計画",
+   "ext": "md"
+  }
+ },
+ {
+  "id": "fileName-6",
+  "fn": "fileName",
+  "args": {
+   "title": ".hidden.",
+   "ext": "txt"
+  }
+ },
+ {
+  "id": "chunks-1",
+  "fn": "chunks",
+  "args": {
+   "segments": [
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000001",
+     "start": 0,
+     "end": 8.5,
+     "text": "Thanks for joining. Let's lock the plan for the spring campaign today.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000002",
+     "start": 9,
+     "end": 20,
+     "text": "I shared the draft. The main idea is short videos first, then email.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000003",
+     "start": 21,
+     "end": 33,
+     "text": "Customers asked for real stories, so I'd lead with two customer videos.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000004",
+     "start": 34,
+     "end": 40,
+     "text": "Agreed. What does that do to the budget?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000005",
+     "start": 41,
+     "end": 54,
+     "text": "Print ads brought almost no sign-ups last year, so we drop them.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000006",
+     "start": 55,
+     "end": 65,
+     "text": "No print ads. Their budget moves to video.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000007",
+     "start": 66,
+     "end": 77,
+     "text": "Kenji will write the first video script by Friday, March 6.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000008",
+     "start": 78,
+     "end": 86,
+     "text": "I can invite Lumen Bikes as the first story.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000009",
+     "start": 87,
+     "end": 97,
+     "text": "Launch stays on March 3. Any questions?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000010",
+     "start": 98,
+     "end": 104,
+     "text": "Who approves the final cut?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000011",
+     "start": 105,
+     "end": 111,
+     "text": "um, uh, I think that's it.",
+     "speaker": null
+    }
+   ],
+   "speakers": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana Ribeiro",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000003",
+     "number": 3,
+     "name": null,
+     "talkTime": 9,
+     "embedding": [
+      0.2,
+      0.2,
+      0.9,
+      0.1
+     ]
+    }
+   ],
+   "language": "en"
+  }
+ },
+ {
+  "id": "chunks-2",
+  "fn": "chunks",
+  "args": {
+   "segments": [
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000031",
+     "start": 0,
+     "end": 7,
+     "text": "えーと、今日はキャンペーンの計画を決めましょう。",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000004"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000032",
+     "start": 8,
+     "end": 16,
+     "text": "佐藤さんが金曜日までに報告書を送ります。",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000033",
+     "start": 17,
+     "end": 25,
+     "text": "予算は動画に移します。",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000004"
+    }
+   ],
+   "speakers": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana Ribeiro",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000003",
+     "number": 3,
+     "name": null,
+     "talkTime": 9,
+     "embedding": [
+      0.2,
+      0.2,
+      0.9,
+      0.1
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000004",
+     "number": 4,
+     "name": "佐藤",
+     "talkTime": 12,
+     "embedding": []
+    }
+   ],
+   "language": "ja"
+  }
+ },
+ {
+  "id": "chunks-3",
+  "fn": "chunks",
+  "args": {
+   "segments": [
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000001",
+     "start": 0,
+     "end": 8.5,
+     "text": "Thanks for joining. Let's lock the plan for the spring campaign today.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000002",
+     "start": 9,
+     "end": 20,
+     "text": "I shared the draft. The main idea is short videos first, then email.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000003",
+     "start": 21,
+     "end": 33,
+     "text": "Customers asked for real stories, so I'd lead with two customer videos.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000004",
+     "start": 34,
+     "end": 40,
+     "text": "Agreed. What does that do to the budget?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000005",
+     "start": 41,
+     "end": 54,
+     "text": "Print ads brought almost no sign-ups last year, so we drop them.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000006",
+     "start": 55,
+     "end": 65,
+     "text": "No print ads. Their budget moves to video.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000007",
+     "start": 66,
+     "end": 77,
+     "text": "Kenji will write the first video script by Friday, March 6.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000008",
+     "start": 78,
+     "end": 86,
+     "text": "I can invite Lumen Bikes as the first story.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000009",
+     "start": 87,
+     "end": 97,
+     "text": "Launch stays on March 3. Any questions?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000010",
+     "start": 98,
+     "end": 104,
+     "text": "Who approves the final cut?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000011",
+     "start": 105,
+     "end": 111,
+     "text": "um, uh, I think that's it.",
+     "speaker": null
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000001",
+     "start": 0,
+     "end": 8.5,
+     "text": "Thanks for joining. Let's lock the plan for the spring campaign today.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000002",
+     "start": 9,
+     "end": 20,
+     "text": "I shared the draft. The main idea is short videos first, then email.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000003",
+     "start": 21,
+     "end": 33,
+     "text": "Customers asked for real stories, so I'd lead with two customer videos.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000004",
+     "start": 34,
+     "end": 40,
+     "text": "Agreed. What does that do to the budget?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000005",
+     "start": 41,
+     "end": 54,
+     "text": "Print ads brought almost no sign-ups last year, so we drop them.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000006",
+     "start": 55,
+     "end": 65,
+     "text": "No print ads. Their budget moves to video.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000007",
+     "start": 66,
+     "end": 77,
+     "text": "Kenji will write the first video script by Friday, March 6.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000008",
+     "start": 78,
+     "end": 86,
+     "text": "I can invite Lumen Bikes as the first story.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000009",
+     "start": 87,
+     "end": 97,
+     "text": "Launch stays on March 3. Any questions?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000010",
+     "start": 98,
+     "end": 104,
+     "text": "Who approves the final cut?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000011",
+     "start": 105,
+     "end": 111,
+     "text": "um, uh, I think that's it.",
+     "speaker": null
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000001",
+     "start": 0,
+     "end": 8.5,
+     "text": "Thanks for joining. Let's lock the plan for the spring campaign today.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000002",
+     "start": 9,
+     "end": 20,
+     "text": "I shared the draft. The main idea is short videos first, then email.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000003",
+     "start": 21,
+     "end": 33,
+     "text": "Customers asked for real stories, so I'd lead with two customer videos.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000004",
+     "start": 34,
+     "end": 40,
+     "text": "Agreed. What does that do to the budget?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000005",
+     "start": 41,
+     "end": 54,
+     "text": "Print ads brought almost no sign-ups last year, so we drop them.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000006",
+     "start": 55,
+     "end": 65,
+     "text": "No print ads. Their budget moves to video.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000007",
+     "start": 66,
+     "end": 77,
+     "text": "Kenji will write the first video script by Friday, March 6.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000008",
+     "start": 78,
+     "end": 86,
+     "text": "I can invite Lumen Bikes as the first story.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000009",
+     "start": 87,
+     "end": 97,
+     "text": "Launch stays on March 3. Any questions?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000010",
+     "start": 98,
+     "end": 104,
+     "text": "Who approves the final cut?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000011",
+     "start": 105,
+     "end": 111,
+     "text": "um, uh, I think that's it.",
+     "speaker": null
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000001",
+     "start": 0,
+     "end": 8.5,
+     "text": "Thanks for joining. Let's lock the plan for the spring campaign today.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000002",
+     "start": 9,
+     "end": 20,
+     "text": "I shared the draft. The main idea is short videos first, then email.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000003",
+     "start": 21,
+     "end": 33,
+     "text": "Customers asked for real stories, so I'd lead with two customer videos.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000004",
+     "start": 34,
+     "end": 40,
+     "text": "Agreed. What does that do to the budget?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000005",
+     "start": 41,
+     "end": 54,
+     "text": "Print ads brought almost no sign-ups last year, so we drop them.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000006",
+     "start": 55,
+     "end": 65,
+     "text": "No print ads. Their budget moves to video.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000007",
+     "start": 66,
+     "end": 77,
+     "text": "Kenji will write the first video script by Friday, March 6.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000008",
+     "start": 78,
+     "end": 86,
+     "text": "I can invite Lumen Bikes as the first story.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000009",
+     "start": 87,
+     "end": 97,
+     "text": "Launch stays on March 3. Any questions?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000010",
+     "start": 98,
+     "end": 104,
+     "text": "Who approves the final cut?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000011",
+     "start": 105,
+     "end": 111,
+     "text": "um, uh, I think that's it.",
+     "speaker": null
+    }
+   ],
+   "speakers": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana Ribeiro",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000003",
+     "number": 3,
+     "name": null,
+     "talkTime": 9,
+     "embedding": [
+      0.2,
+      0.2,
+      0.9,
+      0.1
+     ]
+    }
+   ],
+   "language": null
+  }
+ },
+ {
+  "id": "formatterLines-1",
+  "fn": "formatterLines",
+  "args": {
+   "segments": [
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000001",
+     "start": 0,
+     "end": 8.5,
+     "text": "Thanks for joining. Let's lock the plan for the spring campaign today.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000002",
+     "start": 9,
+     "end": 20,
+     "text": "I shared the draft. The main idea is short videos first, then email.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000003",
+     "start": 21,
+     "end": 33,
+     "text": "Customers asked for real stories, so I'd lead with two customer videos.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000004",
+     "start": 34,
+     "end": 40,
+     "text": "Agreed. What does that do to the budget?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000005",
+     "start": 41,
+     "end": 54,
+     "text": "Print ads brought almost no sign-ups last year, so we drop them.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000006",
+     "start": 55,
+     "end": 65,
+     "text": "No print ads. Their budget moves to video.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000007",
+     "start": 66,
+     "end": 77,
+     "text": "Kenji will write the first video script by Friday, March 6.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000008",
+     "start": 78,
+     "end": 86,
+     "text": "I can invite Lumen Bikes as the first story.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000009",
+     "start": 87,
+     "end": 97,
+     "text": "Launch stays on March 3. Any questions?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000010",
+     "start": 98,
+     "end": 104,
+     "text": "Who approves the final cut?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000011",
+     "start": 105,
+     "end": 111,
+     "text": "um, uh, I think that's it.",
+     "speaker": null
+    }
+   ],
+   "speakers": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana Ribeiro",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000003",
+     "number": 3,
+     "name": null,
+     "talkTime": 9,
+     "embedding": [
+      0.2,
+      0.2,
+      0.9,
+      0.1
+     ]
+    }
+   ],
+   "limit": 60
+  }
+ },
+ {
+  "id": "formatterLines-2",
+  "fn": "formatterLines",
+  "args": {
+   "segments": [
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000021",
+     "start": 0,
+     "end": 9,
+     "text": "Obrigada por virem. Vamos fechar o plano da campanha de primavera.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000022",
+     "start": 10,
+     "end": 19,
+     "text": "Eu compartilhei o rascunho. A ideia é vídeos curtos primeiro.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000023",
+     "start": 20,
+     "end": 31,
+     "text": "A Ana vai enviar o orçamento até sexta-feira, dia 6.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000031",
+     "start": 0,
+     "end": 7,
+     "text": "えーと、今日はキャンペーンの計画を決めましょう。",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000004"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000032",
+     "start": 8,
+     "end": 16,
+     "text": "佐藤さんが金曜日までに報告書を送ります。",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000033",
+     "start": 17,
+     "end": 25,
+     "text": "予算は動画に移します。",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000004"
+    }
+   ],
+   "speakers": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana Ribeiro",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000003",
+     "number": 3,
+     "name": null,
+     "talkTime": 9,
+     "embedding": [
+      0.2,
+      0.2,
+      0.9,
+      0.1
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000004",
+     "number": 4,
+     "name": "佐藤",
+     "talkTime": 12,
+     "embedding": []
+    }
+   ],
+   "limit": 40
+  }
+ },
+ {
+  "id": "tokens-1",
+  "fn": "tokens",
+  "args": {
+   "text": ""
+  }
+ },
+ {
+  "id": "tokens-2",
+  "fn": "tokens",
+  "args": {
+   "text": "hello"
+  }
+ },
+ {
+  "id": "tokens-3",
+  "fn": "tokens",
+  "args": {
+   "text": "Thanks for joining. Let's lock the plan."
+  }
+ },
+ {
+  "id": "tokens-4",
+  "fn": "tokens",
+  "args": {
+   "text": "今日はキャンペーンの計画を決めましょう。"
+  }
+ },
+ {
+  "id": "tokens-5",
+  "fn": "tokens",
+  "args": {
+   "text": "mixed 日本 text"
+  }
+ },
+ {
+  "id": "stableHash-1",
+  "fn": "stableHash",
+  "args": {
+   "text": ""
+  }
+ },
+ {
+  "id": "stableHash-2",
+  "fn": "stableHash",
+  "args": {
+   "text": "a"
+  }
+ },
+ {
+  "id": "stableHash-3",
+  "fn": "stableHash",
+  "args": {
+   "text": "Spring campaign"
+  }
+ },
+ {
+  "id": "stableHash-4",
+  "fn": "stableHash",
+  "args": {
+   "text": "日本語のテキスト"
+  }
+ },
+ {
+  "id": "stableHash-5",
+  "fn": "stableHash",
+  "args": {
+   "text": "Ünïcödé"
+  }
+ },
+ {
+  "id": "rankFusion-1",
+  "fn": "rankFusion",
+  "args": {
+   "lists": [
+    [
+     "EEEEEEEE-0000-0000-0000-000000000001",
+     "EEEEEEEE-0000-0000-0000-000000000002",
+     "EEEEEEEE-0000-0000-0000-000000000003"
+    ],
+    [
+     "EEEEEEEE-0000-0000-0000-000000000003",
+     "EEEEEEEE-0000-0000-0000-000000000001",
+     "EEEEEEEE-0000-0000-0000-000000000004"
+    ]
+   ],
+   "limit": 8
+  }
+ },
+ {
+  "id": "rankFusion-2",
+  "fn": "rankFusion",
+  "args": {
+   "lists": [
+    [
+     "EEEEEEEE-0000-0000-0000-000000000005",
+     "EEEEEEEE-0000-0000-0000-000000000006"
+    ],
+    [
+     "EEEEEEEE-0000-0000-0000-000000000007"
+    ],
+    []
+   ],
+   "limit": 2
+  }
+ },
+ {
+  "id": "rankFusion-3",
+  "fn": "rankFusion",
+  "args": {
+   "lists": [],
+   "limit": 3
+  }
+ },
+ {
+  "id": "speakerStats-1",
+  "fn": "speakerStats",
+  "args": {
+   "speakers": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana Ribeiro",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000003",
+     "number": 3,
+     "name": null,
+     "talkTime": 9,
+     "embedding": [
+      0.2,
+      0.2,
+      0.9,
+      0.1
+     ]
+    }
+   ],
+   "segments": [
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000001",
+     "start": 0,
+     "end": 8.5,
+     "text": "Thanks for joining. Let's lock the plan for the spring campaign today.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000002",
+     "start": 9,
+     "end": 20,
+     "text": "I shared the draft. The main idea is short videos first, then email.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000003",
+     "start": 21,
+     "end": 33,
+     "text": "Customers asked for real stories, so I'd lead with two customer videos.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000004",
+     "start": 34,
+     "end": 40,
+     "text": "Agreed. What does that do to the budget?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000005",
+     "start": 41,
+     "end": 54,
+     "text": "Print ads brought almost no sign-ups last year, so we drop them.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000006",
+     "start": 55,
+     "end": 65,
+     "text": "No print ads. Their budget moves to video.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000007",
+     "start": 66,
+     "end": 77,
+     "text": "Kenji will write the first video script by Friday, March 6.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000008",
+     "start": 78,
+     "end": 86,
+     "text": "I can invite Lumen Bikes as the first story.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000009",
+     "start": 87,
+     "end": 97,
+     "text": "Launch stays on March 3. Any questions?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000010",
+     "start": 98,
+     "end": 104,
+     "text": "Who approves the final cut?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000011",
+     "start": 105,
+     "end": 111,
+     "text": "um, uh, I think that's it.",
+     "speaker": null
+    }
+   ]
+  }
+ },
+ {
+  "id": "speakerStats-2",
+  "fn": "speakerStats",
+  "args": {
+   "speakers": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana Ribeiro",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000003",
+     "number": 3,
+     "name": null,
+     "talkTime": 9,
+     "embedding": [
+      0.2,
+      0.2,
+      0.9,
+      0.1
+     ]
+    }
+   ],
+   "segments": [
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000050",
+     "start": 0,
+     "end": 0,
+     "text": "x",
+     "speaker": null
+    }
+   ]
+  }
+ },
+ {
+  "id": "alignment-1",
+  "fn": "alignment",
+  "args": {
+   "segments": [
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000001",
+     "start": 0,
+     "end": 8.5,
+     "text": "Thanks for joining. Let's lock the plan for the spring campaign today.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000002",
+     "start": 9,
+     "end": 20,
+     "text": "I shared the draft. The main idea is short videos first, then email.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000003",
+     "start": 21,
+     "end": 33,
+     "text": "Customers asked for real stories, so I'd lead with two customer videos.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000004",
+     "start": 34,
+     "end": 40,
+     "text": "Agreed. What does that do to the budget?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000005",
+     "start": 41,
+     "end": 54,
+     "text": "Print ads brought almost no sign-ups last year, so we drop them.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000006",
+     "start": 55,
+     "end": 65,
+     "text": "No print ads. Their budget moves to video.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000007",
+     "start": 66,
+     "end": 77,
+     "text": "Kenji will write the first video script by Friday, March 6.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000008",
+     "start": 78,
+     "end": 86,
+     "text": "I can invite Lumen Bikes as the first story.",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000003"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000009",
+     "start": 87,
+     "end": 97,
+     "text": "Launch stays on March 3. Any questions?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000001"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000010",
+     "start": 98,
+     "end": 104,
+     "text": "Who approves the final cut?",
+     "speaker": "AAAAAAAA-0000-0000-0000-000000000002"
+    },
+    {
+     "id": "BBBBBBBB-0000-0000-0000-000000000011",
+     "start": 105,
+     "end": 111,
+     "text": "um, uh, I think that's it.",
+     "speaker": null
+    }
+   ],
+   "turns": [
+    {
+     "speaker": "S0",
+     "start": 0,
+     "end": 10,
+     "embedding": [
+      1,
+      0,
+      0
+     ]
+    },
+    {
+     "speaker": "S1",
+     "start": 9,
+     "end": 21,
+     "embedding": [
+      0,
+      1,
+      0
+     ]
+    },
+    {
+     "speaker": "S2",
+     "start": 21,
+     "end": 22.5,
+     "embedding": [
+      0,
+      0,
+      1
+     ]
+    },
+    {
+     "speaker": "S0",
+     "start": 30,
+     "end": 45,
+     "embedding": [
+      0.9,
+      0.1,
+      0
+     ]
+    },
+    {
+     "speaker": "S1",
+     "start": 44,
+     "end": 60,
+     "embedding": [
+      0.2,
+      0.9,
+      0.1
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "passingSounds-1",
+  "fn": "passingSounds",
+  "args": {
+   "turns": [
+    {
+     "speaker": "S0",
+     "start": 0,
+     "end": 10,
+     "embedding": [
+      1,
+      0,
+      0
+     ]
+    },
+    {
+     "speaker": "S1",
+     "start": 9,
+     "end": 21,
+     "embedding": [
+      0,
+      1,
+      0
+     ]
+    },
+    {
+     "speaker": "S2",
+     "start": 21,
+     "end": 22.5,
+     "embedding": [
+      0,
+      0,
+      1
+     ]
+    },
+    {
+     "speaker": "S0",
+     "start": 30,
+     "end": 45,
+     "embedding": [
+      0.9,
+      0.1,
+      0
+     ]
+    },
+    {
+     "speaker": "S1",
+     "start": 44,
+     "end": 60,
+     "embedding": [
+      0.2,
+      0.9,
+      0.1
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "passingSounds-2",
+  "fn": "passingSounds",
+  "args": {
+   "turns": [
+    {
+     "speaker": "S9",
+     "start": 0,
+     "end": 1,
+     "embedding": []
+    }
+   ]
+  }
+ },
+ {
+  "id": "centroid-1",
+  "fn": "centroid",
+  "args": {
+   "turns": [
+    {
+     "speaker": "S0",
+     "start": 0,
+     "end": 10,
+     "embedding": [
+      1,
+      0,
+      0
+     ]
+    },
+    {
+     "speaker": "S1",
+     "start": 9,
+     "end": 21,
+     "embedding": [
+      0,
+      1,
+      0
+     ]
+    },
+    {
+     "speaker": "S2",
+     "start": 21,
+     "end": 22.5,
+     "embedding": [
+      0,
+      0,
+      1
+     ]
+    },
+    {
+     "speaker": "S0",
+     "start": 30,
+     "end": 45,
+     "embedding": [
+      0.9,
+      0.1,
+      0
+     ]
+    },
+    {
+     "speaker": "S1",
+     "start": 44,
+     "end": 60,
+     "embedding": [
+      0.2,
+      0.9,
+      0.1
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "centroid-2",
+  "fn": "centroid",
+  "args": {
+   "turns": [
+    {
+     "speaker": "S0",
+     "start": 0,
+     "end": 3,
+     "embedding": [
+      1,
+      0
+     ]
+    },
+    {
+     "speaker": "S1",
+     "start": 3,
+     "end": 6,
+     "embedding": [
+      0.95,
+      0.05
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "voiceMatch-1",
+  "fn": "voiceMatch",
+  "args": {
+   "embedding": [
+    "0.9",
+    "0.1",
+    "0",
+    "0.2"
+   ],
+   "prints": [
+    {
+     "person": "AAAAAAAA-0000-0000-0000-000000000001",
+     "embedding": [
+      "0.88",
+      "0.12",
+      "0.01",
+      "0.19"
+     ],
+     "talkTime": 60
+    },
+    {
+     "person": "AAAAAAAA-0000-0000-0000-000000000002",
+     "embedding": [
+      "0.1",
+      "0.8",
+      "0.3",
+      "0"
+     ],
+     "talkTime": 20
+    }
+   ]
+  }
+ },
+ {
+  "id": "voiceMatch-2",
+  "fn": "voiceMatch",
+  "args": {
+   "embedding": [
+    "0.5",
+    "0.5",
+    "0",
+    "0"
+   ],
+   "prints": [
+    {
+     "person": "AAAAAAAA-0000-0000-0000-000000000001",
+     "embedding": [
+      "0.6",
+      "0.4",
+      "0",
+      "0"
+     ],
+     "talkTime": 10
+    },
+    {
+     "person": "AAAAAAAA-0000-0000-0000-000000000002",
+     "embedding": [
+      "0.4",
+      "0.6",
+      "0",
+      "0"
+     ],
+     "talkTime": 10
+    }
+   ]
+  }
+ },
+ {
+  "id": "voiceMatch-3",
+  "fn": "voiceMatch",
+  "args": {
+   "embedding": [
+    "0",
+    "0",
+    "1",
+    "0"
+   ],
+   "prints": []
+  }
+ },
+ {
+  "id": "recommend-1",
+  "fn": "recommend",
+  "args": {
+   "catalog": [
+    {
+     "id": "whisper-small",
+     "displayName": "Whisper Small",
+     "roles": [
+      "transcription"
+     ],
+     "runtime": "whisperKit",
+     "files": [
+      {
+       "path": "m.bin",
+       "url": "https://example.invalid/m.bin",
+       "size": 480000000,
+       "sha256": "aa"
+      }
+     ],
+     "languages": [
+      "en",
+      "ja",
+      "pt",
+      "es"
+     ],
+     "minMemoryMB": 1200,
+     "quality": {
+      "en": 4,
+      "ja": 3,
+      "pt": 4,
+      "es": 4
+     },
+     "reference": [
+      {
+       "device": "ref",
+       "speedX": 6,
+       "peakMemoryMB": 900,
+       "probeScore": 100
+      }
+     ],
+     "version": "1",
+     "license": "MIT",
+     "sourceHost": "huggingface.co",
+     "repo": "",
+     "backgroundCapable": true,
+     "qualityIsProvisional": false
+    },
+    {
+     "id": "whisper-base",
+     "displayName": "Whisper Base",
+     "roles": [
+      "transcription"
+     ],
+     "runtime": "whisperKit",
+     "files": [
+      {
+       "path": "m.bin",
+       "url": "https://example.invalid/b.bin",
+       "size": 150000000,
+       "sha256": "bb"
+      }
+     ],
+     "languages": [
+      "en",
+      "pt",
+      "es"
+     ],
+     "minMemoryMB": 500,
+     "quality": {
+      "en": 3,
+      "pt": 3,
+      "es": 3
+     },
+     "reference": [
+      {
+       "device": "ref",
+       "speedX": 15,
+       "peakMemoryMB": 400,
+       "probeScore": 100
+      }
+     ],
+     "version": "1",
+     "license": "MIT",
+     "sourceHost": "huggingface.co",
+     "repo": "",
+     "backgroundCapable": true,
+     "qualityIsProvisional": false
+    },
+    {
+     "id": "big-llm",
+     "displayName": "Big",
+     "roles": [
+      "chat"
+     ],
+     "runtime": "mlx",
+     "files": [],
+     "languages": [],
+     "minMemoryMB": 6000,
+     "quality": {
+      "en": 5
+     },
+     "version": "1",
+     "license": "Apache-2.0",
+     "sourceHost": "huggingface.co",
+     "repo": "",
+     "backgroundCapable": false,
+     "qualityIsProvisional": true,
+     "reference": []
+    },
+    {
+     "id": "small-llm",
+     "displayName": "Small",
+     "roles": [
+      "chat"
+     ],
+     "runtime": "mlx",
+     "files": [
+      {
+       "path": "q.gguf",
+       "url": "https://example.invalid/q.gguf",
+       "size": 1000000000,
+       "sha256": "cc"
+      }
+     ],
+     "languages": [],
+     "minMemoryMB": 2000,
+     "quality": {
+      "en": 3,
+      "ja": 3
+     },
+     "version": "1",
+     "license": "Apache-2.0",
+     "sourceHost": "huggingface.co",
+     "repo": "",
+     "backgroundCapable": false,
+     "qualityIsProvisional": true,
+     "reference": []
+    },
+    {
+     "id": "voices",
+     "displayName": "Voices",
+     "roles": [
+      "speakerSeparation",
+      "voicePrint"
+     ],
+     "runtime": "fluidAudio",
+     "files": [],
+     "languages": [],
+     "minMemoryMB": 300,
+     "quality": {},
+     "version": "1",
+     "license": "MIT",
+     "sourceHost": "huggingface.co",
+     "repo": "",
+     "backgroundCapable": true,
+     "qualityIsProvisional": false,
+     "reference": []
+    }
+   ],
+   "device": {
+    "identifier": "ref",
+    "memory": 4096,
+    "probe": 0
+   },
+   "languages": [
+    "en"
+   ],
+   "priority": "balanced",
+   "history": [],
+   "installed": [
+    "whisper-base",
+    "small-llm"
+   ],
+   "condition": {
+    "thermal": "nominal",
+    "isLowPower": false,
+    "isCharging": true,
+    "batteryLevel": 1,
+    "availableMemoryMB": 2000,
+    "freeBytes": 1000000000
+   },
+   "now": 10000000
+  }
+ },
+ {
+  "id": "recommend-2",
+  "fn": "recommend",
+  "args": {
+   "catalog": [
+    {
+     "id": "whisper-small",
+     "displayName": "Whisper Small",
+     "roles": [
+      "transcription"
+     ],
+     "runtime": "whisperKit",
+     "files": [
+      {
+       "path": "m.bin",
+       "url": "https://example.invalid/m.bin",
+       "size": 480000000,
+       "sha256": "aa"
+      }
+     ],
+     "languages": [
+      "en",
+      "ja",
+      "pt",
+      "es"
+     ],
+     "minMemoryMB": 1200,
+     "quality": {
+      "en": 4,
+      "ja": 3,
+      "pt": 4,
+      "es": 4
+     },
+     "reference": [
+      {
+       "device": "ref",
+       "speedX": 6,
+       "peakMemoryMB": 900,
+       "probeScore": 100
+      }
+     ],
+     "version": "1",
+     "license": "MIT",
+     "sourceHost": "huggingface.co",
+     "repo": "",
+     "backgroundCapable": true,
+     "qualityIsProvisional": false
+    },
+    {
+     "id": "whisper-base",
+     "displayName": "Whisper Base",
+     "roles": [
+      "transcription"
+     ],
+     "runtime": "whisperKit",
+     "files": [
+      {
+       "path": "m.bin",
+       "url": "https://example.invalid/b.bin",
+       "size": 150000000,
+       "sha256": "bb"
+      }
+     ],
+     "languages": [
+      "en",
+      "pt",
+      "es"
+     ],
+     "minMemoryMB": 500,
+     "quality": {
+      "en": 3,
+      "pt": 3,
+      "es": 3
+     },
+     "reference": [
+      {
+       "device": "ref",
+       "speedX": 15,
+       "peakMemoryMB": 400,
+       "probeScore": 100
+      }
+     ],
+     "version": "1",
+     "license": "MIT",
+     "sourceHost": "huggingface.co",
+     "repo": "",
+     "backgroundCapable": true,
+     "qualityIsProvisional": false
+    },
+    {
+     "id": "big-llm",
+     "displayName": "Big",
+     "roles": [
+      "chat"
+     ],
+     "runtime": "mlx",
+     "files": [],
+     "languages": [],
+     "minMemoryMB": 6000,
+     "quality": {
+      "en": 5
+     },
+     "version": "1",
+     "license": "Apache-2.0",
+     "sourceHost": "huggingface.co",
+     "repo": "",
+     "backgroundCapable": false,
+     "qualityIsProvisional": true,
+     "reference": []
+    },
+    {
+     "id": "small-llm",
+     "displayName": "Small",
+     "roles": [
+      "chat"
+     ],
+     "runtime": "mlx",
+     "files": [
+      {
+       "path": "q.gguf",
+       "url": "https://example.invalid/q.gguf",
+       "size": 1000000000,
+       "sha256": "cc"
+      }
+     ],
+     "languages": [],
+     "minMemoryMB": 2000,
+     "quality": {
+      "en": 3,
+      "ja": 3
+     },
+     "version": "1",
+     "license": "Apache-2.0",
+     "sourceHost": "huggingface.co",
+     "repo": "",
+     "backgroundCapable": false,
+     "qualityIsProvisional": true,
+     "reference": []
+    },
+    {
+     "id": "voices",
+     "displayName": "Voices",
+     "roles": [
+      "speakerSeparation",
+      "voicePrint"
+     ],
+     "runtime": "fluidAudio",
+     "files": [],
+     "languages": [],
+     "minMemoryMB": 300,
+     "quality": {},
+     "version": "1",
+     "license": "MIT",
+     "sourceHost": "huggingface.co",
+     "repo": "",
+     "backgroundCapable": true,
+     "qualityIsProvisional": false,
+     "reference": []
+    }
+   ],
+   "device": {
+    "identifier": "ref",
+    "memory": 4096,
+    "probe": 50
+   },
+   "languages": [
+    "ja"
+   ],
+   "priority": "quality",
+   "history": [],
+   "installed": [
+    "whisper-base",
+    "small-llm"
+   ],
+   "condition": {
+    "thermal": "nominal",
+    "isLowPower": false,
+    "isCharging": true,
+    "batteryLevel": 1,
+    "availableMemoryMB": 2000,
+    "freeBytes": 1000000000
+   },
+   "now": 10000000
+  }
+ },
+ {
+  "id": "recommend-3",
+  "fn": "recommend",
+  "args": {
+   "catalog": [
+    {
+     "id": "whisper-small",
+     "displayName": "Whisper Small",
+     "roles": [
+      "transcription"
+     ],
+     "runtime": "whisperKit",
+     "files": [
+      {
+       "path": "m.bin",
+       "url": "https://example.invalid/m.bin",
+       "size": 480000000,
+       "sha256": "aa"
+      }
+     ],
+     "languages": [
+      "en",
+      "ja",
+      "pt",
+      "es"
+     ],
+     "minMemoryMB": 1200,
+     "quality": {
+      "en": 4,
+      "ja": 3,
+      "pt": 4,
+      "es": 4
+     },
+     "reference": [
+      {
+       "device": "ref",
+       "speedX": 6,
+       "peakMemoryMB": 900,
+       "probeScore": 100
+      }
+     ],
+     "version": "1",
+     "license": "MIT",
+     "sourceHost": "huggingface.co",
+     "repo": "",
+     "backgroundCapable": true,
+     "qualityIsProvisional": false
+    },
+    {
+     "id": "whisper-base",
+     "displayName": "Whisper Base",
+     "roles": [
+      "transcription"
+     ],
+     "runtime": "whisperKit",
+     "files": [
+      {
+       "path": "m.bin",
+       "url": "https://example.invalid/b.bin",
+       "size": 150000000,
+       "sha256": "bb"
+      }
+     ],
+     "languages": [
+      "en",
+      "pt",
+      "es"
+     ],
+     "minMemoryMB": 500,
+     "quality": {
+      "en": 3,
+      "pt": 3,
+      "es": 3
+     },
+     "reference": [
+      {
+       "device": "ref",
+       "speedX": 15,
+       "peakMemoryMB": 400,
+       "probeScore": 100
+      }
+     ],
+     "version": "1",
+     "license": "MIT",
+     "sourceHost": "huggingface.co",
+     "repo": "",
+     "backgroundCapable": true,
+     "qualityIsProvisional": false
+    },
+    {
+     "id": "big-llm",
+     "displayName": "Big",
+     "roles": [
+      "chat"
+     ],
+     "runtime": "mlx",
+     "files": [],
+     "languages": [],
+     "minMemoryMB": 6000,
+     "quality": {
+      "en": 5
+     },
+     "version": "1",
+     "license": "Apache-2.0",
+     "sourceHost": "huggingface.co",
+     "repo": "",
+     "backgroundCapable": false,
+     "qualityIsProvisional": true,
+     "reference": []
+    },
+    {
+     "id": "small-llm",
+     "displayName": "Small",
+     "roles": [
+      "chat"
+     ],
+     "runtime": "mlx",
+     "files": [
+      {
+       "path": "q.gguf",
+       "url": "https://example.invalid/q.gguf",
+       "size": 1000000000,
+       "sha256": "cc"
+      }
+     ],
+     "languages": [],
+     "minMemoryMB": 2000,
+     "quality": {
+      "en": 3,
+      "ja": 3
+     },
+     "version": "1",
+     "license": "Apache-2.0",
+     "sourceHost": "huggingface.co",
+     "repo": "",
+     "backgroundCapable": false,
+     "qualityIsProvisional": true,
+     "reference": []
+    },
+    {
+     "id": "voices",
+     "displayName": "Voices",
+     "roles": [
+      "speakerSeparation",
+      "voicePrint"
+     ],
+     "runtime": "fluidAudio",
+     "files": [],
+     "languages": [],
+     "minMemoryMB": 300,
+     "quality": {},
+     "version": "1",
+     "license": "MIT",
+     "sourceHost": "huggingface.co",
+     "repo": "",
+     "backgroundCapable": true,
+     "qualityIsProvisional": false,
+     "reference": []
+    }
+   ],
+   "device": {
+    "identifier": "ref",
+    "memory": 8192,
+    "probe": 200
+   },
+   "languages": [
+    "en",
+    "pt"
+   ],
+   "priority": "speed",
+   "history": [
+    {
+     "modelID": "whisper-small",
+     "audioDuration": 600,
+     "wallTime": 300,
+     "outcome": "completed",
+     "date": 1000
+    },
+    {
+     "modelID": "whisper-small",
+     "audioDuration": 0,
+     "wallTime": 0,
+     "outcome": "killed",
+     "date": 1100
+    },
+    {
+     "modelID": "small-llm",
+     "audioDuration": 0,
+     "wallTime": 0,
+     "outcome": "killed",
+     "date": 1
+    },
+    {
+     "modelID": "small-llm",
+     "audioDuration": 0,
+     "wallTime": 0,
+     "outcome": "killed",
+     "date": 2
+    }
+   ],
+   "installed": [
+    "whisper-base",
+    "small-llm"
+   ],
+   "condition": {
+    "thermal": "nominal",
+    "isLowPower": false,
+    "isCharging": true,
+    "batteryLevel": 1,
+    "availableMemoryMB": 2000,
+    "freeBytes": 1000000000
+   },
+   "now": 10000000
+  }
+ },
+ {
+  "id": "recommend-4",
+  "fn": "recommend",
+  "args": {
+   "catalog": [
+    {
+     "id": "whisper-small",
+     "displayName": "Whisper Small",
+     "roles": [
+      "transcription"
+     ],
+     "runtime": "whisperKit",
+     "files": [
+      {
+       "path": "m.bin",
+       "url": "https://example.invalid/m.bin",
+       "size": 480000000,
+       "sha256": "aa"
+      }
+     ],
+     "languages": [
+      "en",
+      "ja",
+      "pt",
+      "es"
+     ],
+     "minMemoryMB": 1200,
+     "quality": {
+      "en": 4,
+      "ja": 3,
+      "pt": 4,
+      "es": 4
+     },
+     "reference": [
+      {
+       "device": "ref",
+       "speedX": 6,
+       "peakMemoryMB": 900,
+       "probeScore": 100
+      }
+     ],
+     "version": "1",
+     "license": "MIT",
+     "sourceHost": "huggingface.co",
+     "repo": "",
+     "backgroundCapable": true,
+     "qualityIsProvisional": false
+    },
+    {
+     "id": "whisper-base",
+     "displayName": "Whisper Base",
+     "roles": [
+      "transcription"
+     ],
+     "runtime": "whisperKit",
+     "files": [
+      {
+       "path": "m.bin",
+       "url": "https://example.invalid/b.bin",
+       "size": 150000000,
+       "sha256": "bb"
+      }
+     ],
+     "languages": [
+      "en",
+      "pt",
+      "es"
+     ],
+     "minMemoryMB": 500,
+     "quality": {
+      "en": 3,
+      "pt": 3,
+      "es": 3
+     },
+     "reference": [
+      {
+       "device": "ref",
+       "speedX": 15,
+       "peakMemoryMB": 400,
+       "probeScore": 100
+      }
+     ],
+     "version": "1",
+     "license": "MIT",
+     "sourceHost": "huggingface.co",
+     "repo": "",
+     "backgroundCapable": true,
+     "qualityIsProvisional": false
+    },
+    {
+     "id": "big-llm",
+     "displayName": "Big",
+     "roles": [
+      "chat"
+     ],
+     "runtime": "mlx",
+     "files": [],
+     "languages": [],
+     "minMemoryMB": 6000,
+     "quality": {
+      "en": 5
+     },
+     "version": "1",
+     "license": "Apache-2.0",
+     "sourceHost": "huggingface.co",
+     "repo": "",
+     "backgroundCapable": false,
+     "qualityIsProvisional": true,
+     "reference": []
+    },
+    {
+     "id": "small-llm",
+     "displayName": "Small",
+     "roles": [
+      "chat"
+     ],
+     "runtime": "mlx",
+     "files": [
+      {
+       "path": "q.gguf",
+       "url": "https://example.invalid/q.gguf",
+       "size": 1000000000,
+       "sha256": "cc"
+      }
+     ],
+     "languages": [],
+     "minMemoryMB": 2000,
+     "quality": {
+      "en": 3,
+      "ja": 3
+     },
+     "version": "1",
+     "license": "Apache-2.0",
+     "sourceHost": "huggingface.co",
+     "repo": "",
+     "backgroundCapable": false,
+     "qualityIsProvisional": true,
+     "reference": []
+    },
+    {
+     "id": "voices",
+     "displayName": "Voices",
+     "roles": [
+      "speakerSeparation",
+      "voicePrint"
+     ],
+     "runtime": "fluidAudio",
+     "files": [],
+     "languages": [],
+     "minMemoryMB": 300,
+     "quality": {},
+     "version": "1",
+     "license": "MIT",
+     "sourceHost": "huggingface.co",
+     "repo": "",
+     "backgroundCapable": true,
+     "qualityIsProvisional": false,
+     "reference": []
+    }
+   ],
+   "device": {
+    "identifier": "ref",
+    "memory": 2048,
+    "probe": 100
+   },
+   "languages": [],
+   "priority": "balanced",
+   "history": [
+    {
+     "modelID": "whisper-small",
+     "audioDuration": 600,
+     "wallTime": 300,
+     "outcome": "completed",
+     "date": 1000
+    },
+    {
+     "modelID": "whisper-small",
+     "audioDuration": 0,
+     "wallTime": 0,
+     "outcome": "killed",
+     "date": 1100
+    }
+   ],
+   "installed": [
+    "whisper-base",
+    "small-llm"
+   ],
+   "condition": {
+    "thermal": "nominal",
+    "isLowPower": false,
+    "isCharging": true,
+    "batteryLevel": 1,
+    "availableMemoryMB": 2000,
+    "freeBytes": 1000000000
+   },
+   "now": 10000000
+  }
+ },
+ {
+  "id": "rightNow-1",
+  "fn": "rightNow",
+  "args": {
+   "condition": {
+    "thermal": "nominal",
+    "isLowPower": false,
+    "isCharging": true,
+    "batteryLevel": 1,
+    "availableMemoryMB": 2000,
+    "freeBytes": 1000000000
+   },
+   "required": 500
+  }
+ },
+ {
+  "id": "rightNow-2",
+  "fn": "rightNow",
+  "args": {
+   "condition": {
+    "thermal": "critical",
+    "isLowPower": false,
+    "isCharging": true,
+    "batteryLevel": 1,
+    "availableMemoryMB": 2000,
+    "freeBytes": 1000000000
+   },
+   "required": 500
+  }
+ },
+ {
+  "id": "rightNow-3",
+  "fn": "rightNow",
+  "args": {
+   "condition": {
+    "thermal": "serious",
+    "isLowPower": false,
+    "isCharging": true,
+    "batteryLevel": 1,
+    "availableMemoryMB": 2000,
+    "freeBytes": 1000000000
+   },
+   "required": 500
+  }
+ },
+ {
+  "id": "rightNow-4",
+  "fn": "rightNow",
+  "args": {
+   "condition": {
+    "thermal": "nominal",
+    "isLowPower": true,
+    "isCharging": true,
+    "batteryLevel": 1,
+    "availableMemoryMB": 2000,
+    "freeBytes": 1000000000
+   },
+   "required": 500
+  }
+ },
+ {
+  "id": "rightNow-5",
+  "fn": "rightNow",
+  "args": {
+   "condition": {
+    "thermal": "nominal",
+    "isLowPower": false,
+    "isCharging": true,
+    "batteryLevel": 1,
+    "availableMemoryMB": 100,
+    "freeBytes": 1000000000
+   },
+   "required": 500
+  }
+ },
+ {
+  "id": "rightNow-6",
+  "fn": "rightNow",
+  "args": {
+   "condition": {
+    "thermal": "nominal",
+    "isLowPower": false,
+    "isCharging": false,
+    "batteryLevel": 0.1,
+    "availableMemoryMB": 2000,
+    "freeBytes": 1000000000
+   },
+   "required": 500
+  }
+ },
+ {
+  "id": "rightNow-7",
+  "fn": "rightNow",
+  "args": {
+   "condition": {
+    "thermal": "fair",
+    "isLowPower": false,
+    "isCharging": true,
+    "batteryLevel": 1,
+    "availableMemoryMB": 2000,
+    "freeBytes": 1000000000
+   },
+   "required": 500
+  }
+ },
+ {
+  "id": "rightNow-8",
+  "fn": "rightNow",
+  "args": {
+   "condition": {
+    "thermal": "nominal",
+    "isLowPower": false,
+    "isCharging": false,
+    "batteryLevel": 0.25,
+    "availableMemoryMB": 2000,
+    "freeBytes": 1000000000
+   },
+   "required": 500
+  }
+ },
+ {
+  "id": "plan-1",
+  "fn": "plan",
+  "args": {
+   "duration": 3600,
+   "speed": "measured",
+   "condition": {
+    "thermal": "nominal",
+    "isLowPower": false,
+    "isCharging": true,
+    "batteryLevel": 1,
+    "availableMemoryMB": 2000,
+    "freeBytes": 1000000000
+   },
+   "isCharging": true,
+   "value": 6
+  }
+ },
+ {
+  "id": "plan-2",
+  "fn": "plan",
+  "args": {
+   "duration": 600,
+   "speed": "estimated",
+   "condition": {
+    "thermal": "nominal",
+    "isLowPower": false,
+    "isCharging": true,
+    "batteryLevel": 1,
+    "availableMemoryMB": 2000,
+    "freeBytes": 1000000000
+   },
+   "isCharging": true,
+   "low": 4.2,
+   "high": 7.8
+  }
+ },
+ {
+  "id": "plan-3",
+  "fn": "plan",
+  "args": {
+   "duration": 60,
+   "speed": "measured",
+   "condition": {
+    "thermal": "nominal",
+    "isLowPower": false,
+    "isCharging": true,
+    "batteryLevel": 1,
+    "availableMemoryMB": 2000,
+    "freeBytes": 1000000000
+   },
+   "isCharging": false,
+   "value": 30
+  }
+ },
+ {
+  "id": "plan-4",
+  "fn": "plan",
+  "args": {
+   "duration": 60,
+   "speed": "unknown",
+   "condition": {
+    "thermal": "fair",
+    "isLowPower": false,
+    "isCharging": true,
+    "batteryLevel": 1,
+    "availableMemoryMB": 2000,
+    "freeBytes": 1000000000
+   },
+   "isCharging": false
+  }
+ },
+ {
+  "id": "plan-5",
+  "fn": "plan",
+  "args": {
+   "duration": 0,
+   "speed": "measured",
+   "condition": {
+    "thermal": "nominal",
+    "isLowPower": false,
+    "isCharging": true,
+    "batteryLevel": 1,
+    "availableMemoryMB": 2000,
+    "freeBytes": 1000000000
+   },
+   "isCharging": true,
+   "value": 5
+  }
+ },
+ {
+  "id": "summaryParts-1",
+  "fn": "summaryParts",
+  "args": {
+   "notes": [
+    "[0] a",
+    "[100] b",
+    "no time",
+    "[2000] c",
+    "[3500] d",
+    "[9999] e"
+   ],
+   "duration": 3600
+  }
+ },
+ {
+  "id": "summaryParts-2",
+  "fn": "summaryParts",
+  "args": {
+   "notes": [
+    "[1] a",
+    "b"
+   ],
+   "duration": 0
+  }
+ },
+ {
+  "id": "isQuestion-1",
+  "fn": "isQuestion",
+  "args": {
+   "text": "Who approves the final cut?"
+  }
+ },
+ {
+  "id": "isQuestion-2",
+  "fn": "isQuestion",
+  "args": {
+   "text": "誰が承認しますか"
+  }
+ },
+ {
+  "id": "isQuestion-3",
+  "fn": "isQuestion",
+  "args": {
+   "text": "誰が承認しますか。"
+  }
+ },
+ {
+  "id": "isQuestion-4",
+  "fn": "isQuestion",
+  "args": {
+   "text": "Decided."
+  }
+ },
+ {
+  "id": "isQuestion-5",
+  "fn": "isQuestion",
+  "args": {
+   "text": "¿Quién? "
+  }
+ },
+ {
+  "id": "isQuestion-6",
+  "fn": "isQuestion",
+  "args": {
+   "text": "Quem aprova？"
+  }
+ },
+ {
+  "id": "languageName-1",
+  "fn": "languageName",
+  "args": {
+   "code": "en"
+  }
+ },
+ {
+  "id": "languageName-2",
+  "fn": "languageName",
+  "args": {
+   "code": "ja"
+  }
+ },
+ {
+  "id": "languageName-3",
+  "fn": "languageName",
+  "args": {
+   "code": "pt"
+  }
+ },
+ {
+  "id": "languageName-4",
+  "fn": "languageName",
+  "args": {
+   "code": "es"
+  }
+ },
+ {
+  "id": "languageName-5",
+  "fn": "languageName",
+  "args": {
+   "code": "fr"
+  }
+ },
+ {
+  "id": "languageName-6",
+  "fn": "languageName",
+  "args": {
+   "code": "de"
+  }
+ },
+ {
+  "id": "keptNames-1",
+  "fn": "keptNames",
+  "args": {
+   "speakers": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana Ribeiro",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000003",
+     "number": 3,
+     "name": null,
+     "talkTime": 9,
+     "embedding": [
+      0.2,
+      0.2,
+      0.9,
+      0.1
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000004",
+     "number": 4,
+     "name": "佐藤",
+     "talkTime": 12,
+     "embedding": []
+    }
+   ],
+   "language": null
+  }
+ },
+ {
+  "id": "keptNames-2",
+  "fn": "keptNames",
+  "args": {
+   "speakers": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana Ribeiro",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000003",
+     "number": 3,
+     "name": null,
+     "talkTime": 9,
+     "embedding": [
+      0.2,
+      0.2,
+      0.9,
+      0.1
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000004",
+     "number": 4,
+     "name": "佐藤",
+     "talkTime": 12,
+     "embedding": []
+    }
+   ],
+   "language": "ja"
+  }
+ },
+ {
+  "id": "keptNames-3",
+  "fn": "keptNames",
+  "args": {
+   "speakers": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana Ribeiro",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000003",
+     "number": 3,
+     "name": null,
+     "talkTime": 9,
+     "embedding": [
+      0.2,
+      0.2,
+      0.9,
+      0.1
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000004",
+     "number": 4,
+     "name": "佐藤",
+     "talkTime": 12,
+     "embedding": []
+    }
+   ],
+   "language": "en"
+  }
+ },
+ {
+  "id": "keptNames-4",
+  "fn": "keptNames",
+  "args": {
+   "speakers": [
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000001",
+     "number": 1,
+     "name": "Ana Ribeiro",
+     "talkTime": 40,
+     "embedding": [
+      0.9,
+      0.1,
+      0.0,
+      0.2
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000002",
+     "number": 2,
+     "name": "Kenji",
+     "talkTime": 30,
+     "embedding": [
+      0.1,
+      0.8,
+      0.3,
+      0.0
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000003",
+     "number": 3,
+     "name": null,
+     "talkTime": 9,
+     "embedding": [
+      0.2,
+      0.2,
+      0.9,
+      0.1
+     ]
+    },
+    {
+     "id": "AAAAAAAA-0000-0000-0000-000000000004",
+     "number": 4,
+     "name": "佐藤",
+     "talkTime": 12,
+     "embedding": []
+    }
+   ],
+   "language": "pt"
+  }
+ },
+ {
+  "id": "transcriptionHints-1",
+  "fn": "transcriptionHints",
+  "args": {
+   "written": [
+    "Lumen",
+    "lumen",
+    " ",
+    "Ana Ribeiro",
+    "Term 0",
+    "Term 1",
+    "Term 2",
+    "Term 3",
+    "Term 4",
+    "Term 5",
+    "Term 6",
+    "Term 7",
+    "Term 8",
+    "Term 9",
+    "Term 10",
+    "Term 11",
+    "Term 12",
+    "Term 13",
+    "Term 14",
+    "Term 15",
+    "Term 16",
+    "Term 17",
+    "Term 18",
+    "Term 19",
+    "Term 20",
+    "Term 21",
+    "Term 22",
+    "Term 23",
+    "Term 24",
+    "Term 25",
+    "Term 26",
+    "Term 27",
+    "Term 28",
+    "Term 29",
+    "Term 30",
+    "Term 31",
+    "Term 32",
+    "Term 33",
+    "Term 34",
+    "Term 35",
+    "Term 36",
+    "Term 37",
+    "Term 38",
+    "Term 39",
+    "Term 40",
+    "Term 41",
+    "Term 42",
+    "Term 43",
+    "Term 44",
+    "Term 45",
+    "Term 46",
+    "Term 47",
+    "Term 48",
+    "Term 49"
+   ]
+  }
+ },
+ {
+  "id": "sort-1",
+  "fn": "sort",
+  "args": {
+   "titles": [
+    "Meeting 10",
+    "meeting 2",
+    "Älpha",
+    "alpha",
+    "Beta",
+    "Meeting 1"
+   ]
+  }
+ }
+]
