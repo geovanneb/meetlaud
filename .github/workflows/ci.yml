@@ -250,13 +250,16 @@ jobs:
         working-directory: android
     steps:
       - uses: actions/checkout@v7
+      # Only GitHub's own actions: the repository allows no others. setup-java caches Gradle's downloads.
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
-      - uses: gradle/actions/setup-gradle@v4
-        with:
-          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+          cache: gradle
+          cache-dependency-path: |
+            android/**/*.gradle.kts
+            android/gradle/libs.versions.toml
+            android/gradle/wrapper/gradle-wrapper.properties
       # The NDK and CMake that build whisper.cpp and llama.cpp, the versions pinned in gradle/libs.versions.toml.
       - name: Install the NDK and CMake
         run: |
@@ -275,13 +278,16 @@ jobs:
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v7
+      # Only GitHub's own actions: the repository allows no others. setup-java caches Gradle's downloads.
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
-      - uses: gradle/actions/setup-gradle@v4
-        with:
-          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+          cache: gradle
+          cache-dependency-path: |
+            android/**/*.gradle.kts
+            android/gradle/libs.versions.toml
+            android/gradle/wrapper/gradle-wrapper.properties
       - name: Install the NDK and CMake
         working-directory: android
         run: |
@@ -297,13 +303,8 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
       # x86_64 images from Android 11 run ARM64 apps by translation, and the app ships ARM64 code only.
-      - uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 34
-          target: google_apis
-          arch: x86_64
-          disable-animations: true
-          script: Tools/android-ui-tests
+      - run: Tools/android-emulator 34
+      - run: Tools/android-ui-tests
 
   # The main ruleset requires a check with this name. It passes only when every job above passes, on both platforms,
   # so the rule keeps working however the jobs are split. The name stays as the ruleset knows it.

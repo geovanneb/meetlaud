@@ -76,13 +76,16 @@ jobs:
         working-directory: android
     steps:
       - uses: actions/checkout@v7
+      # Only GitHub's own actions: the repository allows no others. setup-java caches Gradle's downloads.
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
-      - uses: gradle/actions/setup-gradle@v4
-        with:
-          cache-read-only: true
+          cache: gradle
+          cache-dependency-path: |
+            android/**/*.gradle.kts
+            android/gradle/libs.versions.toml
+            android/gradle/wrapper/gradle-wrapper.properties
       - name: Install the NDK and CMake
         run: |
           ndk=$(sed -n 's/^ndk = "\(.*\)"/\1/p' gradle/libs.versions.toml)
