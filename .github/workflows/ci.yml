@@ -107,7 +107,7 @@ jobs:
         run: ../Tools/parity/run && git diff --exit-code ../Tools/parity/golden.json
       - name: Upload results on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: unit-results
           path: ios/build/results
@@ -188,7 +188,7 @@ jobs:
           ${{ matrix.tests }}"
       - name: Upload results on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ui-results-${{ strategy.job-index }}
           path: ios/build/results
@@ -251,7 +251,7 @@ jobs:
           -resultBundlePath ${{ github.workspace }}/ios/build/results/ui.xcresult"
       - name: Upload results on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ui-results-smoke-${{ matrix.part }}
           path: ios/build/results
