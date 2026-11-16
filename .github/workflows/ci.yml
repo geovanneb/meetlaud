@@ -85,14 +85,14 @@ jobs:
         run: echo "version=$(plutil -extract ProductBuildVersion raw "$(xcode-select -p)/../version.plist")" >> "$GITHUB_OUTPUT"
       - name: Restore packages
         id: spm
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: ios/build/spm
           key: spm-${{ steps.xcode.outputs.version }}-${{ hashFiles('ios/Packages/Package.resolved') }}
           restore-keys: spm-${{ steps.xcode.outputs.version }}-
       - name: Restore build products
         id: products
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: ios/build/package
           key: dd-unit-${{ steps.xcode.outputs.version }}-${{ hashFiles('ios/Packages/Package.resolved') }}-${{ github.sha }}
@@ -115,13 +115,13 @@ jobs:
       # main always saves. A pull request saves only when it found nothing to start from, so its next push is fast.
       - name: Save packages
         if: steps.spm.outputs.cache-hit != 'true' && (github.ref == 'refs/heads/main' || steps.spm.outputs.cache-matched-key == '')
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: ios/build/spm
           key: spm-${{ steps.xcode.outputs.version }}-${{ hashFiles('ios/Packages/Package.resolved') }}
       - name: Save build products
         if: github.ref == 'refs/heads/main' || steps.products.outputs.cache-matched-key == ''
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: ios/build/package
           key: dd-unit-${{ steps.xcode.outputs.version }}-${{ hashFiles('ios/Packages/Package.resolved') }}-${{ github.sha }}
@@ -166,14 +166,14 @@ jobs:
         run: echo "version=$(plutil -extract ProductBuildVersion raw "$(xcode-select -p)/../version.plist")" >> "$GITHUB_OUTPUT"
       - name: Restore packages
         id: spm
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: ios/build/spm
           key: spm-${{ steps.xcode.outputs.version }}-${{ hashFiles('ios/Packages/Package.resolved') }}
           restore-keys: spm-${{ steps.xcode.outputs.version }}-
       - name: Restore build products
         id: products
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: |
             ios/build/Build
@@ -195,7 +195,7 @@ jobs:
           retention-days: 7
       - name: Save build products
         if: matrix.saves && (github.ref == 'refs/heads/main' || steps.products.outputs.cache-matched-key == '')
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: |
             ios/build/Build
@@ -230,14 +230,14 @@ jobs:
         run: echo "version=$(plutil -extract ProductBuildVersion raw "$(xcode-select -p)/../version.plist")" >> "$GITHUB_OUTPUT"
       - name: Restore packages
         id: spm
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: ios/build/spm
           key: spm-${{ steps.xcode.outputs.version }}-${{ hashFiles('ios/Packages/Package.resolved') }}
           restore-keys: spm-${{ steps.xcode.outputs.version }}-
       - name: Restore build products
         id: products
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: |
             ios/build/Build
@@ -259,13 +259,13 @@ jobs:
       # Only when this run had no cache to start from, so the next push to the same pull request is fast.
       - name: Save packages
         if: matrix.part == 1 && steps.spm.outputs.cache-matched-key == ''
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: ios/build/spm
           key: spm-${{ steps.xcode.outputs.version }}-${{ hashFiles('ios/Packages/Package.resolved') }}
       - name: Save build products
         if: matrix.part == 1 && steps.products.outputs.cache-matched-key == ''
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: |
             ios/build/Build
