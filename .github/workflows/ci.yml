@@ -16,8 +16,8 @@ concurrency:
   group: ci-${{ github.ref }}-${{ github.event_name == 'schedule' && 'nightly' || 'run' }}
   cancel-in-progress: true
 
-# Two tiers, so a pull request gets an answer in about 10 minutes instead of 30:
-# - A pull request runs lint, unit tests, and the UI smoke set (Tools/ui-smoke-tests.txt) on two macOS machines.
+# Two tiers, so a pull request gets an answer in about 15 minutes instead of 30:
+# - A pull request runs lint, unit tests, and the UI smoke set (Tools/ui-smoke-tests.txt) on three macOS machines.
 #   A pull request never runs every UI test: on GitHub's queued Macs that took over 30 minutes (D-082).
 # - A pull request that only changes documentation skips the macOS jobs.
 # - Every push to main, the nightly run, and a manual run run every UI test, in the four groups below.
@@ -25,10 +25,13 @@ concurrency:
 # - The UI tests were 28 of 43 minutes, one app launch after another on one simulator. They run in four groups,
 #   on four machines at once. The last group is "everything not named above", so a new test class always runs.
 # - MLX, WhisperKit, and FluidAudio took most of each build. Packages and build products are cached, so a pull
-#   request recompiles only what changed. Only main saves caches, so every branch starts from main's.
+#   request recompiles only what changed. main saves caches and every branch starts from them. A pull request
+#   that finds none (new packages, a new Xcode, moved folders) saves its own, so only its first run is slow.
 # - Unit tests and UI tests run side by side, and the UI tests build the app, so there is no separate build step.
 env:
   SPM: ${{ github.workspace }}/ios/build/spm
+  HOMEBREW_NO_AUTO_UPDATE: "1"
+  HOMEBREW_NO_INSTALL_CLEANUP: "1"
 
 jobs:
   gates:
@@ -77,15 +80,18 @@ jobs:
           destination=$(Tools/ci-simulator)
           echo "DESTINATION=$destination" >> "$GITHUB_ENV"
           xcrun simctl boot "${destination##*id=}" || true
+      # Read from a file: starting xcodebuild just to ask for its version took a minute.
       - id: xcode
-        run: echo "version=$(xcodebuild -version | shasum | cut -c1-12)" >> "$GITHUB_OUTPUT"
+        run: echo "version=$(plutil -extract ProductBuildVersion raw "$(xcode-select -p)/../version.plist")" >> "$GITHUB_OUTPUT"
       - name: Restore packages
+        id: spm
         uses: actions/cache/restore@v4
         with:
           path: ios/build/spm
           key: spm-${{ steps.xcode.outputs.version }}-${{ hashFiles('ios/Packages/Package.resolved') }}
           restore-keys: spm-${{ steps.xcode.outputs.version }}-
       - name: Restore build products
+        id: products
         uses: actions/cache/restore@v4
         with:
           path: ios/build/package
@@ -106,14 +112,15 @@ jobs:
           name: unit-results
           path: ios/build/results
           retention-days: 7
+      # main always saves. A pull request saves only when it found nothing to start from, so its next push is fast.
       - name: Save packages
-        if: github.ref == 'refs/heads/main'
+        if: steps.spm.outputs.cache-hit != 'true' && (github.ref == 'refs/heads/main' || steps.spm.outputs.cache-matched-key == '')
         uses: actions/cache/save@v4
         with:
           path: ios/build/spm
           key: spm-${{ steps.xcode.outputs.version }}-${{ hashFiles('ios/Packages/Package.resolved') }}
       - name: Save build products
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' || steps.products.outputs.cache-matched-key == ''
         uses: actions/cache/save@v4
         with:
           path: ios/build/package
@@ -154,15 +161,18 @@ jobs:
           destination=$(Tools/ci-simulator)
           echo "DESTINATION=$destination" >> "$GITHUB_ENV"
           xcrun simctl boot "${destination##*id=}" || true
+      # Read from a file: starting xcodebuild just to ask for its version took a minute.
       - id: xcode
-        run: echo "version=$(xcodebuild -version | shasum | cut -c1-12)" >> "$GITHUB_OUTPUT"
+        run: echo "version=$(plutil -extract ProductBuildVersion raw "$(xcode-select -p)/../version.plist")" >> "$GITHUB_OUTPUT"
       - name: Restore packages
+        id: spm
         uses: actions/cache/restore@v4
         with:
           path: ios/build/spm
           key: spm-${{ steps.xcode.outputs.version }}-${{ hashFiles('ios/Packages/Package.resolved') }}
           restore-keys: spm-${{ steps.xcode.outputs.version }}-
       - name: Restore build products
+        id: products
         uses: actions/cache/restore@v4
         with:
           path: |
@@ -184,7 +194,7 @@ jobs:
           path: ios/build/results
           retention-days: 7
       - name: Save build products
-        if: github.ref == 'refs/heads/main' && matrix.saves
+        if: matrix.saves && (github.ref == 'refs/heads/main' || steps.products.outputs.cache-matched-key == '')
         uses: actions/cache/save@v4
         with:
           path: |
@@ -194,7 +204,7 @@ jobs:
           key: dd-ui-${{ steps.xcode.outputs.version }}-${{ hashFiles('ios/Packages/Package.resolved') }}-${{ github.sha }}
 
   ui-smoke:
-    name: UI tests (smoke)
+    name: UI tests (smoke ${{ matrix.part }} of 2)
     needs: gates
     if: needs.gates.outputs.ios == 'true' && needs.gates.outputs.full != 'true'
     runs-on: macos-26
@@ -202,6 +212,11 @@ jobs:
       run:
         working-directory: ios
     timeout-minutes: 30
+    # Two machines, each with every second test of the list: the tests are most of this job's time.
+    strategy:
+      fail-fast: false
+      matrix:
+        part: [1, 2]
     steps:
       - uses: actions/checkout@v7
       # Starts booting while the caches restore, and survives a runner image without the usual simulator.
@@ -210,15 +225,18 @@ jobs:
           destination=$(Tools/ci-simulator)
           echo "DESTINATION=$destination" >> "$GITHUB_ENV"
           xcrun simctl boot "${destination##*id=}" || true
+      # Read from a file: starting xcodebuild just to ask for its version took a minute.
       - id: xcode
-        run: echo "version=$(xcodebuild -version | shasum | cut -c1-12)" >> "$GITHUB_OUTPUT"
+        run: echo "version=$(plutil -extract ProductBuildVersion raw "$(xcode-select -p)/../version.plist")" >> "$GITHUB_OUTPUT"
       - name: Restore packages
+        id: spm
         uses: actions/cache/restore@v4
         with:
           path: ios/build/spm
           key: spm-${{ steps.xcode.outputs.version }}-${{ hashFiles('ios/Packages/Package.resolved') }}
           restore-keys: spm-${{ steps.xcode.outputs.version }}-
       - name: Restore build products
+        id: products
         uses: actions/cache/restore@v4
         with:
           path: |
@@ -229,15 +247,31 @@ jobs:
           restore-keys: dd-ui-${{ steps.xcode.outputs.version }}-${{ hashFiles('ios/Packages/Package.resolved') }}-
       - run: brew bundle --file=Brewfile
       - run: >-
-          make test-ui-smoke XCODEFLAGS="-clonedSourcePackagesDirPath $SPM
+          make test-ui-smoke PART=${{ matrix.part }} PARTS=2 XCODEFLAGS="-clonedSourcePackagesDirPath $SPM
           -resultBundlePath ${{ github.workspace }}/ios/build/results/ui.xcresult"
       - name: Upload results on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: ui-results-smoke
+          name: ui-results-smoke-${{ matrix.part }}
           path: ios/build/results
           retention-days: 7
+      # Only when this run had no cache to start from, so the next push to the same pull request is fast.
+      - name: Save packages
+        if: matrix.part == 1 && steps.spm.outputs.cache-matched-key == ''
+        uses: actions/cache/save@v4
+        with:
+          path: ios/build/spm
+          key: spm-${{ steps.xcode.outputs.version }}-${{ hashFiles('ios/Packages/Package.resolved') }}
+      - name: Save build products
+        if: matrix.part == 1 && steps.products.outputs.cache-matched-key == ''
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ios/build/Build
+            ios/build/ModuleCache.noindex
+            ios/build/CompilationCache.noindex
+          key: dd-ui-${{ steps.xcode.outputs.version }}-${{ hashFiles('ios/Packages/Package.resolved') }}-${{ github.sha }}
 
   android:
     name: Build and test (Android)
@@ -251,7 +285,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       # Only GitHub's own actions: the repository allows no others. setup-java caches Gradle's downloads.
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
@@ -279,7 +313,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       # Only GitHub's own actions: the repository allows no others. setup-java caches Gradle's downloads.
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"

@@ -14,6 +14,10 @@ sdk="$ANDROID_HOME/cmdline-tools/latest/bin"
 adb="$ANDROID_HOME/platform-tools/adb"
 log="${RUNNER_TEMP:-${TMPDIR:-/tmp}}/emulator.log"
 limit=600
+# avdmanager and the emulator do not agree on where devices live when this is not set: on GitHub's Linux machines
+# one wrote to ~/.config/.android/avd and the other read ~/.android/avd ("Unknown AVD name").
+export ANDROID_AVD_HOME="${ANDROID_AVD_HOME:-$HOME/.android/avd}"
+mkdir -p "$ANDROID_AVD_HOME"
 
 fail() {
     echo "android-emulator: $1" >&2
@@ -22,10 +26,11 @@ fail() {
     exit 1
 }
 
-yes | "$sdk/sdkmanager" "emulator" "platform-tools" "$image" > /dev/null
+yes 2> /dev/null | "$sdk/sdkmanager" "emulator" "platform-tools" "$image" > /dev/null
 echo no | "$sdk/avdmanager" create avd --force -n ci -k "$image" > /dev/null
+[ -f "$ANDROID_AVD_HOME/ci.ini" ] || { echo "android-emulator: the device was not created in $ANDROID_AVD_HOME" >&2; exit 1; }
 echo "android-emulator: starting $image"
-"$ANDROID_HOME/emulator/emulator" -avd ci -no-window -no-audio -no-boot-anim -no-snapshot \
+"$ANDROID_HOME/emulator/emulator" -avd ci -no-window -no-audio -no-boot-anim -no-snapshot -no-metrics \
     -gpu swiftshader_indirect -accel auto -memory 4096 > "$log" 2>&1 &
 emulator=$!
 

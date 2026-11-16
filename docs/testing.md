@@ -114,7 +114,7 @@ The first one is `ios/Evals/SummaryEval`: the app's own summary code and model, 
 
 ## CI/CD
 
-GitHub Actions: macOS runners for iOS and Linux runners for Android, in two tiers. A pull request should get an answer in about 10 minutes, and `main` still runs every test.
+GitHub Actions: macOS runners for iOS and Linux runners for Android, in two tiers. A pull request should get an answer in about 15 minutes, and `main` still runs every test.
 
 ```
 gates (Linux, seconds) ─┬─► iOS lint + unit tests                        ─┐
@@ -127,20 +127,20 @@ gates (Linux, seconds) ─┬─► iOS lint + unit tests                       
 | Event | What runs |
 |---|---|
 | Pull request that only changes documentation (`*.md`, `docs/`, issue templates) | The gates only, about 1 minute |
-| Pull request that changes code | iOS lint, unit tests, and the UI smoke set on two macOS machines; Android lint, unit tests, build, and instrumented tests on two Linux machines. A change to one app only runs that app's jobs |
+| Pull request that changes code | iOS lint, unit tests, and the UI smoke set on three macOS machines; Android lint, unit tests, build, and instrumented tests on two Linux machines. A change to one app only runs that app's jobs |
 | Push to `main`, every night at 03:00 JST, and a manual run | Every UI test, in four groups |
 
 - **The tier.** `Tools/ci-scope` reads the changed files and decides. An empty or unreadable diff runs the macOS jobs. A pull request never runs every UI test, even when it changes the UI tests or the build: that took over 30 minutes. To run a class before you push, use `make test-ui XCODEFLAGS="-only-testing:MeetlaudUITests/<Class>"`.
-- **The smoke set.** `ios/Tools/ui-smoke-tests.txt` lists about one UI test per area: navigation, recording, summary, Ask, search, models, network activity, speakers, settings, and the lock. Run it locally with `make test-ui-smoke`. Keep it under about 15 tests; a test listed there must exist (`Tools/tests/test_ci.py` checks).
+- **The smoke set.** `ios/Tools/ui-smoke-tests.txt` lists about one UI test per area: navigation, recording, summary, Ask, search, models, network activity, speakers, settings, and the lock. Run it locally with `make test-ui-smoke`. CI runs it on two machines, each with every second test of the list (`PART=1 PARTS=2`), because launching the app for each test is most of that job's time. Keep it under about 15 tests; a test listed there must exist (`Tools/tests/test_ci.py` checks).
 - **Why not every UI test on every pull request.** They are about 60 minutes of machine time on GitHub's 3-core Macs, and GitHub often queues macOS jobs. With six macOS jobs per run, a pull request waited about 30 minutes, even for a typo. A UI regression that the smoke set misses fails on `main` or overnight, and is fixed there.
 - **The simulator.** `ios/Tools/ci-simulator` picks the iPhone 17 Pro, or any iPhone the runner image has, and boots it while the caches restore. A missing simulator once failed a whole job.
 - **Audits look twice.** When Apple's audit reports a problem, `auditAccessibility` waits a second and audits again, and only the second pass fails the test. A summary still sliding into place was once reported as clipped text; a real problem is still there a second later.
 - **Taps wait.** A drawer or menu that just opened can still be moving in on a CI machine. Tap with `tapWhenReady()`, not `tap()`: it waits for the element, and costs nothing when it is already there.
 - **Why split.** In one job, CI took about 43 minutes, 28 of them UI tests launching the app one after another. The UI tests now run in four groups on four machines at once. The last group skips the classes named in the others, so a new test class runs without touching the workflow. When a group grows much slower than the others, move a class out of it.
-- **Caches.** Packages (`build/spm`) and build products are cached, so MLX, WhisperKit, and FluidAudio are not compiled again on every run. Only `main` saves caches, and pull requests start from them. A change to `Package.resolved` or to Xcode starts a fresh cache.
+- **Caches.** Packages (`build/spm`) and build products are cached, so MLX, WhisperKit, and FluidAudio are not compiled again on every run. `main` saves caches, and pull requests start from them. A change to `Package.resolved`, to Xcode, or to the cached folders starts a fresh cache: then a build takes about 17 minutes instead of 5. A pull request that finds no cache saves its own, so only its first run pays for that. A restored cache needs no help to build incrementally: on a fresh checkout it was measured at 21 seconds against 123 for a cold build, and content-based file times and Xcode's inode setting changed nothing.
 - **No separate build step.** The UI tests build the app, so a compile error still fails CI.
 - **Only GitHub's own actions** (`actions/*`). The repository allows no others, and a workflow that uses one fails before any job starts (`startup_failure`), with no check reported. Write a script in `Tools/` instead, as `Tools/android-emulator` does for the emulator.
-- **Android on an emulator.** `Tools/android-emulator` boots one, and `Tools/android-ui-tests` runs every instrumented test except the engine tests, which download models: the database, the domain's text handling under Android's own regex engine, and the parity screens. The emulator is x86_64, which runs the app's ARM64 code by translation. The same script runs on a phone (`make android-test-ui`).
+- **Android on an emulator.** `Tools/android-emulator` boots one (it sets `ANDROID_AVD_HOME`, since the SDK's tools do not agree on where devices live without it), and `Tools/android-ui-tests` runs every instrumented test except the engine tests, which download models: the database, the domain's text handling under Android's own regex engine, and the parity screens. The emulator is x86_64, which runs the app's ARM64 code by translation. The same script runs on a phone (`make android-test-ui`).
 - **Required check.** The `main` ruleset requires "Build and test (iOS)". It keeps that name, but it is a small final job that passes only when every job of both platforms passes, so splitting jobs never needs a ruleset change.
 - **Failures.** A failed job uploads its `.xcresult` as an artifact for 7 days, with the failing assertion and screenshots.
 - Locally, `make test` and `make test-ui` work as before. `XCODEFLAGS` passes extra flags, such as `-only-testing:MeetlaudUITests/SummaryTests`.

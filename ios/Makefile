@@ -6,7 +6,10 @@ DERIVED := build
 ## the UI tests across machines, e.g. make test-ui XCODEFLAGS="-only-testing:MeetlaudUITests/SummaryTests".
 XCODEFLAGS ?=
 ## A few UI tests per area, listed in Tools/ui-smoke-tests.txt. Pull requests run these; main runs every UI test.
-SMOKE_TESTS := $(addprefix -only-testing:MeetlaudUITests/,$(shell cat Tools/ui-smoke-tests.txt))
+## CI splits the list across machines: PART=1 PARTS=2 is every second test, PART=2 PARTS=2 the others.
+PART ?= 1
+PARTS ?= 1
+SMOKE_TESTS := $(addprefix -only-testing:MeetlaudUITests/,$(shell awk 'NR % $(PARTS) == $(PART) % $(PARTS)' Tools/ui-smoke-tests.txt))
 
 .PHONY: bootstrap generate format lint check test-tools test test-ui test-ui-smoke build ci screenshots eval-summary eval-transcription \
 	ipa-unsigned
