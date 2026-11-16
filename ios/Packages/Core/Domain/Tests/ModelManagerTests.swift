@@ -127,7 +127,8 @@ struct ModelManagerTests {
 
     /// Waits for the manager to hear an installer event. Generous, because CI runs tests in parallel on a busy machine.
     private func waitFor(_ harness: Harness, _ id: String, until match: (InstallState) -> Bool) async -> Bool {
-        let deadline = ContinuousClock.now + .seconds(15)
+        // Generous on purpose: on a busy CI machine, with every test running at once, 15 seconds was once not enough.
+        let deadline = ContinuousClock.now + .seconds(60)
         while ContinuousClock.now < deadline {
             if await match(harness.manager.makeSnapshot().state(of: id)) {
                 return true
