@@ -6,6 +6,13 @@ All notable changes to Meetlaud are listed here. The format follows [Keep a Chan
 
 The first public version. Everything below runs on the device.
 
+### Android
+- A native Android app with the same screens, look, and features as the iPhone app, in the same repository. Transcription with whisper.cpp, summaries, chat, and search with llama.cpp, and speaker separation with ONNX Runtime, all on the device. Libraries exported from one app open in the other.
+- On Android, settings and help for iPhone-only features (widgets, system search, the Action Button) stay hidden until Android has them, and text that named iPhone, iOS, or Face ID now speaks Android's own words.
+- Releases: a tag publishes both apps on GitHub, an Android App Bundle and APK signed with the release key, and an unsigned iPhone build for sideloading, with checksums and build provenance. TestFlight receives a signed build when App Store Connect is set up. See [Releasing](docs/releasing.md).
+- CI checks both apps on every pull request, including Android's instrumented tests on an emulator, and the required check waits for both platforms.
+- New features and bug fixes land on both platforms together. The rules are in CONTRIBUTING.md and AGENTS.md.
+
 ### Record
 - One-tap recording from the app, widgets, the Lock Screen, Control Center, the Action Button, and Shortcuts.
 - Background recording with a Live Activity, and recovery after a crash or interruption.
@@ -64,4 +71,5 @@ The first public version. Everything below runs on the device.
 - AI models: a model with several files could report a failed install while it was actually fine, when two downloads finished at the same moment.
 - CI: unit tests and UI tests run side by side, UI tests in four groups, with packages and build products cached. A failed job keeps its test results for a week.
 - CI: pull requests answer in about 10 minutes. They run lint, unit tests, and a UI smoke set; documentation-only ones skip the macOS jobs. Every UI test still runs on `main` and every night. CI picks a simulator the machine has, the accessibility audit looks twice before it fails, and every UI test tap waits for its element. Pull requests never run every UI test.
+- pt-BR: the Voice print model role now reads "Impressão de voz".
 - Contributors: `Config/Local.xcconfig` can set `APP_BUNDLE_IDENTIFIER`, so a fork can run on its own iPhone. The widget, App Group, test, and background task identifiers follow it.

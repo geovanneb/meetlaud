@@ -1,0 +1,222 @@
+name: Release
+
+# Pushing a tag such as v1.2.0 publishes both apps on GitHub (docs/releasing.md):
+# - Android: the App Bundle for Google Play and an APK to install directly, signed with the release key.
+# - iOS: an unsigned IPA for people who sideload with their own Apple account, and, when App Store Connect is set up,
+#   a signed build sent to TestFlight.
+# - The release notes come from the version's section in CHANGELOG.md, with a SHA256SUMS file and build provenance.
+# A tag with a hyphen (v1.2.0-beta.1) becomes a pre-release. A manual run builds everything and publishes nothing.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version to build, without the v (nothing is published)
+        required: true
+        default: 0.1.0
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    name: Version and notes
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      apple: ${{ steps.version.outputs.apple }}
+      build: ${{ steps.version.outputs.build }}
+      prerelease: ${{ steps.version.outputs.prerelease }}
+      publish: ${{ steps.version.outputs.publish }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: version
+        env:
+          INPUT: ${{ inputs.version }}
+          TAG: ${{ github.ref_name }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          if [ "$EVENT" = push ]; then version="${TAG#v}"; publish=true; else version="$INPUT"; publish=false; fi
+          echo "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$' || { echo "Not a version: $version"; exit 1; }
+          case "$version" in *-*) prerelease=true ;; *) prerelease=false ;; esac
+          {
+            echo "version=$version"
+            # Apple accepts only numbers in the version, so a pre-release ships as its base version.
+            echo "apple=${version%%-*}"
+            # One build number for both stores, always growing.
+            echo "build=$((1000 + GITHUB_RUN_NUMBER))"
+            echo "prerelease=$prerelease"
+            echo "publish=$publish"
+          } >> "$GITHUB_OUTPUT"
+      # A release never goes out without its notes, and the gates hold for it as for any pull request.
+      - run: Tools/release-notes "${{ steps.version.outputs.version }}" > release-notes.md
+        if: steps.version.outputs.publish == 'true'
+      - run: python3 -m unittest discover -s Tools/tests -q
+      - run: make -C ios check
+      - run: Tools/check-android android
+      - uses: actions/upload-artifact@v4
+        if: steps.version.outputs.publish == 'true'
+        with:
+          name: release-notes
+          path: release-notes.md
+
+  android:
+    name: Android bundle and APK
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@v7
+      # Only GitHub's own actions: the repository allows no others. setup-java caches Gradle's downloads.
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+          cache-dependency-path: |
+            android/**/*.gradle.kts
+            android/gradle/libs.versions.toml
+            android/gradle/wrapper/gradle-wrapper.properties
+      - name: Install the NDK and CMake
+        run: |
+          ndk=$(sed -n 's/^ndk = "\(.*\)"/\1/p' gradle/libs.versions.toml)
+          cmake=$(sed -n 's/^cmake = "\(.*\)"/\1/p' gradle/libs.versions.toml)
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;$ndk" "cmake;$cmake" > /dev/null
+      # The key exists only in the runner's temporary folder, for this job.
+      - name: Release key
+        env:
+          KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          PUBLISH: ${{ needs.prepare.outputs.publish }}
+        run: |
+          if [ -z "$KEYSTORE" ]; then
+            if [ "$PUBLISH" = true ]; then echo "::error::ANDROID_KEYSTORE_BASE64 is not set. A release must be signed."; exit 1; fi
+            echo "::warning::No release key: this build is unsigned and only for checking."
+            exit 0
+          fi
+          echo "$KEYSTORE" | base64 --decode > "$RUNNER_TEMP/release.jks"
+          echo "MEETLAUD_KEYSTORE_FILE=$RUNNER_TEMP/release.jks" >> "$GITHUB_ENV"
+      - name: Build
+        env:
+          MEETLAUD_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          MEETLAUD_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          MEETLAUD_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          VERSION: ${{ needs.prepare.outputs.version }}
+          BUILD: ${{ needs.prepare.outputs.build }}
+        run: |
+          ./gradlew --quiet lint testDebugUnitTest bundleRelease assembleRelease \
+            -Pmeetlaud.versionName="$VERSION" -Pmeetlaud.versionCode="$BUILD"
+          mkdir -p ../dist
+          cp app/build/outputs/bundle/release/app-release.aab "../dist/Meetlaud-$VERSION.aab"
+          cp app/build/outputs/apk/release/app-release*.apk "../dist/Meetlaud-$VERSION.apk"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android
+          path: dist/
+          retention-days: 7
+
+  ios:
+    name: iOS IPA and TestFlight
+    needs: prepare
+    runs-on: macos-26
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: ios
+    steps:
+      - uses: actions/checkout@v7
+      - run: brew bundle --file=Brewfile
+      - name: Unsigned IPA
+        env:
+          VERSION: ${{ needs.prepare.outputs.apple }}
+          BUILD: ${{ needs.prepare.outputs.build }}
+          FULL: ${{ needs.prepare.outputs.version }}
+        run: |
+          make ipa-unsigned VERSION="$VERSION" BUILD="$BUILD"
+          mkdir -p ../dist
+          cp build/release/Meetlaud-unsigned.ipa "../dist/Meetlaud-$FULL-unsigned.ipa"
+      # Signing in the cloud with an App Store Connect API key: no certificate or profile is stored anywhere.
+      - name: TestFlight
+        shell: bash
+        env:
+          KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          KEY_P8: ${{ secrets.APP_STORE_CONNECT_KEY_BASE64 }}
+          TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          PUBLISH: ${{ needs.prepare.outputs.publish }}
+          VERSION: ${{ needs.prepare.outputs.apple }}
+          BUILD: ${{ needs.prepare.outputs.build }}
+        run: |
+          if [ -z "$KEY_ID" ] || [ "$PUBLISH" != true ]; then
+            echo "TestFlight skipped: App Store Connect is not set up, or this run publishes nothing."
+            exit 0
+          fi
+          key="$RUNNER_TEMP/AuthKey_$KEY_ID.p8"
+          echo "$KEY_P8" | base64 --decode > "$key"
+          echo "DEVELOPMENT_TEAM = $TEAM_ID" > Config/Local.xcconfig
+          auth=(-allowProvisioningUpdates -authenticationKeyPath "$key" -authenticationKeyID "$KEY_ID" -authenticationKeyIssuerID "$ISSUER_ID")
+          xcodebuild -project Meetlaud.xcodeproj -scheme Meetlaud -configuration Release \
+            -destination generic/platform=iOS -archivePath build/release/Meetlaud.xcarchive -quiet \
+            MARKETING_VERSION="$VERSION" CURRENT_PROJECT_VERSION="$BUILD" "${auth[@]}" archive
+          cat > build/release/ExportOptions.plist <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>upload</string>
+            <key>teamID</key><string>$TEAM_ID</string>
+            <key>manageAppVersionAndBuildNumber</key><false/>
+          </dict></plist>
+          PLIST
+          xcodebuild -exportArchive -archivePath build/release/Meetlaud.xcarchive \
+            -exportOptionsPlist build/release/ExportOptions.plist -exportPath build/release/export "${auth[@]}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ios
+          path: dist/
+          retention-days: 7
+
+  publish:
+    name: GitHub release
+    needs: [prepare, android, ios]
+    if: needs.prepare.outputs.publish == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Checksums
+        working-directory: dist
+        run: |
+          mv release-notes.md ../release-notes.md
+          sha256sum Meetlaud-* > SHA256SUMS
+          cat SHA256SUMS
+      # Anyone can check that a file was built here, from this tag: gh attestation verify <file> -R <this repository>.
+      - uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: dist/Meetlaud-*
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+          VERSION: ${{ needs.prepare.outputs.version }}
+          PRERELEASE: ${{ needs.prepare.outputs.prerelease }}
+        run: |
+          flags=""
+          if [ "$PRERELEASE" = true ]; then flags="--prerelease"; else flags="--latest"; fi
+          gh release create "$TAG" dist/* --repo "$GITHUB_REPOSITORY" --verify-tag \
+            --title "Meetlaud $VERSION" --notes-file release-notes.md $flags

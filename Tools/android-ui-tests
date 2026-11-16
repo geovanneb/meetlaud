@@ -1,0 +1,25 @@
+#!/bin/sh
+# Runs the Android instrumented tests on the connected phone or emulator, as the CI does (D-084).
+#
+# Usage: Tools/android-ui-tests [test class, e.g. com.meetlaud.app.ParityScreens]
+#
+# Without a class, everything but EngineTests, which downloads gigabytes of models and runs on request only
+# (docs/android.md). Exits non-zero when a test fails or the run does not finish.
+set -eu
+root=$(cd "$(dirname "$0")/.." && pwd)
+if [ -z "${JAVA_HOME:-}" ]; then
+    JAVA_HOME=$(/usr/libexec/java_home -v 17 2>/dev/null || brew --prefix openjdk@17 2>/dev/null || true)
+    export JAVA_HOME
+fi
+# GitHub's machines have the SDK but do not put adb on the PATH.
+command -v adb > /dev/null 2>&1 || PATH="$PATH:${ANDROID_HOME:?adb is not on the PATH, and ANDROID_HOME is not set}/platform-tools"
+(cd "$root/android" && ./gradlew --quiet installDebug installDebugAndroidTest)
+# The tests open the app from the background. Android allows that to an app that may draw over others, and MIUI
+# (Xiaomi, Redmi, POCO) asks for its own permission, operation 10021. Debug build only.
+adb shell appops set com.meetlaud.app SYSTEM_ALERT_WINDOW allow
+adb shell appops set com.meetlaud.app 10021 allow 2>/dev/null || true
+if [ $# -gt 0 ]; then filter="-e class $1"; else filter="-e notClass com.meetlaud.app.infra.engines.EngineTests"; fi
+# shellcheck disable=SC2086
+result=$(adb shell am instrument -w -r $filter com.meetlaud.app.test/androidx.test.runner.AndroidJUnitRunner)
+echo "$result" | grep -E "^OK |^Tests run|INSTRUMENTATION_STATUS: (test=|stack=)" | grep -v "INSTRUMENTATION_STATUS: test=" || true
+echo "$result" | grep -q "^OK " || { echo "android-ui-tests: failed" >&2; echo "$result" | grep -A20 "stack=" >&2 || true; exit 1; }

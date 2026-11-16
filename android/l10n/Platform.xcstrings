@@ -1,0 +1,215 @@
+{
+  "sourceLanguage": "en",
+  "version": "1.0",
+  "strings": {
+    "android.app_lock_note": {
+      "comment": "Android only: the iOS key says iPhone, iOS, or Face ID.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for your fingerprint, face, or screen lock when you come back, and hides your content in recent apps. Recording keeps running."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "戻ったときに指紋、顔、または画面ロックを要求し、最近使ったアプリで内容を隠します。録音は続きます。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pede a digital, o rosto ou o bloqueio de tela quando você volta e esconde o conteúdo nos apps recentes. A gravação continua."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pide la huella, la cara o el bloqueo de pantalla al volver y oculta el contenido en las apps recientes. La grabación continúa."
+          }
+        }
+      }
+    },
+    "android.app_lock_unavailable": {
+      "comment": "Android only: the iOS key says iPhone, iOS, or Face ID.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set a screen lock on this phone to use this."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "利用するには、この端末に画面ロックを設定してください。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Defina um bloqueio de tela neste celular para usar isto."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Configura un bloqueo de pantalla en este teléfono para usarlo."
+          }
+        }
+      }
+    },
+    "android.back": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Back"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "戻る"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voltar"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atrás"
+          }
+        }
+      }
+    },
+    "android.device_backup": {
+      "comment": "Android only: the iOS key says iPhone, iOS, or Face ID.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Include in device backup"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "端末のバックアップに含める"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Incluir no backup do aparelho"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Incluir en la copia del dispositivo"
+          }
+        }
+      }
+    },
+    "android.device_backup_note": {
+      "comment": "Android only: the iOS key says iPhone, iOS, or Face ID.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off by default. When on, your recordings go into your phone's backup, which may be Google's backup. AI models are never included."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "初期設定はオフです。オンにすると、録音は端末のバックアップ（Googleのバックアップの場合があります）に含まれます。AIモデルは含まれません。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desligado por padrão. Ligado, suas gravações entram no backup do celular, que pode ser o backup do Google. Os modelos de IA nunca entram."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desactivado por defecto. Si lo activas, tus grabaciones entran en la copia del teléfono, que puede ser la copia de Google. Los modelos de IA nunca se incluyen."
+          }
+        }
+      }
+    },
+    "android.promise_body": {
+      "comment": "Android only: the iOS key says iPhone, iOS, or Face ID.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing you record, type, or ask. Everything runs on this device. There are no accounts and no analytics. The only connections are the AI model downloads you start, and Network activity lists every one."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "録音、入力、質問の内容は一切送信されません。すべてこのデバイス上で実行されます。アカウントも分析もありません。通信はあなたが開始したAIモデルのダウンロードのみで、ネットワークアクティビティにすべて記録されます。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nada do que você grava, digita ou pergunta. Tudo roda neste aparelho. Não há contas nem análises. As únicas conexões são os downloads de modelos de IA que você inicia, e a Atividade de rede lista cada um."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nada de lo que grabas, escribes o preguntas. Todo funciona en este dispositivo. No hay cuentas ni analíticas. Las únicas conexiones son las descargas de modelos de IA que inicias, y Actividad de red las muestra todas."
+          }
+        }
+      }
+    },
+    "android.run_stopped": {
+      "comment": "Android only: the iOS key says iPhone, iOS, or Face ID.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stopped by Android to free memory"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "メモリ確保のためAndroidが停止"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Interrompido pelo Android para liberar memória"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Android lo detuvo para liberar memoria"
+          }
+        }
+      }
+    }
+  }
+}

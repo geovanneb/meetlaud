@@ -3,14 +3,15 @@
 
 Usage: git diff --name-only BASE HEAD | ci-scope
 
-Prints two lines for $GITHUB_OUTPUT:
-  ios=true|false   false when every file is documentation, so the macOS jobs can be skipped
-  full=false       a pull request never runs every UI test: that is about 30 minutes. main and the nightly run do (D-082)
+Prints three lines for $GITHUB_OUTPUT:
+  ios=true|false       false when nothing that reaches the iOS app changed, so the macOS jobs can be skipped
+  android=true|false   false when nothing that reaches the Android app changed, so the Android jobs can be skipped
+  full=false           a pull request never runs every UI test: that is about 30 minutes. main and the nightly run do (D-082)
 """
 import re
 import sys
 
-# Files that never reach the app or the tests.
+# Files that never reach either app or the tests.
 DOCS = re.compile(
     r"""(
         .*\.md
@@ -25,18 +26,37 @@ DOCS = re.compile(
     re.VERBOSE,
 )
 
+# Files inside ios/ that the Android app depends on (D-084): text it is generated from, and the Domain its parity
+# test checks it against.
+SHARED = re.compile(r"ios/(.*\.xcstrings|.*/models\.json|Packages/Core/Domain/Sources/.*|Packages/UI/Localization/Sources/.*)$")
+
 
 def scope(files):
+    """Returns (ios, android, full)."""
     files = [name.strip() for name in files if name.strip()]
     if not files:
-        # An empty diff means we could not tell. Run the macOS jobs rather than skip them.
-        return True, False
-    return any(not DOCS.match(name) for name in files), False
+        # An empty diff means we could not tell. Run everything rather than skip it.
+        return True, True, False
+    ios = android = False
+    for name in files:
+        if DOCS.match(name):
+            continue
+        if SHARED.match(name):
+            ios = android = True
+        elif name.startswith("ios/"):
+            ios = True
+        elif name.startswith("android/"):
+            android = True
+        else:
+            # Root tools, workflows, and anything new: both apps may depend on it.
+            ios = android = True
+    return ios, android, False
 
 
 def main():
-    ios, full = scope(sys.stdin.read().splitlines())
+    ios, android, full = scope(sys.stdin.read().splitlines())
     print(f"ios={str(ios).lower()}")
+    print(f"android={str(android).lower()}")
     print(f"full={str(full).lower()}")
 
 

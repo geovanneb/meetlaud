@@ -1,0 +1,182 @@
+{
+ "models": [
+  {
+   "backgroundCapable": true,
+   "displayName": "Whisper Small",
+   "files": [
+    {
+     "path": "ggml-small-q8_0.bin",
+     "sha256": "49c8fb02b65e6049d5fa6c04f81f53b867b5ec9540406812c643f177317f779f",
+     "size": 264464607,
+     "url": "https://huggingface.co/ggerganov/whisper.cpp/resolve/5359861c739e955e79d9a303bcbc70fb988958b1/ggml-small-q8_0.bin"
+    }
+   ],
+   "id": "whisper-small",
+   "languages": [
+    "en",
+    "ja",
+    "pt",
+    "es"
+   ],
+   "license": "MIT",
+   "minMemoryMB": 1200,
+   "quality": {
+    "en": 3,
+    "es": 3,
+    "ja": 3,
+    "pt": 3
+   },
+   "qualityIsProvisional": true,
+   "reference": [],
+   "repo": "ggerganov/whisper.cpp",
+   "roles": [
+    "transcription"
+   ],
+   "runtime": "whisperCpp",
+   "sourceHost": "huggingface.co",
+   "version": "5359861c73"
+  },
+  {
+   "backgroundCapable": true,
+   "displayName": "Whisper Turbo",
+   "files": [
+    {
+     "path": "ggml-large-v3-turbo-q5_0.bin",
+     "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2",
+     "size": 574041195,
+     "url": "https://huggingface.co/ggerganov/whisper.cpp/resolve/5359861c739e955e79d9a303bcbc70fb988958b1/ggml-large-v3-turbo-q5_0.bin"
+    }
+   ],
+   "id": "whisper-turbo",
+   "languages": [
+    "en",
+    "ja",
+    "pt",
+    "es"
+   ],
+   "license": "MIT",
+   "minMemoryMB": 2500,
+   "quality": {
+    "en": 4,
+    "es": 4,
+    "ja": 4,
+    "pt": 4
+   },
+   "qualityIsProvisional": true,
+   "reference": [],
+   "repo": "ggerganov/whisper.cpp",
+   "roles": [
+    "transcription"
+   ],
+   "runtime": "whisperCpp",
+   "sourceHost": "huggingface.co",
+   "version": "5359861c73"
+  },
+  {
+   "backgroundCapable": false,
+   "displayName": "Qwen 3.5 2B",
+   "files": [
+    {
+     "path": "Qwen3.5-2B-Q4_K_M.gguf",
+     "sha256": "aaf42c8b7c3cab2bf3d69c355048d4a0ee9973d48f16c731c0520ee914699223",
+     "size": 1280835840,
+     "url": "https://huggingface.co/unsloth/Qwen3.5-2B-GGUF/resolve/f6d5376be1edb4d416d56da11e5397a961aca8ae/Qwen3.5-2B-Q4_K_M.gguf"
+    }
+   ],
+   "id": "qwen35-2b",
+   "languages": [
+    "en",
+    "ja",
+    "pt",
+    "es"
+   ],
+   "license": "Apache-2.0",
+   "minMemoryMB": 2000,
+   "quality": {
+    "en": 3,
+    "es": 3,
+    "ja": 3,
+    "pt": 3
+   },
+   "qualityIsProvisional": true,
+   "reference": [],
+   "repo": "unsloth/Qwen3.5-2B-GGUF",
+   "roles": [
+    "chat"
+   ],
+   "runtime": "llamaCpp",
+   "sourceHost": "huggingface.co",
+   "version": "f6d5376be1"
+  },
+  {
+   "backgroundCapable": true,
+   "displayName": "Qwen3 Embedding 0.6B",
+   "files": [
+    {
+     "path": "Qwen3-Embedding-0.6B-Q8_0.gguf",
+     "sha256": "06507c7b42688469c4e7298b0a1e16deff06caf291cf0a5b278c308249c3e439",
+     "size": 639150592,
+     "url": "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B-GGUF/resolve/370f27d7550e0def9b39c1f16d3fbaa13aa67728/Qwen3-Embedding-0.6B-Q8_0.gguf"
+    }
+   ],
+   "id": "qwen3-embedding-0.6b",
+   "languages": [
+    "en",
+    "ja",
+    "pt",
+    "es"
+   ],
+   "license": "Apache-2.0",
+   "minMemoryMB": 1000,
+   "quality": {
+    "en": 3,
+    "es": 3,
+    "ja": 3,
+    "pt": 3
+   },
+   "qualityIsProvisional": true,
+   "reference": [],
+   "repo": "Qwen/Qwen3-Embedding-0.6B-GGUF",
+   "roles": [
+    "search"
+   ],
+   "runtime": "llamaCpp",
+   "sourceHost": "huggingface.co",
+   "version": "370f27d755"
+  },
+  {
+   "backgroundCapable": true,
+   "displayName": "Pyannote 3 with WeSpeaker",
+   "files": [
+    {
+     "path": "segmentation.onnx",
+     "sha256": "057ee564753071c0b09b5b611648b50ac188d50846bff5f01e9f7bbf1591ea25",
+     "size": 5986908,
+     "url": "https://huggingface.co/onnx-community/pyannote-segmentation-3.0/resolve/733a93b6473d019a773298e08cefa686894b1854/onnx/model.onnx"
+    },
+    {
+     "path": "embedding.onnx",
+     "sha256": "3955447b0499dc9e0a4541a895df08b03c69098eba4e56c02b5603e9f7f4fcbb",
+     "size": 26535549,
+     "url": "https://huggingface.co/onnx-community/wespeaker-voxceleb-resnet34-LM/resolve/6a61a1833ff2583aabeba044f5c8221f00b67ceb/onnx/model.onnx"
+    }
+   ],
+   "id": "pyannote-3",
+   "languages": [],
+   "license": "MIT, CC-BY-4.0",
+   "minMemoryMB": 400,
+   "quality": {},
+   "qualityIsProvisional": true,
+   "reference": [],
+   "repo": "onnx-community/pyannote-segmentation-3.0",
+   "roles": [
+    "speakerSeparation",
+    "voicePrint"
+   ],
+   "runtime": "onnx",
+   "sourceHost": "huggingface.co",
+   "version": "733a93b647"
+  }
+ ],
+ "schema": 1
+}

@@ -1,0 +1,211 @@
+#!/usr/bin/env python3
+"""Writes Android's icons: one vector drawable per SF Symbol the iOS app uses (D-084).
+
+Usage: android-icons <android res dir>
+
+SF Symbols may only be used on Apple platforms, so Android draws the closest Lucide icon (ISC license, pinned below)
+instead. Each drawable is named after the symbol it stands for, `sf_<symbol with dots as underscores>`, so a feature
+ports from Swift by name: Image(systemName: "folder") becomes SfIcon("folder").
+
+The output is committed. This script is only for adding or changing an icon, and it is the one tool that downloads,
+from the pinned package on jsDelivr. Run it again after editing SYMBOLS, and record new icons nowhere else.
+"""
+import math
+import re
+import sys
+import urllib.request
+import xml.etree.ElementTree as ET
+from pathlib import Path
+
+LUCIDE = "https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/{}.svg"
+# SF Symbols at the regular weight are a little lighter than Lucide's default stroke of 2.
+STROKE = 1.75
+
+# SF Symbol -> (Lucide icon, fill). "fill" fills every closed shape, for the .fill variants.
+SYMBOLS = {
+    "arrow.clockwise": ("rotate-cw", False),
+    "arrow.triangle.2.circlepath": ("refresh-cw", False),
+    "arrow.trianglehead.merge": ("merge", False),
+    "arrow.up": ("arrow-up", False),
+    "arrow.up.arrow.down": ("arrow-up-down", False),
+    "arrow.uturn.backward": ("undo-2", False),
+    "bell": ("bell", False),
+    "bolt.fill": ("zap", True),
+    "brain": ("brain", False),
+    "bubble.left.and.bubble.right": ("messages-square", False),
+    "calendar": ("calendar", False),
+    "camera": ("camera", False),
+    "camera.fill": ("camera", True),
+    "character.book.closed": ("book-a", False),
+    "checklist": ("list-checks", False),
+    "checkmark": ("check", False),
+    "checkmark.circle": ("circle-check", False),
+    "checkmark.shield": ("shield-check", False),
+    "chevron.down": ("chevron-down", False),
+    "chevron.up": ("chevron-up", False),
+    "chevron.left": ("chevron-left", False),
+    "chevron.right": ("chevron-right", False),
+    "circle": ("circle", False),
+    "circle.dashed": ("circle-dashed", False),
+    "circle.lefthalf.filled": ("contrast", False),
+    "clock": ("clock", False),
+    "clock.arrow.circlepath": ("history", False),
+    "cpu": ("cpu", False),
+    "doc.plaintext": ("file-text", False),
+    "doc.text": ("file-text", False),
+    "doc.text.magnifyingglass": ("file-search", False),
+    "ellipsis": ("ellipsis", False),
+    "exclamationmark.triangle": ("triangle-alert", False),
+    "exclamationmark.triangle.fill": ("triangle-alert", True),
+    "externaldrive": ("hard-drive", False),
+    "externaldrive.badge.exclamationmark": ("hard-drive", False),
+    "flag": ("flag", False),
+    "flag.fill": ("flag", True),
+    "folder": ("folder", False),
+    "folder.badge.plus": ("folder-plus", False),
+    "gearshape": ("settings", False),
+    "globe": ("globe", False),
+    "gobackward": ("rotate-ccw", False),
+    "goforward": ("rotate-cw", False),
+    "graduationcap": ("graduation-cap", False),
+    "hourglass": ("hourglass", False),
+    "house": ("house", False),
+    "info.circle": ("info", False),
+    "internaldrive": ("hard-drive", False),
+    "line.3.horizontal.decrease": ("list-filter", False),
+    "list.bullet": ("list", False),
+    "list.clipboard": ("clipboard-list", False),
+    "lock.fill": ("lock", True),
+    "lock.shield": ("shield", False),
+    "magnifyingglass": ("search", False),
+    "megaphone": ("megaphone", False),
+    "mic": ("mic", False),
+    "mic.fill": ("mic", True),
+    "moon": ("moon", False),
+    "network": ("network", False),
+    "pause.circle": ("circle-pause", False),
+    "pause.fill": ("pause", True),
+    "pencil": ("pencil", False),
+    "person": ("user", False),
+    "person.2": ("users", False),
+    "person.3": ("users", False),
+    "person.crop.circle": ("circle-user", False),
+    "person.text.rectangle": ("contact", False),
+    "person.wave.2": ("speech", False),
+    "phone": ("phone", False),
+    "phone.down": ("phone-off", False),
+    "photo": ("image", False),
+    "play.fill": ("play", True),
+    "plus": ("plus", False),
+    "plus.bubble": ("message-square-plus", False),
+    "plus.square.on.square": ("copy-plus", False),
+    "point.3.connected.trianglepath.dotted": ("share-2", False),
+    "questionmark.circle": ("circle-help", False),
+    "sidebar.right": ("panel-right", False),
+    "slider.horizontal.3": ("sliders-horizontal", False),
+    "sparkles": ("sparkles", False),
+    "square.and.arrow.down": ("download", False),
+    "square.and.arrow.up": ("share", False),
+    "square.and.pencil": ("square-pen", False),
+    "square.grid.2x2": ("layout-grid", False),
+    "star": ("star", False),
+    "star.fill": ("star", True),
+    "stop.fill": ("square", True),
+    "sun.max": ("sun", False),
+    "text.alignleft": ("align-left", False),
+    "text.magnifyingglass": ("text-search", False),
+    "thermometer.medium": ("thermometer", False),
+    "trash": ("trash", False),
+    "wand.and.stars": ("wand-sparkles", False),
+    "waveform": ("audio-lines", False),
+    "wrench.and.screwdriver": ("wrench", False),
+    "xmark": ("x", False),
+}
+
+NS = "{http://www.w3.org/2000/svg}"
+
+
+def num(value):
+    return float(value or 0)
+
+
+def fmt(value):
+    return f"{value:.3f}".rstrip("0").rstrip(".")
+
+
+def circle_path(cx, cy, rx, ry):
+    return (f"M{fmt(cx - rx)},{fmt(cy)} a{fmt(rx)},{fmt(ry)} 0 1,0 {fmt(2 * rx)},0 "
+            f"a{fmt(rx)},{fmt(ry)} 0 1,0 {fmt(-2 * rx)},0 Z")
+
+
+def rect_path(x, y, w, h, rx, ry):
+    if not rx and not ry:
+        return f"M{fmt(x)},{fmt(y)} h{fmt(w)} v{fmt(h)} h{fmt(-w)} Z"
+    rx = min(rx or ry, w / 2)
+    ry = min(ry or rx, h / 2)
+    return (f"M{fmt(x + rx)},{fmt(y)} h{fmt(w - 2 * rx)} a{fmt(rx)},{fmt(ry)} 0 0 1 {fmt(rx)},{fmt(ry)} "
+            f"v{fmt(h - 2 * ry)} a{fmt(rx)},{fmt(ry)} 0 0 1 {fmt(-rx)},{fmt(ry)} h{fmt(-(w - 2 * rx))} "
+            f"a{fmt(rx)},{fmt(ry)} 0 0 1 {fmt(-rx)},{fmt(-ry)} v{fmt(-(h - 2 * ry))} "
+            f"a{fmt(rx)},{fmt(ry)} 0 0 1 {fmt(rx)},{fmt(-ry)} Z")
+
+
+def shapes(svg):
+    """Yields (path data, closed) for every drawable element."""
+    for element in svg.iter():
+        tag = element.tag.replace(NS, "")
+        a = element.attrib
+        if tag == "path":
+            data = a["d"]
+            yield data, data.strip().lower().endswith("z")
+        elif tag == "circle":
+            yield circle_path(num(a["cx"]), num(a["cy"]), num(a["r"]), num(a["r"])), True
+        elif tag == "ellipse":
+            yield circle_path(num(a["cx"]), num(a["cy"]), num(a["rx"]), num(a["ry"])), True
+        elif tag == "rect":
+            yield rect_path(num(a.get("x")), num(a.get("y")), num(a["width"]), num(a["height"]),
+                            num(a.get("rx")), num(a.get("ry"))), True
+        elif tag == "line":
+            yield f"M{a['x1']},{a['y1']} L{a['x2']},{a['y2']}", False
+        elif tag in ("polyline", "polygon"):
+            points = re.split(r"[\s,]+", a["points"].strip())
+            pairs = [f"{points[i]},{points[i + 1]}" for i in range(0, len(points), 2)]
+            closed = tag == "polygon"
+            yield "M" + " L".join(pairs) + (" Z" if closed else ""), closed
+
+
+def drawable(svg_text, filled):
+    svg = ET.fromstring(svg_text)
+    paths = []
+    for data, closed in shapes(svg):
+        fill = ' android:fillColor="#FF000000"' if filled and closed else ""
+        paths.append(
+            f'    <path android:pathData="{data}"{fill}\n'
+            f'        android:strokeColor="#FF000000" android:strokeWidth="{STROKE}"\n'
+            f'        android:strokeLineCap="round" android:strokeLineJoin="round" />')
+    return ("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+            "<!-- Generated by Tools/android-icons from Lucide (ISC). Edit the script, not this file. -->\n"
+            "<vector xmlns:android=\"http://schemas.android.com/apk/res/android\"\n"
+            "    android:width=\"24dp\" android:height=\"24dp\"\n"
+            "    android:viewportWidth=\"24\" android:viewportHeight=\"24\">\n"
+            + "\n".join(paths) + "\n</vector>\n")
+
+
+def main(res_dir):
+    out = Path(res_dir) / "drawable"
+    out.mkdir(parents=True, exist_ok=True)
+    for old in out.glob("sf_*.xml"):
+        old.unlink()
+    cache = {}
+    for symbol, (lucide, filled) in sorted(SYMBOLS.items()):
+        if lucide not in cache:
+            with urllib.request.urlopen(LUCIDE.format(lucide), timeout=30) as response:
+                cache[lucide] = response.read().decode()
+        name = "sf_" + re.sub(r"[^a-z0-9]", "_", symbol)
+        (out / f"{name}.xml").write_text(drawable(cache[lucide], filled))
+    print(f"android-icons: {len(SYMBOLS)} icons from {len(cache)} Lucide files")
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        raise SystemExit(__doc__)
+    main(sys.argv[1])

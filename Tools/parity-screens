@@ -1,0 +1,38 @@
+#!/bin/sh
+# Takes every parity screenshot on both platforms and puts each pair side by side (D-084).
+#
+# Usage: Tools/parity-screens <out dir> [iOS test, e.g. ParityScreens/testShell]
+#
+# iOS runs on the booted simulator, Android on the phone connected over USB. Both apps show the fictional showcase
+# library in English. Output: <out>/ios/*.png, <out>/android/*.png, and <out>/compare/*.png for each pair.
+set -eu
+out=$(cd "$(dirname "$1")" && pwd)/$(basename "$1")
+only=${2:-ParityScreens}
+root=$(cd "$(dirname "$0")/.." && pwd)
+# Gradle needs JDK 17 (see docs/android.md). Found here when JAVA_HOME is not set.
+if [ -z "${JAVA_HOME:-}" ]; then
+    JAVA_HOME=$(/usr/libexec/java_home -v 17 2>/dev/null || brew --prefix openjdk@17 2>/dev/null)
+    export JAVA_HOME
+fi
+mkdir -p "$out/ios" "$out/android" "$out/compare"
+
+device=$(xcrun simctl list devices booted | sed -n 's/.*(\([0-9A-F-]\{36\}\)) (Booted).*/\1/p' | head -n 1)
+# The project is generated: a test file added since the last generation would otherwise be skipped silently.
+(cd "$root/ios" && xcodegen generate --quiet)
+(cd "$root/ios" && TEST_RUNNER_PARITY_DIR="$out/ios" xcodebuild -project Meetlaud.xcodeproj -scheme Meetlaud \
+    -destination "platform=iOS Simulator,id=$device" -derivedDataPath build -quiet \
+    "-only-testing:MeetlaudUITests/$only" test)
+
+[ -n "$(ls "$out/ios")" ] || { echo "parity-screens: iOS took no screenshots" >&2; exit 1; }
+adb shell rm -rf /sdcard/Android/data/com.meetlaud.app/files/parity
+adb shell cmd locale set-app-locales com.meetlaud.app --locales en-US
+"$root/Tools/android-ui-tests" com.meetlaud.app.ParityScreens
+adb pull /sdcard/Android/data/com.meetlaud.app/files/parity/. "$out/android" >/dev/null
+# Back to the phone's own language: the person uses this phone too.
+adb shell cmd locale set-app-locales com.meetlaud.app --locales "" 2>/dev/null || true
+
+for shot in "$out"/ios/*.png; do
+    name=$(basename "$shot")
+    [ -f "$out/android/$name" ] && "$root/Tools/compare-screens" "$shot" "$out/android/$name" "$out/compare/$name" >/dev/null
+done
+echo "parity-screens: $(ls "$out/compare" | wc -l | tr -d ' ') pairs in $out/compare"

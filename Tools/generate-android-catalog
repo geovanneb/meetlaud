@@ -1,0 +1,116 @@
+#!/usr/bin/env python3
+"""Builds the Android model catalog from pinned Hugging Face revisions, as ios/Tools/generate-model-catalog does (D-085).
+
+The same ids as iOS wherever the model is the same, so a choice moves with an archive between the two apps. Only the
+files differ: Android runs whisper.cpp and llama.cpp, which read one ggml or GGUF file per model. Every file gets its
+real size and SHA-256, so the app verifies what it downloads.
+
+Usage: generate-android-catalog
+"""
+import json
+import sys
+import urllib.request
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+OUTPUT = ROOT / "android/app/src/main/assets/models.json"
+API = "https://huggingface.co/api/models"
+LANGUAGES = ["en", "ja", "pt", "es"]
+
+
+def fetch_json(url):
+    with urllib.request.urlopen(url, timeout=60) as response:
+        return json.load(response)
+
+
+def single_file(repo, path, destination):
+    """One LFS file at the repository's current revision, pinned by that revision."""
+    revision = fetch_json(f"{API}/{repo}")["sha"]
+    folder = path.rsplit("/", 1)[0] if "/" in path else ""
+    items = fetch_json(f"{API}/{repo}/tree/{revision}/{folder}")
+    item = next(i for i in items if i["path"] == path)
+    print(f"{repo}/{path}: {revision[:10]}, {item['size'] // 1_000_000} MB", file=sys.stderr)
+    return revision, {
+        "path": destination,
+        "url": f"https://huggingface.co/{repo}/resolve/{revision}/{path}",
+        "size": item["size"],
+        "sha256": item["lfs"]["oid"],
+    }
+
+
+def entry(model_id, name, roles, runtime, license, repo, path, destination, languages, memory, background, quality):
+    revision, file = single_file(repo, path, destination)
+    return {
+        "id": model_id,
+        "version": revision[:10],
+        "displayName": name,
+        "roles": roles,
+        "runtime": runtime,
+        "license": license,
+        "sourceHost": "huggingface.co",
+        "repo": repo,
+        "files": [file],
+        "languages": languages,
+        "minMemoryMB": memory,
+        "backgroundCapable": background,
+        "quality": quality,
+        "qualityIsProvisional": True,
+        "reference": [],
+    }
+
+
+def pyannote():
+    """Two ONNX files from two repositories: pyannote's segmentation (MIT) and the WeSpeaker voice prints (CC-BY-4.0)
+    that pyannote's own pipelines use with it. iOS runs Community-1, which is built from the same two parts."""
+    seg_revision, segmentation = single_file("onnx-community/pyannote-segmentation-3.0", "onnx/model.onnx", "segmentation.onnx")
+    _, voice = single_file("onnx-community/wespeaker-voxceleb-resnet34-LM", "onnx/model.onnx", "embedding.onnx")
+    return {
+        "id": "pyannote-3",
+        "version": seg_revision[:10],
+        "displayName": "Pyannote 3 with WeSpeaker",
+        "roles": ["speakerSeparation", "voicePrint"],
+        "runtime": "onnx",
+        "license": "MIT, CC-BY-4.0",
+        "sourceHost": "huggingface.co",
+        "repo": "onnx-community/pyannote-segmentation-3.0",
+        "files": [segmentation, voice],
+        "languages": [],
+        "minMemoryMB": 400,
+        "backgroundCapable": True,
+        "quality": {},
+        "qualityIsProvisional": True,
+        "reference": [],
+    }
+
+
+def main():
+    previous = {}
+    if OUTPUT.exists():
+        previous = {m["id"]: m.get("reference", []) for m in json.loads(OUTPUT.read_text())["models"]}
+    whisper = "ggerganov/whisper.cpp"
+    models = [
+        entry("whisper-small", "Whisper Small", ["transcription"], "whisperCpp", "MIT", whisper,
+              "ggml-small-q8_0.bin", "ggml-small-q8_0.bin", LANGUAGES, 1200, True, {l: 3 for l in LANGUAGES}),
+        entry("whisper-turbo", "Whisper Turbo", ["transcription"], "whisperCpp", "MIT", whisper,
+              "ggml-large-v3-turbo-q5_0.bin", "ggml-large-v3-turbo-q5_0.bin", LANGUAGES, 2500, True,
+              {l: 4 for l in LANGUAGES}),
+        # Foreground only, as on iOS: a summary is written while the person looks, and the phone stays cool.
+        # 2000 MB, not iOS's 3500: llama.cpp maps the weights from storage and runs on the CPU, with no GPU copy.
+        # Measured on the emulator while writing a summary (docs/android.md).
+        entry("qwen35-2b", "Qwen 3.5 2B", ["chat"], "llamaCpp", "Apache-2.0", "unsloth/Qwen3.5-2B-GGUF",
+              "Qwen3.5-2B-Q4_K_M.gguf", "Qwen3.5-2B-Q4_K_M.gguf", LANGUAGES, 2000, False, {l: 3 for l in LANGUAGES}),
+        # iOS searches with the system's models. Android has none, so this one is downloaded.
+        entry("qwen3-embedding-0.6b", "Qwen3 Embedding 0.6B", ["search"], "llamaCpp", "Apache-2.0",
+              "Qwen/Qwen3-Embedding-0.6B-GGUF", "Qwen3-Embedding-0.6B-Q8_0.gguf", "Qwen3-Embedding-0.6B-Q8_0.gguf",
+              LANGUAGES, 1000, True, {l: 3 for l in LANGUAGES}),
+        pyannote(),
+    ]
+    for model in models:
+        model["reference"] = previous.get(model["id"], [])
+    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+    OUTPUT.write_text(json.dumps({"schema": 1, "models": models}, indent=1, sort_keys=True) + "\n")
+    print(f"generate-android-catalog: {len(models)} models", file=sys.stderr)
+
+
+if __name__ == "__main__":
+    main()

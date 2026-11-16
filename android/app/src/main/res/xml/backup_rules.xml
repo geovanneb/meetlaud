@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The same rules for Android 11 and older. -->
+<full-backup-content>
+    <exclude domain="file" path="Meetlaud/models/" />
+    <exclude domain="file" path="Showcase/" />
+</full-backup-content>

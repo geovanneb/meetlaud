@@ -16,8 +16,8 @@ concurrency:
   group: ci-${{ github.ref }}-${{ github.event_name == 'schedule' && 'nightly' || 'run' }}
   cancel-in-progress: true
 
-# Two tiers, so a pull request gets an answer in about 10 minutes instead of 30:
-# - A pull request runs lint, unit tests, and the UI smoke set (Tools/ui-smoke-tests.txt) on two macOS machines.
+# Two tiers, so a pull request gets an answer in about 15 minutes instead of 30:
+# - A pull request runs lint, unit tests, and the UI smoke set (Tools/ui-smoke-tests.txt) on three macOS machines.
 #   A pull request never runs every UI test: on GitHub's queued Macs that took over 30 minutes (D-082).
 # - A pull request that only changes documentation skips the macOS jobs.
 # - Every push to main, the nightly run, and a manual run run every UI test, in the four groups below.
@@ -25,10 +25,13 @@ concurrency:
 # - The UI tests were 28 of 43 minutes, one app launch after another on one simulator. They run in four groups,
 #   on four machines at once. The last group is "everything not named above", so a new test class always runs.
 # - MLX, WhisperKit, and FluidAudio took most of each build. Packages and build products are cached, so a pull
-#   request recompiles only what changed. Only main saves caches, so every branch starts from main's.
+#   request recompiles only what changed. main saves caches and every branch starts from them. A pull request
+#   that finds none (new packages, a new Xcode, moved folders) saves its own, so only its first run is slow.
 # - Unit tests and UI tests run side by side, and the UI tests build the app, so there is no separate build step.
 env:
-  SPM: ${{ github.workspace }}/build/spm
+  SPM: ${{ github.workspace }}/ios/build/spm
+  HOMEBREW_NO_AUTO_UPDATE: "1"
+  HOMEBREW_NO_INSTALL_CLEANUP: "1"
 
 jobs:
   gates:
@@ -37,13 +40,13 @@ jobs:
     timeout-minutes: 10
     outputs:
       ios: ${{ steps.scope.outputs.ios }}
+      android: ${{ steps.scope.outputs.android }}
       full: ${{ steps.scope.outputs.full }}
     steps:
       - uses: actions/checkout@v7
       - run: python3 -m unittest discover -s Tools/tests -q
-      - run: Tools/check-architecture
-      - run: Tools/check-privacy
-      - run: Tools/check-l10n
+      - run: make -C ios check
+      - run: Tools/check-android android
       - name: Decide what to run
         id: scope
         env:
@@ -55,7 +58,7 @@ jobs:
             git fetch --quiet --depth=1 origin "$BASE" || true
             { git diff --name-only "$BASE" HEAD || true; } | Tools/ci-scope > scope.txt
           else
-            printf 'ios=true\nfull=true\n' > scope.txt
+            printf 'ios=true\nandroid=true\nfull=true\n' > scope.txt
           fi
           cat scope.txt
           cat scope.txt >> "$GITHUB_OUTPUT"
@@ -65,6 +68,9 @@ jobs:
     needs: gates
     if: needs.gates.outputs.ios == 'true'
     runs-on: macos-26
+    defaults:
+      run:
+        working-directory: ios
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v7
@@ -74,50 +80,60 @@ jobs:
           destination=$(Tools/ci-simulator)
           echo "DESTINATION=$destination" >> "$GITHUB_ENV"
           xcrun simctl boot "${destination##*id=}" || true
+      # Read from a file: starting xcodebuild just to ask for its version took a minute.
       - id: xcode
-        run: echo "version=$(xcodebuild -version | shasum | cut -c1-12)" >> "$GITHUB_OUTPUT"
+        run: echo "version=$(plutil -extract ProductBuildVersion raw "$(xcode-select -p)/../version.plist")" >> "$GITHUB_OUTPUT"
       - name: Restore packages
+        id: spm
         uses: actions/cache/restore@v4
         with:
-          path: build/spm
-          key: spm-${{ steps.xcode.outputs.version }}-${{ hashFiles('Packages/Package.resolved') }}
+          path: ios/build/spm
+          key: spm-${{ steps.xcode.outputs.version }}-${{ hashFiles('ios/Packages/Package.resolved') }}
           restore-keys: spm-${{ steps.xcode.outputs.version }}-
       - name: Restore build products
+        id: products
         uses: actions/cache/restore@v4
         with:
-          path: build/package
-          key: dd-unit-${{ steps.xcode.outputs.version }}-${{ hashFiles('Packages/Package.resolved') }}-${{ github.sha }}
-          restore-keys: dd-unit-${{ steps.xcode.outputs.version }}-${{ hashFiles('Packages/Package.resolved') }}-
+          path: ios/build/package
+          key: dd-unit-${{ steps.xcode.outputs.version }}-${{ hashFiles('ios/Packages/Package.resolved') }}-${{ github.sha }}
+          restore-keys: dd-unit-${{ steps.xcode.outputs.version }}-${{ hashFiles('ios/Packages/Package.resolved') }}-
       - run: brew bundle --file=Brewfile
       - run: make lint
       - run: >-
           make test XCODEFLAGS="-clonedSourcePackagesDirPath $SPM
-          -resultBundlePath ${{ github.workspace }}/build/results/unit.xcresult"
+          -resultBundlePath ${{ github.workspace }}/ios/build/results/unit.xcresult"
+      # The Android app's Domain is checked against these answers, so they must be the iOS Domain's current ones.
+      - name: Parity answers are current
+        run: ../Tools/parity/run && git diff --exit-code ../Tools/parity/golden.json
       - name: Upload results on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: unit-results
-          path: build/results
+          path: ios/build/results
           retention-days: 7
+      # main always saves. A pull request saves only when it found nothing to start from, so its next push is fast.
       - name: Save packages
-        if: github.ref == 'refs/heads/main'
+        if: steps.spm.outputs.cache-hit != 'true' && (github.ref == 'refs/heads/main' || steps.spm.outputs.cache-matched-key == '')
         uses: actions/cache/save@v4
         with:
-          path: build/spm
-          key: spm-${{ steps.xcode.outputs.version }}-${{ hashFiles('Packages/Package.resolved') }}
+          path: ios/build/spm
+          key: spm-${{ steps.xcode.outputs.version }}-${{ hashFiles('ios/Packages/Package.resolved') }}
       - name: Save build products
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' || steps.products.outputs.cache-matched-key == ''
         uses: actions/cache/save@v4
         with:
-          path: build/package
-          key: dd-unit-${{ steps.xcode.outputs.version }}-${{ hashFiles('Packages/Package.resolved') }}-${{ github.sha }}
+          path: ios/build/package
+          key: dd-unit-${{ steps.xcode.outputs.version }}-${{ hashFiles('ios/Packages/Package.resolved') }}-${{ github.sha }}
 
   ui:
     name: UI tests (${{ matrix.name }})
     needs: gates
     if: needs.gates.outputs.full == 'true'
     runs-on: macos-26
+    defaults:
+      run:
+        working-directory: ios
     timeout-minutes: 45
     strategy:
       fail-fast: false
@@ -145,51 +161,62 @@ jobs:
           destination=$(Tools/ci-simulator)
           echo "DESTINATION=$destination" >> "$GITHUB_ENV"
           xcrun simctl boot "${destination##*id=}" || true
+      # Read from a file: starting xcodebuild just to ask for its version took a minute.
       - id: xcode
-        run: echo "version=$(xcodebuild -version | shasum | cut -c1-12)" >> "$GITHUB_OUTPUT"
+        run: echo "version=$(plutil -extract ProductBuildVersion raw "$(xcode-select -p)/../version.plist")" >> "$GITHUB_OUTPUT"
       - name: Restore packages
+        id: spm
         uses: actions/cache/restore@v4
         with:
-          path: build/spm
-          key: spm-${{ steps.xcode.outputs.version }}-${{ hashFiles('Packages/Package.resolved') }}
+          path: ios/build/spm
+          key: spm-${{ steps.xcode.outputs.version }}-${{ hashFiles('ios/Packages/Package.resolved') }}
           restore-keys: spm-${{ steps.xcode.outputs.version }}-
       - name: Restore build products
+        id: products
         uses: actions/cache/restore@v4
         with:
           path: |
-            build/Build
-            build/ModuleCache.noindex
-            build/CompilationCache.noindex
-          key: dd-ui-${{ steps.xcode.outputs.version }}-${{ hashFiles('Packages/Package.resolved') }}-${{ github.sha }}
-          restore-keys: dd-ui-${{ steps.xcode.outputs.version }}-${{ hashFiles('Packages/Package.resolved') }}-
+            ios/build/Build
+            ios/build/ModuleCache.noindex
+            ios/build/CompilationCache.noindex
+          key: dd-ui-${{ steps.xcode.outputs.version }}-${{ hashFiles('ios/Packages/Package.resolved') }}-${{ github.sha }}
+          restore-keys: dd-ui-${{ steps.xcode.outputs.version }}-${{ hashFiles('ios/Packages/Package.resolved') }}-
       - run: brew bundle --file=Brewfile
       - run: >-
           make test-ui XCODEFLAGS="-clonedSourcePackagesDirPath $SPM
-          -resultBundlePath ${{ github.workspace }}/build/results/ui.xcresult
+          -resultBundlePath ${{ github.workspace }}/ios/build/results/ui.xcresult
           ${{ matrix.tests }}"
       - name: Upload results on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: ui-results-${{ strategy.job-index }}
-          path: build/results
+          path: ios/build/results
           retention-days: 7
       - name: Save build products
-        if: github.ref == 'refs/heads/main' && matrix.saves
+        if: matrix.saves && (github.ref == 'refs/heads/main' || steps.products.outputs.cache-matched-key == '')
         uses: actions/cache/save@v4
         with:
           path: |
-            build/Build
-            build/ModuleCache.noindex
-            build/CompilationCache.noindex
-          key: dd-ui-${{ steps.xcode.outputs.version }}-${{ hashFiles('Packages/Package.resolved') }}-${{ github.sha }}
+            ios/build/Build
+            ios/build/ModuleCache.noindex
+            ios/build/CompilationCache.noindex
+          key: dd-ui-${{ steps.xcode.outputs.version }}-${{ hashFiles('ios/Packages/Package.resolved') }}-${{ github.sha }}
 
   ui-smoke:
-    name: UI tests (smoke)
+    name: UI tests (smoke ${{ matrix.part }} of 2)
     needs: gates
     if: needs.gates.outputs.ios == 'true' && needs.gates.outputs.full != 'true'
     runs-on: macos-26
+    defaults:
+      run:
+        working-directory: ios
     timeout-minutes: 30
+    # Two machines, each with every second test of the list: the tests are most of this job's time.
+    strategy:
+      fail-fast: false
+      matrix:
+        part: [1, 2]
     steps:
       - uses: actions/checkout@v7
       # Starts booting while the caches restore, and survives a runner image without the usual simulator.
@@ -198,40 +225,128 @@ jobs:
           destination=$(Tools/ci-simulator)
           echo "DESTINATION=$destination" >> "$GITHUB_ENV"
           xcrun simctl boot "${destination##*id=}" || true
+      # Read from a file: starting xcodebuild just to ask for its version took a minute.
       - id: xcode
-        run: echo "version=$(xcodebuild -version | shasum | cut -c1-12)" >> "$GITHUB_OUTPUT"
+        run: echo "version=$(plutil -extract ProductBuildVersion raw "$(xcode-select -p)/../version.plist")" >> "$GITHUB_OUTPUT"
       - name: Restore packages
+        id: spm
         uses: actions/cache/restore@v4
         with:
-          path: build/spm
-          key: spm-${{ steps.xcode.outputs.version }}-${{ hashFiles('Packages/Package.resolved') }}
+          path: ios/build/spm
+          key: spm-${{ steps.xcode.outputs.version }}-${{ hashFiles('ios/Packages/Package.resolved') }}
           restore-keys: spm-${{ steps.xcode.outputs.version }}-
       - name: Restore build products
+        id: products
         uses: actions/cache/restore@v4
         with:
           path: |
-            build/Build
-            build/ModuleCache.noindex
-            build/CompilationCache.noindex
-          key: dd-ui-${{ steps.xcode.outputs.version }}-${{ hashFiles('Packages/Package.resolved') }}-${{ github.sha }}
-          restore-keys: dd-ui-${{ steps.xcode.outputs.version }}-${{ hashFiles('Packages/Package.resolved') }}-
+            ios/build/Build
+            ios/build/ModuleCache.noindex
+            ios/build/CompilationCache.noindex
+          key: dd-ui-${{ steps.xcode.outputs.version }}-${{ hashFiles('ios/Packages/Package.resolved') }}-${{ github.sha }}
+          restore-keys: dd-ui-${{ steps.xcode.outputs.version }}-${{ hashFiles('ios/Packages/Package.resolved') }}-
       - run: brew bundle --file=Brewfile
       - run: >-
-          make test-ui-smoke XCODEFLAGS="-clonedSourcePackagesDirPath $SPM
-          -resultBundlePath ${{ github.workspace }}/build/results/ui.xcresult"
+          make test-ui-smoke PART=${{ matrix.part }} PARTS=2 XCODEFLAGS="-clonedSourcePackagesDirPath $SPM
+          -resultBundlePath ${{ github.workspace }}/ios/build/results/ui.xcresult"
       - name: Upload results on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: ui-results-smoke
-          path: build/results
+          name: ui-results-smoke-${{ matrix.part }}
+          path: ios/build/results
           retention-days: 7
+      # Only when this run had no cache to start from, so the next push to the same pull request is fast.
+      - name: Save packages
+        if: matrix.part == 1 && steps.spm.outputs.cache-matched-key == ''
+        uses: actions/cache/save@v4
+        with:
+          path: ios/build/spm
+          key: spm-${{ steps.xcode.outputs.version }}-${{ hashFiles('ios/Packages/Package.resolved') }}
+      - name: Save build products
+        if: matrix.part == 1 && steps.products.outputs.cache-matched-key == ''
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ios/build/Build
+            ios/build/ModuleCache.noindex
+            ios/build/CompilationCache.noindex
+          key: dd-ui-${{ steps.xcode.outputs.version }}-${{ hashFiles('ios/Packages/Package.resolved') }}-${{ github.sha }}
 
-  # The main ruleset requires a check with this name. It passes only when every job above passes, so the rule keeps
-  # working however the jobs are split.
+  android:
+    name: Build and test (Android)
+    needs: gates
+    if: needs.gates.outputs.android == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@v7
+      # Only GitHub's own actions: the repository allows no others. setup-java caches Gradle's downloads.
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+          cache-dependency-path: |
+            android/**/*.gradle.kts
+            android/gradle/libs.versions.toml
+            android/gradle/wrapper/gradle-wrapper.properties
+      # The NDK and CMake that build whisper.cpp and llama.cpp, the versions pinned in gradle/libs.versions.toml.
+      - name: Install the NDK and CMake
+        run: |
+          ndk=$(sed -n 's/^ndk = "\(.*\)"/\1/p' gradle/libs.versions.toml)
+          cmake=$(sed -n 's/^cmake = "\(.*\)"/\1/p' gradle/libs.versions.toml)
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;$ndk" "cmake;$cmake" > /dev/null
+      - run: ./gradlew --quiet lint testDebugUnitTest assembleDebug
+
+  # The instrumented tests on an emulator: the database, the domain's text handling under Android's own regex engine
+  # (the JVM accepts patterns Android rejects), and the parity screens. Engine tests download models: phone only.
+  android-device:
+    name: Instrumented tests (Android)
+    needs: gates
+    if: needs.gates.outputs.android == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      # Only GitHub's own actions: the repository allows no others. setup-java caches Gradle's downloads.
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+          cache-dependency-path: |
+            android/**/*.gradle.kts
+            android/gradle/libs.versions.toml
+            android/gradle/wrapper/gradle-wrapper.properties
+      - name: Install the NDK and CMake
+        working-directory: android
+        run: |
+          ndk=$(sed -n 's/^ndk = "\(.*\)"/\1/p' gradle/libs.versions.toml)
+          cmake=$(sed -n 's/^cmake = "\(.*\)"/\1/p' gradle/libs.versions.toml)
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;$ndk" "cmake;$cmake" > /dev/null
+      # Built before the emulator starts, so the emulator's minutes are spent on tests.
+      - run: ./gradlew --quiet assembleDebug assembleDebugAndroidTest
+        working-directory: android
+      - name: Let the emulator use KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      # x86_64 images from Android 11 run ARM64 apps by translation, and the app ships ARM64 code only.
+      - run: Tools/android-emulator 34
+        timeout-minutes: 15
+      - run: Tools/android-ui-tests
+        timeout-minutes: 30
+
+  # The main ruleset requires a check with this name. It passes only when every job above passes, on both platforms,
+  # so the rule keeps working however the jobs are split. The name stays as the ruleset knows it.
   result:
     name: Build and test (iOS)
-    needs: [gates, unit, ui, ui-smoke]
+    needs: [gates, unit, ui, ui-smoke, android, android-device]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -245,9 +360,17 @@ jobs:
           UNIT: ${{ needs.unit.result }}
           UI: ${{ needs.ui.result }}
           SMOKE: ${{ needs.ui-smoke.result }}
+          ANDROID: ${{ needs.gates.outputs.android }}
+          ANDROID_BUILD: ${{ needs.android.result }}
+          ANDROID_DEVICE: ${{ needs.android-device.result }}
         run: |
           echo "gates: $GATES, ios: $IOS, full: $FULL, unit: $UNIT, ui: $UI, smoke: $SMOKE"
+          echo "android: $ANDROID, build: $ANDROID_BUILD, device: $ANDROID_DEVICE"
           test "$GATES" = success
+          if [ "$ANDROID" = true ]; then
+            test "$ANDROID_BUILD" = success
+            test "$ANDROID_DEVICE" = success
+          fi
           if [ "$IOS" != true ]; then exit 0; fi
           test "$UNIT" = success
           if [ "$FULL" = true ]; then test "$UI" = success; else test "$SMOKE" = success; fi

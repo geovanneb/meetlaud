@@ -1,0 +1,13 @@
+#!/bin/sh
+# Refreshes Tools/parity/golden.json from the iOS Domain, compiled for this Mac (D-084).
+# Needs Xcode. The Android unit test ParityTest then checks the Kotlin Domain against the same file.
+set -eu
+here=$(cd "$(dirname "$0")" && pwd)
+root=$(cd "$here/../.." && pwd)
+build=$(mktemp -d)
+trap 'rm -rf "$build"' EXIT
+"$here/make-cases"
+xcrun swiftc -O -swift-version 6 -parse-as-library -module-name Domain \
+    "$root"/ios/Packages/Core/Domain/Sources/*.swift "$here/Runner.swift" -o "$build/runner"
+# The same language and region on every machine: word breaking and sorting depend on them.
+LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 "$build/runner" "$here/cases.json" "$here/golden.json"

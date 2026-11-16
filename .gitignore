@@ -1,18 +1,18 @@
 .DS_Store
 *.xcodeproj
 *.xcworkspace
-App/Info.plist
+ios/App/Info.plist
 .build/
 .swiftpm/
 build/
 DerivedData/
 xcuserdata/
-Config/Local.xcconfig
+ios/Config/Local.xcconfig
 __pycache__/
 
 # Screenshots of other products, for local reference only
 references/
-Extensions/Widgets/Info.plist
+ios/Extensions/Widgets/Info.plist
 
 # Local agent settings
 .claude/
@@ -20,3 +20,13 @@ Extensions/Widgets/Info.plist
 # Personal agent notes for one clone (see AGENTS.md)
 AGENTS.local.md
 CLAUDE.local.md
+
+# Android
+.gradle/
+android/**/build/
+# The NDK's CMake output for the engines, and the engine sources it downloads.
+android/**/.cxx/
+android/local.properties
+android/.idea/
+android/.kotlin/
+*.iml

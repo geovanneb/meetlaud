@@ -61,7 +61,7 @@ meetlaud/
 └── docs/
 ```
 
-All targets are declared in one manifest, `Packages/Package.swift`. The dependency graph in that file is the architecture ([D-025](decisions.md)).
+All targets are declared in one manifest, `ios/Packages/Package.swift`. The dependency graph in that file is the architecture ([D-025](decisions.md)).
 
 Why each engine is a separate target: heavy dependencies stay isolated, incremental builds stay fast, and an engine can be replaced without touching anything else.
 

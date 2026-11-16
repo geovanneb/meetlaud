@@ -1,0 +1,50 @@
+#!/bin/sh
+# Starts a headless Android emulator and waits until it has booted, for CI (D-086).
+#
+# Usage: Tools/android-emulator [api level, default 34] [abi, default x86_64]
+#
+# Needs ANDROID_HOME. Installs the system image the first time. An x86_64 image from Android 11 runs the app's ARM64
+# code by translation, and KVM makes it fast enough (the workflow enables it). Gives up after 10 minutes, and prints
+# the emulator's own log whenever it fails, so a job never hangs in silence. Animations are turned off for UI tests.
+set -eu
+api=${1:-34}
+abi=${2:-x86_64}
+image="system-images;android-$api;google_apis;$abi"
+sdk="$ANDROID_HOME/cmdline-tools/latest/bin"
+adb="$ANDROID_HOME/platform-tools/adb"
+log="${RUNNER_TEMP:-${TMPDIR:-/tmp}}/emulator.log"
+limit=600
+# avdmanager and the emulator do not agree on where devices live when this is not set: on GitHub's Linux machines
+# one wrote to ~/.config/.android/avd and the other read ~/.android/avd ("Unknown AVD name").
+export ANDROID_AVD_HOME="${ANDROID_AVD_HOME:-$HOME/.android/avd}"
+mkdir -p "$ANDROID_AVD_HOME"
+
+fail() {
+    echo "android-emulator: $1" >&2
+    echo "--- emulator log ---" >&2
+    tail -80 "$log" >&2 2>/dev/null || true
+    exit 1
+}
+
+yes 2> /dev/null | "$sdk/sdkmanager" "emulator" "platform-tools" "$image" > /dev/null
+echo no | "$sdk/avdmanager" create avd --force -n ci -k "$image" > /dev/null
+[ -f "$ANDROID_AVD_HOME/ci.ini" ] || { echo "android-emulator: the device was not created in $ANDROID_AVD_HOME" >&2; exit 1; }
+echo "android-emulator: starting $image"
+"$ANDROID_HOME/emulator/emulator" -avd ci -no-window -no-audio -no-boot-anim -no-snapshot -no-metrics \
+    -gpu swiftshader_indirect -accel auto -memory 4096 > "$log" 2>&1 &
+emulator=$!
+
+"$adb" start-server > /dev/null 2>&1
+seconds=0
+until [ "$("$adb" shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = "1" ]; do
+    kill -0 "$emulator" 2>/dev/null || fail "the emulator stopped before it booted"
+    [ "$seconds" -lt "$limit" ] || fail "no boot after $((limit / 60)) minutes"
+    if [ $((seconds % 60)) -eq 0 ]; then echo "android-emulator: waiting ($seconds s)"; fi
+    sleep 5
+    seconds=$((seconds + 5))
+done
+for setting in window_animation_scale transition_animation_scale animator_duration_scale; do
+    "$adb" shell settings put global "$setting" 0
+done
+"$adb" shell input keyevent KEYCODE_WAKEUP
+echo "android-emulator: booted in about $seconds seconds"

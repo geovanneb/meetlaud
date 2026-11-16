@@ -1,0 +1,11 @@
+{
+  "_comment": "Cases where the apps cannot match exactly, with both outputs pinned. Anything not listed here must match iOS. Adding an entry needs a reason a reviewer can check.",
+  "differences": [
+    {
+      "id": "queryTerms-2",
+      "swift": "予算|つい|決まり|まし",
+      "kotlin": "予算|について|決まり|した",
+      "reason": "Japanese word breaking. iOS uses Apple's own morphological tokenizer; Android's BreakIterator is stock ICU, which splits some particles differently. Only keyword search and citation matching read these terms, and both sets still find the meeting."
+    }
+  ]
+}

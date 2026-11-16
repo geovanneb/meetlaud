@@ -1,6 +1,6 @@
 # Contributing to Meetlaud
 
-Thank you for helping. Meetlaud exists to prove that meeting notes with AI do not need a device to buy, a subscription, or someone else's server. Every contribution that keeps that promise is welcome, from a typo to a new model.
+Thank you for helping. Meetlaud is one product with two native apps, for iPhone and iPad and for Android, built from this repository. It exists to prove that meeting notes with AI do not need a device to buy, a subscription, or someone else's server. Every contribution that keeps that promise is welcome, from a typo to a new model.
 
 You can write issues and discussions in English, Japanese, Portuguese, or Spanish. Code, commits, and technical docs are in English.
 
@@ -8,43 +8,55 @@ You can write issues and discussions in English, Japanese, Portuguese, or Spanis
 
 | You are... | You could... |
 |---|---|
-| A user | Report a bug, suggest a feature, or test on your own iPhone or iPad |
+| A user | Report a bug, suggest a feature, or test on your own iPhone, iPad, or Android phone |
 | A native speaker of ja, pt-BR, or es | Review the interface text and the translated READMEs |
 | A professional | Write a summary template for your field (sales, medicine, law, research...) |
-| An iOS developer | Pick an issue labeled `good first issue` or `help wanted` |
+| An iOS or Android developer | Pick an issue labeled `good first issue` or `help wanted` |
 | An ML engineer | Evaluate a new on-device model, or improve the summary prompts |
-| An Android developer | Help start the Android app ([plan](docs/porting-android.md)) |
+| A developer on one platform | Port a change to the other, or check that a bug happens on both |
 
 For anything larger than a small fix, please open an issue first, so that we can agree on the approach before you spend time on it.
 
 ## The promise, in rules
 
-These rules protect what makes Meetlaud worth using. The build checks most of them, so you will know fast if something breaks one.
+These rules protect what makes Meetlaud worth using, on both platforms. The build checks most of them, so you will know fast if something breaks one.
 
 1. **Recording never loses data.** Any change to capture must pass the interruption and recovery tests, on a real device.
-2. **No network outside `ModelDelivery`**, except `ConnectorGTD`, which reaches only a computer the person paired on their local network. No analytics, telemetry, crash reporters, or SDKs that open connections. `Tools/check-privacy` enforces this.
+2. **No network outside `ModelDelivery`** (`infra.modeldelivery` on Android), except `ConnectorGTD`, which reaches only a computer the person paired on their local network. No analytics, telemetry, crash reporters, or SDKs that open connections. `ios/Tools/check-privacy` and `Tools/check-android` enforce this.
 3. **No accounts and no login.**
-4. **`Domain` is pure Swift.** It imports no UI, audio, database, or AI framework.
-5. **Features do not import features.** They talk through `Domain` and the router. `Tools/check-architecture` enforces this.
-6. **Every AI engine sits behind a port.** No feature knows about WhisperKit, FluidAudio, or MLX.
+4. **`Domain` is pure.** On both platforms it imports no UI, audio, database, or AI framework.
+5. **Features do not import features.** They talk through `Domain` and the router. `ios/Tools/check-architecture` and `Tools/check-android` enforce this.
+6. **Every AI engine sits behind a port.** No feature knows about WhisperKit, FluidAudio, MLX, whisper.cpp, llama.cpp, or ONNX Runtime.
 7. **Only one large model in memory at a time.** The `ModelArbiter` decides.
-8. **All interface text lives in the String Catalog**, in English, Japanese, Portuguese (Brazil), and Spanish. `Tools/check-l10n` enforces this.
-9. **Native components first.** A custom component needs a reason, and must support VoiceOver, Dynamic Type, and Reduce Motion.
+8. **All interface text lives in the String Catalog**, in English, Japanese, Portuguese (Brazil), and Spanish. Android builds its text from the same catalogs. `ios/Tools/check-l10n` and `Tools/check-android` enforce this.
+9. **Native components first.** A custom component needs a reason, and must support VoiceOver and TalkBack, Dynamic Type and font scaling, and Reduce Motion.
+10. **Both platforms, always.** See the next section.
 
 The reasons behind these and other choices are in the [decision log](docs/decisions.md). To change a closed decision, open an issue first.
 
+## Both platforms, always
+
+Someone on Android and someone on iPhone get the same Meetlaud: the same features, screens, and behavior (D-084).
+
+- **New features are built for both platforms**, in one pull request, or in two that link each other and merge together. Design on iOS first, then port with the same names, layout, text, and tests. [The Android app](docs/android.md) explains how.
+- **Bugs are checked on both platforms.** Say in the pull request where the bug happens. If it happens on both, the fixes go together in one pull request. If only one platform is affected, say why the other is not.
+- **Screen changes** update `ParityScreens` on both sides, and `make parity-screens` shows each pair side by side.
+- **Can build only one platform?** That is fine. Say so, keep the pull request a draft, and a maintainer or another contributor finishes the other side before it merges.
+
 ## Set up
+
+### iOS
 
 You need a Mac with Xcode 26 and [Homebrew](https://brew.sh).
 
 ```sh
 make bootstrap          # installs XcodeGen, SwiftLint, SwiftFormat, and generates the project
-open Meetlaud.xcodeproj
+open ios/Meetlaud.xcodeproj
 ```
 
-The Xcode project is generated from `project.yml` and is not committed. Run `make generate` after adding files.
+The Xcode project is generated from `ios/project.yml` and is not committed. Run `make generate` after adding files.
 
-To run on a real device, create `Config/Local.xcconfig` (git ignores it):
+To run on a real device, create `ios/Config/Local.xcconfig` (git ignores it):
 
 ```
 DEVELOPMENT_TEAM = YOUR_TEAM_ID
@@ -55,24 +67,42 @@ The project's own identifiers belong to the maintainer's team, so pick a bundle 
 
 In the simulator, the app runs with scripted engines and sample data, so you can work on every screen without downloading models. Useful launch arguments: `--fake-capture --seed-library` for the test library, and `--showcase` for the fictional meetings in the screenshots.
 
+### Android
+
+You need JDK 17 and the Android SDK, on macOS, Linux, or Windows. The SDK needs the NDK and CMake versions pinned in `android/gradle/libs.versions.toml`, because the AI engines are built from source:
+
+```sh
+sdkmanager "ndk;28.2.13676358" "cmake;3.22.1"
+make android-build      # or open android/ in Android Studio
+make android-install    # on the phone connected over USB
+```
+
+The app is built for 64-bit ARM. An ARM64 emulator, or an x86_64 one from Android 11, runs it. Launch it with the `showcase` extra for the fictional meetings: `adb shell am start -n com.meetlaud.app/.MainActivity --ez showcase true`. Testing on a Xiaomi phone or the emulator has a few quirks, listed in [The Android app](docs/android.md).
+
 ## Where things are
 
 ```
-App/                  App entry point and composition root (the only place that knows every module)
-Extensions/           Widgets, Live Activity, and controls
-Packages/
-  Core/               Domain (pure Swift rules and ports), routing, connector interfaces
-  Features/           One package per screen area: Home, Detail, Ask, Library, Models, Settings...
-  Infrastructure/     Adapters: audio capture, Whisper, Apple Speech, diarization, MLX, database, downloads
-  Connectors/         Optional connectors, such as Get Things Done
-  UI/                 Design system, localization, app shell
-  Testing/            Fakes shared by unit and UI tests
-AppUITests/           UI tests, accessibility audits, and real-device tests
-Tools/                The checks behind `make check`
-docs/                 Architecture, design, privacy, decisions, and research
+ios/
+  App/                App entry point and composition root (the only place that knows every module)
+  Extensions/         Widgets, Live Activity, and controls
+  Packages/
+    Core/             Domain (pure Swift rules and ports), routing, connector interfaces
+    Features/         One package per screen area: Home, Detail, Ask, Library, Models, Settings...
+    Infrastructure/   Adapters: audio capture, Whisper, Apple Speech, diarization, MLX, database, downloads
+    Connectors/       Optional connectors, such as Get Things Done
+    UI/               Design system, localization, app shell
+    Testing/          Fakes shared by unit and UI tests
+  AppUITests/         UI tests, accessibility audits, and real-device tests
+  Tools/              The iOS checks behind `make check`
+android/
+  domain/             The iOS Domain, ported line by line to pure Kotlin
+  app/                Design system, features, and adapters, in packages named like the iOS modules
+  engines/            JNI bridges to whisper.cpp and llama.cpp, built from pinned sources
+Tools/                Shared checks and generators: Android rules, strings, icons, parity, release notes
+docs/                 Architecture, design, privacy, decisions, research, and releasing
 ```
 
-Start with [Architecture](docs/architecture.md) for the big picture.
+Start with [Architecture](docs/architecture.md) for the big picture, and [The Android app](docs/android.md) for how Android mirrors it.
 
 ## Before you open a pull request
 
@@ -82,21 +112,25 @@ make ci
 
 | Command | What it does | Needs a build |
 |---|---|---|
-| `make check` | Architecture, privacy, and localization rules | No |
-| `make lint` | The rules above, plus SwiftFormat and SwiftLint | No |
-| `make build` | Builds the app | Yes |
-| `make test` | Unit tests (Swift Testing) | Yes |
-| `make test-ui` | UI tests and the accessibility audit | Yes |
-| `make test-ui-smoke` | The UI smoke set that pull requests run in CI | Yes |
-| `make format` | Formats the code | No |
+| `make check` | Architecture, privacy, and localization rules of both apps | No |
+| `make lint` | The rules above, plus SwiftFormat, SwiftLint, and Android lint | No |
+| `make build` | Builds the iOS app | Yes |
+| `make android-build` | Builds the Android app | Yes |
+| `make test` | Unit tests of both apps (Swift Testing and JUnit) | Yes |
+| `make test-ui` | iOS UI tests and the accessibility audit | Yes |
+| `make test-ui-smoke` | The iOS UI smoke set that pull requests run in CI | Yes |
+| `make android-test-ui` | Android instrumented tests, on a phone or emulator | Yes |
+| `make parity-screens` | Both apps' parity screenshots, side by side | Yes |
+| `make format` | Formats the Swift code | No |
 | `make screenshots` | Regenerates the README pictures in light and dark | Yes |
 
 Then:
 
-- **Tests:** new behavior comes with tests. Use Swift Testing, and put shared fakes in `TestSupport`.
+- **Both platforms:** the change and its tests exist on iOS and Android, or the PR says which side is left and stays a draft.
+- **Tests:** new behavior comes with tests. Use Swift Testing on iOS, with shared fakes in `TestSupport`, and JUnit on Android. Android code that parses text also needs an instrumented test, since the JVM's regular expressions differ from Android's.
 - **Text:** add every new string to the String Catalog in all four languages. A machine translation is fine as a start. Say so in the PR, and a native speaker will review it.
-- **Real devices:** changes to capture, background work, or models need a run on a real iPhone (`RealDeviceCaptureTests`). These tests leave test recordings in the app.
-- **New dependency:** check the license of the package and of any model it brings, then update `THIRD_PARTY_NOTICES.md` and `Tools/privacy-allowlist.json`, and explain the choice in the PR.
+- **Real devices:** changes to capture, background work, or models need a run on a real iPhone (`RealDeviceCaptureTests`, which leave test recordings in the app) and on a real Android phone.
+- **New dependency:** check the license of the package and of any model it brings, then update `THIRD_PARTY_NOTICES.md` and `ios/Tools/privacy-allowlist.json` or `android/privacy-allowlist.json`, and explain the choice in the PR.
 - **Changelog:** add a line to `CHANGELOG.md` under "Unreleased" for anything a person would notice.
 
 ## How we work (GitHub Flow)
@@ -107,7 +141,7 @@ Then:
 2. **Fork the repo** and create a branch from the latest `main`, named `feat/`, `fix/`, `docs/`, `test/`, `refactor/`, or `chore/` plus a short description (for example `fix/widget-dark-mode`).
 3. **Make your change**, with tests where it makes sense.
 4. **Open a pull request** against `main`. Fill in the template and link the issue (`Closes #123`).
-5. **CI must pass** and a maintainer reviews. A pull request runs lint, unit tests, and a UI smoke set, in about 10 minutes; a documentation-only one takes about a minute. Every UI test runs on `main` and every night ([details](docs/testing.md#cicd)). We squash-merge, so the PR title becomes the commit message on `main`.
+5. **CI must pass** and a maintainer reviews. A pull request runs both apps' lint and unit tests, the iOS UI smoke set, the Android build, and the Android instrumented tests on an emulator; a documentation-only one takes about a minute. Every UI test runs on `main` and every night ([details](docs/testing.md#cicd)). We squash-merge, so the PR title becomes the commit message on `main`.
 
 ## Keeping pull requests independent
 
@@ -132,7 +166,7 @@ git checkout -b feat/my-change upstream/main
 ```
 
 - **One logical change per PR**, so it can be reviewed and merged on its own.
-- **Don't add to the same spot as another open PR.** In this repository the usual places for conflicts are `CHANGELOG.md` (put your line under the heading it belongs to), the decision IDs in `docs/decisions.md` (check `main` and the open PRs before you take the next `D-0xx`), the String Catalogs (never re-sort or reformat the whole file), and `project.yml`. This lowers the risk; it does not remove it.
+- **Don't add to the same spot as another open PR.** In this repository the usual places for conflicts are `CHANGELOG.md` (put your line under the heading it belongs to), the decision IDs in `docs/decisions.md` (check `main` and the open PRs before you take the next `D-0xx`), the String Catalogs (never re-sort or reformat the whole file), `ios/project.yml`, and `android/gradle/libs.versions.toml`. This lowers the risk; it does not remove it.
 
 ### When a change needs another PR that isn't merged yet
 
@@ -178,7 +212,7 @@ Rebase your branch onto the latest `upstream/main`, resolve the conflicts keepin
 We use [Conventional Commits](https://www.conventionalcommits.org) for PR titles, because they become the commit on `main` and feed the release notes:
 
 ```
-fix(capture): keep recording when a call interrupts
+fix(capture): keep recording when a call interrupts, on both platforms
 feat(models): show the setup's download progress
 docs: explain how to sign with your own team
 ```
@@ -194,6 +228,10 @@ Common types: `feat`, `fix`, `docs`, `test`, `refactor`, `chore`, `ci`, `build`.
 - Real people's recordings, names, or personal data in tests, fixtures, or screenshots.
 - Anything that sends meeting content off the device without the person's explicit action.
 - Code generated by AI that the author has not read and understood. AI tools are welcome: the project's rules for coding agents are in [AGENTS.md](AGENTS.md), and you are responsible for what you submit.
+
+## Releases
+
+Maintainers release both apps together from a tag. See [Releasing](docs/releasing.md).
 
 ## License
 
