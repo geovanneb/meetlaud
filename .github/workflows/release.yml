@@ -60,7 +60,7 @@ jobs:
       - run: python3 -m unittest discover -s Tools/tests -q
       - run: make -C ios check
       - run: Tools/check-android android
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: steps.version.outputs.publish == 'true'
         with:
           name: release-notes
@@ -117,7 +117,7 @@ jobs:
           mkdir -p ../dist
           cp app/build/outputs/bundle/release/app-release.aab "../dist/Meetlaud-$VERSION.aab"
           cp app/build/outputs/apk/release/app-release*.apk "../dist/Meetlaud-$VERSION.apk"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: android
           path: dist/
@@ -178,7 +178,7 @@ jobs:
           PLIST
           xcodebuild -exportArchive -archivePath build/release/Meetlaud.xcarchive \
             -exportOptionsPlist build/release/ExportOptions.plist -exportPath build/release/export "${auth[@]}"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ios
           path: dist/
