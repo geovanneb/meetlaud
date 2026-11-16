@@ -206,7 +206,7 @@ jobs:
           sha256sum Meetlaud-* > SHA256SUMS
           cat SHA256SUMS
       # Anyone can check that a file was built here, from this tag: gh attestation verify <file> -R <this repository>.
-      - uses: actions/attest-build-provenance@v2
+      - uses: actions/attest-build-provenance@v4
         with:
           subject-path: dist/Meetlaud-*
       - name: Publish
