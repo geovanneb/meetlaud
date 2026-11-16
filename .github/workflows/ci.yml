@@ -304,7 +304,9 @@ jobs:
           sudo udevadm trigger --name-match=kvm
       # x86_64 images from Android 11 run ARM64 apps by translation, and the app ships ARM64 code only.
       - run: Tools/android-emulator 34
+        timeout-minutes: 15
       - run: Tools/android-ui-tests
+        timeout-minutes: 30
 
   # The main ruleset requires a check with this name. It passes only when every job above passes, on both platforms,
   # so the rule keeps working however the jobs are split. The name stays as the ruleset knows it.
