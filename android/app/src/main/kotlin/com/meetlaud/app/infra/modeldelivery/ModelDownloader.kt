@@ -5,6 +5,7 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import com.meetlaud.app.infra.system.ForegroundWork
+import com.meetlaud.app.infra.system.WorkKind
 import com.meetlaud.domain.InstallFailure
 import com.meetlaud.domain.InstallState
 import com.meetlaud.domain.ModelDescriptor
@@ -165,7 +166,7 @@ class ModelDownloader(
 
     private suspend fun run(model: ModelDescriptor) {
         val key = "download.${model.id}"
-        ForegroundWork.hold(key, model.displayName)
+        ForegroundWork.hold(key, model.displayName, kind = WorkKind.TRANSFER)
         try {
             var retries = 0
             while (true) {
@@ -236,7 +237,7 @@ class ModelDownloader(
                             lastReport = now
                             val received = minOf(stagedBytes(model, except = file) + have, model.totalBytes)
                             update(model.id, InstallState.Downloading(received, model.totalBytes))
-                            ForegroundWork.hold("download.${model.id}", model.displayName, received.toDouble() / maxOf(model.totalBytes, 1))
+                            ForegroundWork.hold("download.${model.id}", model.displayName, received.toDouble() / maxOf(model.totalBytes, 1), WorkKind.TRANSFER)
                         }
                     }
                 }
