@@ -8,9 +8,12 @@ import com.meetlaud.app.infra.modeldelivery.ModelDownloader
 import com.meetlaud.domain.InstallState
 import com.meetlaud.domain.LanguageRequest
 import com.meetlaud.domain.ModelDescriptor
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import org.junit.Assert.assertEquals
@@ -75,6 +78,27 @@ class EngineTests {
         println("qwen35-2b: $text")
         assertTrue(text, text.contains("blue", ignoreCase = true))
         assertTrue("No thinking block", !text.contains("<think>"))
+    }
+
+    /**
+     * A cancelled answer frees the model while its prompt is still being read. Reading thousands of tokens takes
+     * minutes on a slow phone, and until the engine lets go, a summary the person asked for waits its turn.
+     */
+    @Test fun qwenStopsWhileReadingALongPrompt() = runBlocking {
+        val (model, folder) = install("qwen35-2b")
+        val engine = LlamaLanguageEngine()
+        engine.prepare(model, folder)
+        val passage = "Ana said the launch moves to March, and Kenji will send the budget on Friday. "
+        val request = LanguageRequest("You answer in one short sentence.", passage.repeat(250) + "\nWhen is the launch?", 40)
+        val answer = launch(Dispatchers.Default) { engine.generate(request).toList() }
+        delay(2000)
+        answer.cancel()
+        val started = System.nanoTime()
+        // Unloading runs after the engine's current work, so it measures how long the prompt kept the model.
+        engine.unload()
+        val seconds = (System.nanoTime() - started) / 1e9
+        println("qwen35-2b: freed $seconds s after cancelling a long prompt")
+        assertTrue("Freed after $seconds s", seconds < 30)
     }
 
     /** A summary's items keep the [seconds] of the line they come from, so each one links to its moment. */

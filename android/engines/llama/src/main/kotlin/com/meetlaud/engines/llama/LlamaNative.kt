@@ -1,6 +1,9 @@
 package com.meetlaud.engines.llama
 
-/** Receives generated text as UTF-8 bytes. Returns false to stop. */
+/**
+ * Receives generated text as UTF-8 bytes. Returns false to stop. While the prompt is read it also gets empty arrays,
+ * between batches, so that a long prompt can be stopped too.
+ */
 fun interface ByteSink {
     fun onBytes(bytes: ByteArray): Boolean
 }

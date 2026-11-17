@@ -97,16 +97,27 @@ Java_com_meetlaud_engines_llama_LlamaNative_generate(JNIEnv *env, jobject, jlong
     jmethodID onBytes = env->GetMethodID(sinkClass, "onBytes", "([B)Z");
     int written = 0;
     int status = 0;
-    // The prompt goes in by batches no larger than n_batch.
+    bool stopped = false;
+    // The prompt goes in by batches no larger than n_batch. A long prompt takes minutes on a slow phone, and the model
+    // stays taken until it ends, so the sink is asked between batches, with no bytes, whether to go on.
+    jbyteArray nothing = env->NewByteArray(0);
     for (size_t start = 0; start < prompt.size(); start += params.n_batch) {
         const auto count = static_cast<int32_t>(std::min<size_t>(params.n_batch, prompt.size() - start));
         if (llama_decode(ctx, llama_batch_get_one(prompt.data() + start, count)) != 0) {
             status = -3;
             break;
         }
+        if (start + params.n_batch < prompt.size()) {
+            const jboolean keepGoing = env->CallBooleanMethod(sink, onBytes, nothing);
+            if (env->ExceptionCheck() || !keepGoing) {
+                stopped = true;
+                break;
+            }
+        }
     }
+    env->DeleteLocalRef(nothing);
     char piece[256];
-    while (status == 0 && written < maxTokens) {
+    while (status == 0 && !stopped && written < maxTokens) {
         llama_token token = llama_sampler_sample(sampler, ctx, -1);
         if (llama_vocab_is_eog(vocab, token)) break;
         const int32_t length = llama_token_to_piece(vocab, token, piece, sizeof(piece), 0, false);
