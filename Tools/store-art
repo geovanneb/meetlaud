@@ -1,0 +1,190 @@
+#!/usr/bin/env python3
+"""Turns the store screenshots into the Google Play pictures: one 1080x1920 picture per screen with a caption, and the
+1024x500 feature graphic, in every language of docs/store/captions.json.
+
+Usage: Tools/store-art <screenshots dir> <out dir> [locale,locale...]
+
+<screenshots dir> is what Tools/store-screenshots wrote: <locale>/*.png and <locale>/regions.json. Each picture is an
+HTML page rendered by Chrome in headless mode, so the type is real type, in each language's own font. Output, in the
+layout Play tools and F-Droid read: <out>/<locale>/images/phoneScreenshots/N.jpg and featureGraphic.jpg.
+"""
+import html
+import json
+import pathlib
+import shutil
+import subprocess
+import sys
+import tempfile
+
+from PIL import Image
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+# Play shows the first three before anyone scrolls: what it is, then the two things people come for.
+ORDER = ["01-home", "03-summary", "02-transcript", "04-ask", "05-recording", "06-models", "07-templates", "08-network"]
+# A quiet tint per screen, so the row reads as a set and each picture still stands apart.
+TINTS = {
+    "01-home": ("#EEF2FF", "#F8F9FC"), "03-summary": ("#FFF3E3", "#FCFAF6"), "02-transcript": ("#E9F7EF", "#F7FBF8"),
+    "04-ask": ("#F1ECFF", "#FAF8FE"), "05-recording": ("#FFECEC", "#FDF8F8"), "06-models": ("#E6F5FA", "#F6FAFC"),
+    "07-templates": ("#FFF6DD", "#FCFBF5"), "08-network": ("#EAF4EA", "#F7FAF7"),
+}
+FONTS = (
+    "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800"
+    "&family=Noto+Sans+JP:wght@400;500;700;900&display=block"
+)
+
+STYLE = """
+:root { --ink: #0B0B0C; --muted: #4B4D57; --accent: #0A6CFF; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: %(w)dpx; height: %(h)dpx; overflow: hidden; }
+body { font-family: %(font)s; color: var(--ink); -webkit-font-smoothing: antialiased;
+       background: radial-gradient(120%% 70%% at 50%% 0%%, %(tint)s 0%%, %(base)s 70%%); position: relative; }
+.phone { position: absolute; background: #0B0B0C; border-radius: 76px; padding: 14px;
+         box-shadow: 0 40px 90px rgba(20, 22, 40, .22), 0 6px 18px rgba(20, 22, 40, .12); }
+.phone img { display: block; width: 100%%; border-radius: 62px; }
+h1, p { text-wrap: balance; }
+:lang(ja) h1, :lang(ja) p { word-break: auto-phrase; }
+.callout { position: absolute; background-repeat: no-repeat; background-color: #fff; border-radius: 30px;
+           box-shadow: 0 30px 70px rgba(20, 22, 40, .22), 0 0 0 1px rgba(20, 22, 40, .06); }
+"""
+
+
+def page(width, height, locale, tint, body):
+    font = "'Noto Sans JP', sans-serif" if locale.startswith("ja") else "'Inter', 'Noto Sans JP', sans-serif"
+    style = STYLE % {"w": width, "h": height, "font": font, "tint": tint[0], "base": tint[1]}
+    return f"""<!doctype html><html lang="{locale}"><head><meta charset="utf-8">
+<link rel="stylesheet" href="{FONTS}"><style>{style}</style></head><body>{body}
+<script>
+// Shrinks a caption until it fits its lines, so every language keeps the same layout. The box, not scrollHeight:
+// Japanese glyphs reach past a tight line height, which is fine to see but would always count as overflow.
+function fit(el, lines) {{
+  let size = parseFloat(getComputedStyle(el).fontSize);
+  const line = () => parseFloat(getComputedStyle(el).lineHeight);
+  while (el.getBoundingClientRect().height > line() * lines + 2 && size > 20) {{ size -= 2; el.style.fontSize = size + 'px'; }}
+}}
+// Measured only once each caption's own font is loaded: Japanese fonts arrive in pieces, per character.
+const captions = [...document.querySelectorAll('[data-lines]')];
+Promise.all(captions.map(el => {{
+  const style = getComputedStyle(el);
+  return document.fonts.load(`${{style.fontWeight}} ${{style.fontSize}} ${{style.fontFamily}}`, el.textContent);
+}})).then(() => document.fonts.ready).then(() => captions.forEach(el => fit(el, +el.dataset.lines)));
+</script></body></html>"""
+
+
+def callout(region, shot_size, left, top, width):
+    """The part of the screenshot at `region`, enlarged into a card."""
+    pad = 18
+    l, t, r, b = region[0] - pad, region[1] - pad, region[2] + pad, region[3] + pad
+    l, t = max(l, 0), max(t, 0)
+    r, b = min(r, shot_size[0]), min(b, shot_size[1])
+    scale = width / (r - l)
+    height = (b - t) * scale
+    return (
+        f'<div class="callout" style="left:{left}px; top:{top:.0f}px; width:{width}px; height:{height:.0f}px; '
+        f"background-image:url(shot.png); background-size:{shot_size[0] * scale:.1f}px {shot_size[1] * scale:.1f}px; "
+        f'background-position:{-l * scale:.1f}px {-t * scale:.1f}px;"></div>'
+    ), height
+
+
+def scene(locale, name, captions, regions, shot_size):
+    title, subtitle = captions["scenes"][name]
+    badges = name in ("01-home", "08-network")
+    # The phone runs off the bottom edge: the last strip of any screen is the gesture bar.
+    phone_top, phone_width = (480 if badges else 404), 724
+    scale = (phone_width - 28) / shot_size[0]
+    left = (1080 - phone_width) / 2
+    pills = ""
+    if badges:
+        pills = '<div style="margin-top:30px;">' + "".join(
+            f'<span style="display:inline-block; margin:0 6px 10px; padding:12px 22px; border-radius:999px; background:#fff; '
+            f'font-size:27px; font-weight:700; white-space:nowrap; '
+            f'box-shadow:0 10px 26px rgba(20,22,40,.12), 0 0 0 1px rgba(20,22,40,.05);">'
+            f'<span style="color:var(--accent);">●</span>&nbsp; {html.escape(b)}</span>'
+            for b in captions["badges"]
+        ) + "</div>"
+    body = f"""
+<div style="position:absolute; left:48px; right:48px; top:92px; text-align:center;">
+  <h1 data-lines="2" style="font-size:78px; line-height:1.08; font-weight:800; letter-spacing:-0.025em;">{html.escape(title)}</h1>
+  <p data-lines="2" style="margin-top:22px; font-size:36px; line-height:1.34; font-weight:500; color:var(--muted);">{html.escape(subtitle)}</p>
+  {pills}
+</div>
+<div class="phone" style="left:{left:.0f}px; top:{phone_top}px; width:{phone_width}px;"><img src="shot.png"></div>
+"""
+    key = name.split("-", 1)[1]
+    if key in regions:
+        region = regions[key]
+        # A little larger than on the phone, to read, but close to the real size, so it still looks like the app.
+        width = min(940, (region[2] - region[0]) * 0.9)
+        card, height = callout(region, shot_size, (1080 - width) / 2, 0, width)
+        # Level with the part of the screen it enlarges, inside the picture.
+        center = phone_top + 14 + (region[1] + region[3]) / 2 * scale
+        top = max(680, min(center - height / 2, 1860 - height))
+        body += card.replace("top:0px", f"top:{top:.0f}px")
+    return body
+
+
+def feature(locale, captions):
+    """1024x500. Play crops and overlays this in places, so everything that must be read sits in the middle."""
+    title, subtitle = captions["feature"]
+    logo = (ROOT / "docs/assets/logo.png").as_uri()
+    return f"""
+<div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(255,255,255,0) 60%, rgba(10,108,255,.05));"></div>
+<img src="shot-left.png" style="position:absolute; left:-70px; top:120px; width:250px; border-radius:30px; transform:rotate(-8deg);
+  border:8px solid #0B0B0C; box-shadow:0 24px 60px rgba(20,22,40,.25); opacity:.95;">
+<img src="shot-right.png" style="position:absolute; right:-70px; top:110px; width:250px; border-radius:30px; transform:rotate(8deg);
+  border:8px solid #0B0B0C; box-shadow:0 24px 60px rgba(20,22,40,.25); opacity:.95;">
+<div style="position:absolute; left:212px; right:212px; top:92px; bottom:92px; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; text-align:center;">
+  <div style="display:flex; align-items:center; gap:18px;">
+    <img src="{logo}" style="width:72px; height:72px; mix-blend-mode:multiply;">
+    <span style="font-size:60px; font-weight:800; letter-spacing:-0.03em;">Meetlaud</span>
+  </div>
+  <h1 data-lines="1" style="margin-top:22px; font-size:40px; line-height:1.15; font-weight:800; letter-spacing:-0.02em;">{html.escape(title)}</h1>
+  <p data-lines="2" style="margin-top:12px; font-size:24px; line-height:1.35; font-weight:500; color:var(--muted);">{html.escape(subtitle)}</p>
+</div>
+"""
+
+
+def render(folder, document, width, height, out):
+    (folder / "page.html").write_text(document, encoding="utf-8")
+    png = folder / "render.png"
+    subprocess.run(
+        [CHROME, "--headless=new", "--disable-gpu", "--hide-scrollbars", "--force-device-scale-factor=1",
+         "--allow-file-access-from-files", f"--window-size={width},{height}", "--virtual-time-budget=8000",
+         f"--screenshot={png}", (folder / "page.html").as_uri()],
+        check=True, capture_output=True,
+    )
+    image = Image.open(png).convert("RGB")
+    assert image.size == (width, height), image.size
+    out.parent.mkdir(parents=True, exist_ok=True)
+    # Play takes JPEG or 24-bit PNG without alpha, up to 8 MB. JPEG keeps the repository small.
+    image.save(out, "JPEG", quality=92, optimize=True, progressive=True)
+
+
+def main():
+    shots, out = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2])
+    captions = json.loads((ROOT / "docs/store/captions.json").read_text(encoding="utf-8"))
+    only = sys.argv[3].split(",") if len(sys.argv) > 3 else list(captions)
+    for locale, text in captions.items():
+        if locale not in only:
+            continue
+        folder = shots / locale
+        regions_file = folder / "regions.json"
+        regions = json.loads(regions_file.read_text()) if regions_file.exists() else {}
+        target = out / locale / "images"
+        with tempfile.TemporaryDirectory() as temp:
+            work = pathlib.Path(temp)
+            for index, name in enumerate(ORDER, start=1):
+                shutil.copy(folder / f"{name}.png", work / "shot.png")
+                size = Image.open(work / "shot.png").size
+                document = page(1080, 1920, locale, TINTS[name], scene(locale, name, text, regions, size))
+                render(work, document, 1080, 1920, target / "phoneScreenshots" / f"{index}.jpg")
+            shutil.copy(folder / "03-summary.png", work / "shot-left.png")
+            shutil.copy(folder / "04-ask.png", work / "shot-right.png")
+            render(work, page(1024, 500, locale, ("#EEF2FF", "#FAFBFD"), feature(locale, text)), 1024, 500,
+                   target / "featureGraphic.jpg")
+        print(f"store-art: {locale}: {len(ORDER)} screenshots and the feature graphic")
+
+
+if __name__ == "__main__":
+    main()

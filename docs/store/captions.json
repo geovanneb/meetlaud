@@ -1,0 +1,182 @@
+{
+  "en-US": {
+    "badges": [
+      "100% on device",
+      "No account",
+      "Open source"
+    ],
+    "feature": [
+      "Your meetings, remembered.",
+      "Record, transcribe, and summarize. All on your phone."
+    ],
+    "scenes": {
+      "01-home": [
+        "Your meetings, remembered.",
+        "Record, transcribe, and summarize. All on your phone."
+      ],
+      "03-summary": [
+        "Summaries you can check",
+        "Key points, decisions, and action items, each linked to the moment it was said."
+      ],
+      "02-transcript": [
+        "Know who said what",
+        "Transcripts with every speaker named. Tap a line to hear it."
+      ],
+      "04-ask": [
+        "Ask your meetings anything",
+        "Every answer shows where it came from."
+      ],
+      "05-recording": [
+        "One tap to record",
+        "Keeps going with the screen off, and survives calls and crashes."
+      ],
+      "06-models": [
+        "The AI runs on your phone",
+        "Pick the model for each job. Once downloaded, it works in airplane mode."
+      ],
+      "07-templates": [
+        "A template for every meeting",
+        "Minutes, one-on-ones, interviews, lectures, or your own."
+      ],
+      "08-network": [
+        "Nothing leaves your phone",
+        "No account and no cloud. The code is open for anyone to check."
+      ]
+    }
+  },
+  "ja-JP": {
+    "badges": [
+      "すべて端末内で処理",
+      "アカウント不要",
+      "オープンソース"
+    ],
+    "feature": [
+      "会議の記憶は、スマホの中に。",
+      "録音も文字起こしも要約も、すべて端末内で。"
+    ],
+    "scenes": {
+      "01-home": [
+        "会議の記憶は、スマホの中に。",
+        "録音も文字起こしも要約も、すべて端末内で。"
+      ],
+      "03-summary": [
+        "確かめられる要約",
+        "要点・決定事項・タスクは、話された瞬間にリンク。"
+      ],
+      "02-transcript": [
+        "誰が何を話したか、ひと目で",
+        "話者ごとの文字起こし。タップすればその場面を再生。"
+      ],
+      "04-ask": [
+        "会議の内容を、AIに質問",
+        "回答には、根拠となる発言が必ず示されます。"
+      ],
+      "05-recording": [
+        "ワンタップで録音",
+        "画面を消しても録音を継続。電話や不具合でも消えません。"
+      ],
+      "06-models": [
+        "AIはスマホの中で動く",
+        "用途ごとにモデルを選択。ダウンロード後は機内モードでも使えます。"
+      ],
+      "07-templates": [
+        "どんな会議にもテンプレート",
+        "議事録、1on1、面接、講義。自分で作ることもできます。"
+      ],
+      "08-network": [
+        "データは外に出ません",
+        "アカウントもクラウドも不要。コードは誰でも確認できます。"
+      ]
+    }
+  },
+  "pt-BR": {
+    "badges": [
+      "100% no aparelho",
+      "Sem conta",
+      "Código aberto"
+    ],
+    "feature": [
+      "Suas reuniões, sempre à mão.",
+      "Grave, transcreva e resuma. Tudo no seu celular."
+    ],
+    "scenes": {
+      "01-home": [
+        "Suas reuniões, sempre à mão.",
+        "Grave, transcreva e resuma. Tudo no seu celular."
+      ],
+      "03-summary": [
+        "Resumos que você pode conferir",
+        "Pontos principais, decisões e tarefas, cada um ligado ao momento em que foi dito."
+      ],
+      "02-transcript": [
+        "Saiba quem disse o quê",
+        "Transcrição com o nome de cada pessoa. Toque numa frase para ouvir."
+      ],
+      "04-ask": [
+        "Pergunte às suas reuniões",
+        "Toda resposta mostra de onde veio."
+      ],
+      "05-recording": [
+        "Grave com um toque",
+        "Continua com a tela apagada e resiste a ligações e travamentos."
+      ],
+      "06-models": [
+        "A IA roda no seu celular",
+        "Escolha o modelo de cada tarefa. Depois de baixado, funciona até no modo avião."
+      ],
+      "07-templates": [
+        "Um modelo para cada reunião",
+        "Ata, 1:1, entrevista, aula ou um modelo seu."
+      ],
+      "08-network": [
+        "Nada sai do seu celular",
+        "Sem conta e sem nuvem. O código é aberto para quem quiser conferir."
+      ]
+    }
+  },
+  "es-419": {
+    "badges": [
+      "100% en el dispositivo",
+      "Sin cuenta",
+      "Código abierto"
+    ],
+    "feature": [
+      "Tus reuniones, siempre a mano.",
+      "Graba, transcribe y resume. Todo en tu teléfono."
+    ],
+    "scenes": {
+      "01-home": [
+        "Tus reuniones, siempre a mano.",
+        "Graba, transcribe y resume. Todo en tu teléfono."
+      ],
+      "03-summary": [
+        "Resúmenes que puedes verificar",
+        "Puntos clave, decisiones y tareas, cada uno enlazado al momento en que se dijo."
+      ],
+      "02-transcript": [
+        "Sabe quién dijo qué",
+        "Transcripciones con el nombre de cada persona. Toca una frase para escucharla."
+      ],
+      "04-ask": [
+        "Pregunta a tus reuniones",
+        "Cada respuesta muestra de dónde salió."
+      ],
+      "05-recording": [
+        "Graba con un toque",
+        "Sigue grabando con la pantalla apagada y resiste llamadas y fallos."
+      ],
+      "06-models": [
+        "La IA funciona en tu teléfono",
+        "Elige el modelo para cada tarea. Una vez descargado, funciona en modo avión."
+      ],
+      "07-templates": [
+        "Una plantilla para cada reunión",
+        "Actas, 1:1, entrevistas, clases o la tuya propia."
+      ],
+      "08-network": [
+        "Nada sale de tu teléfono",
+        "Sin cuenta y sin nube. El código es abierto para que cualquiera lo revise."
+      ]
+    }
+  }
+}

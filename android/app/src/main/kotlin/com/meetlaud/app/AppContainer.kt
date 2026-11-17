@@ -165,7 +165,7 @@ class AppContainer(context: Context, showcase: Boolean) {
     val home = HomeModel(store, calendar, calendarChoices, scope)
     val libraryService = LibraryService(store, files, MediaAudioProcessor())
     val library = LibraryController(libraryService, store, preferences, context, scope)
-    val recordingCoordinator = RecordingCoordinator(LiveCaptureEngine(context), store, files, AacAssembler(), RecordingNotificationPresenter(context))
+    val recordingCoordinator = RecordingCoordinator(if (showcase) ShowcaseCaptureEngine() else LiveCaptureEngine(context), store, files, AacAssembler(), RecordingNotificationPresenter(context))
     val recorder = RecordingController(recordingCoordinator, LiveMicrophonePermission(permissions), router, preferences, scope)
     val calendarProvider = SystemCalendarProvider(context, permissions)
     val people = com.meetlaud.app.feature.people.PeopleModel(store, speakerService, store)
@@ -195,7 +195,7 @@ class AppContainer(context: Context, showcase: Boolean) {
 
     init {
         if (showcase) {
-            runBlocking { Showcase.seed(store) }
+            runBlocking { Showcase.seed(store, context.resources.configuration.locales[0].language) }
             // The showcase is for screenshots and tests, as iOS passes -models.hasSeenSetup YES to its UI tests.
             preferences.setBool("models.hasSeenSetup", true)
         }

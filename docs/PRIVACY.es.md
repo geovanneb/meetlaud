@@ -2,6 +2,8 @@
 
 [English](PRIVACY.md) · [日本語](PRIVACY.ja.md) · [Português](PRIVACY.pt-BR.md) · Español
 
+Vigente desde el 17 de noviembre de 2026. Esta política cubre la app Meetlaud para iPhone, iPad y Android, incluida la app de Android en Google Play, publicada allí con el nombre de desarrollador NovaAppsBR.
+
 Esta página explica con palabras sencillas lo que hace el código, en la app de iPhone y en la de Android. La propia compilación garantiza la mayor parte: mira `ios/Tools/check-privacy` y `Tools/check-android`, y las listas `ios/Tools/privacy-allowlist.json` y `android/privacy-allowlist.json`. Si esta traducción y la [versión en inglés](PRIVACY.md) no coinciden, vale la versión en inglés.
 
 ## Qué sale de tu dispositivo
@@ -49,3 +51,30 @@ Grabar a otras personas puede requerir su consentimiento, según dónde estés. 
 
 - La IA puede equivocarse. Los resúmenes y las respuestas enlazan con sus fuentes para que las compruebes.
 - Quien pueda desbloquear tu teléfono puede abrir la app, salvo que actives el bloqueo de la app.
+
+## Descargas de modelos y Hugging Face
+
+Descargar un modelo es una solicitud web común a Hugging Face. Por eso, como con cualquier sitio web, Hugging Face ve tu dirección IP y el archivo solicitado. La app no envía nada más: ninguna cuenta, ningún identificador y nada de tus reuniones. La política de privacidad de Hugging Face cubre lo que hace con los registros de sus servidores.
+
+## Para qué sirve cada permiso en Android
+
+| Permiso | Por qué |
+|---|---|
+| Micrófono | Para grabar, solo mientras grabas |
+| Notificaciones | Los controles de la grabación y, si los activas, recordatorios y transcripciones listas |
+| Calendario (lectura) | Opcional. Muestra las próximas reuniones y nombra las grabaciones según ellas, en el dispositivo |
+| Biometría | Opcional. El bloqueo de la app |
+| Internet y estado de la red | Descargas de modelos y el ordenador que emparejes (ver arriba) |
+| Servicios en primer plano | Seguir grabando, transcribiendo y descargando con la pantalla apagada |
+
+## Cuánto tiempo se guardan los datos
+
+Todo se queda en tu dispositivo hasta que lo borres: una grabación, la papelera o todo a la vez con Borrar todo. Desinstalar la app también lo borra, salvo alguna copia en una copia de seguridad del dispositivo que hayas activado. Nadie más tiene una copia, así que nadie puede borrar ni recuperar nada por ti.
+
+## Niños
+
+Meetlaud no está hecha para niños y no recopila nada de nadie a propósito, ya que no recopila nada.
+
+## Cambios y contacto
+
+Cualquier cambio en esta política se hace en este archivo, con todo su historial en el repositorio, y la fecha de arriba cambia con él. Las preguntas son bienvenidas en las [discusiones del repositorio](https://github.com/geovanneb/meetlaud/discussions). Para un problema de privacidad o seguridad, usa el reporte privado descrito en [SECURITY.md](../SECURITY.md).

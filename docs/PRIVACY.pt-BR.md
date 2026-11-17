@@ -2,6 +2,8 @@
 
 [English](PRIVACY.md) · [日本語](PRIVACY.ja.md) · Português · [Español](PRIVACY.es.md)
 
+Em vigor desde 17 de novembro de 2026. Esta política vale para o app Meetlaud no iPhone, iPad e Android, incluindo o app Android no Google Play, publicado lá com o nome de desenvolvedor NovaAppsBR.
+
 Esta página explica em linguagem simples o que o código faz, no app de iPhone e no app de Android. A própria compilação garante a maior parte disso: veja `ios/Tools/check-privacy` e `Tools/check-android`, e as listas `ios/Tools/privacy-allowlist.json` e `android/privacy-allowlist.json`. Se houver diferença entre esta tradução e a [versão em inglês](PRIVACY.md), vale a versão em inglês.
 
 ## O que sai do seu aparelho
@@ -49,3 +51,30 @@ Gravar pessoas pode exigir o consentimento delas, dependendo de onde você está
 
 - A IA pode errar. Resumos e respostas levam às fontes para você conferir.
 - Quem consegue desbloquear seu celular consegue abrir o app, a menos que você ative o bloqueio do app.
+
+## Downloads de modelos e o Hugging Face
+
+Baixar um modelo é uma requisição web comum ao Hugging Face. Por isso, como em qualquer site, o Hugging Face vê o seu endereço IP e o arquivo pedido. O app não envia mais nada: nenhuma conta, nenhum identificador e nada das suas reuniões. A política de privacidade do próprio Hugging Face cobre o que ele faz com os registros dos servidores.
+
+## Para que serve cada permissão no Android
+
+| Permissão | Por quê |
+|---|---|
+| Microfone | Para gravar, só enquanto você grava |
+| Notificações | Os controles da gravação e, se você ativar, lembretes e transcrições prontas |
+| Agenda (leitura) | Opcional. Mostra as próximas reuniões e dá nome às gravações a partir delas, no aparelho |
+| Biometria | Opcional. O bloqueio do app |
+| Internet e estado da rede | Downloads de modelos e o computador que você parear (veja acima) |
+| Serviços em primeiro plano | Continuar gravando, transcrevendo e baixando com a tela apagada |
+
+## Por quanto tempo os dados ficam guardados
+
+Tudo fica no seu aparelho até você apagar: uma gravação, a lixeira ou tudo de uma vez com Apagar tudo. Desinstalar o app também apaga, exceto alguma cópia num backup do aparelho que você tenha ativado. Ninguém mais tem uma cópia, então ninguém pode apagar nem recuperar nada por você.
+
+## Crianças
+
+O Meetlaud não é feito para crianças e não coleta nada de ninguém de propósito, já que não coleta nada.
+
+## Mudanças e contato
+
+Qualquer mudança nesta política é feita neste arquivo, com todo o histórico no repositório, e a data acima muda junto. Dúvidas são bem-vindas nas [discussões do repositório](https://github.com/geovanneb/meetlaud/discussions). Para um problema de privacidade ou segurança, use o relato privado descrito em [SECURITY.md](../SECURITY.md).

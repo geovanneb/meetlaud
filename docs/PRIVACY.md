@@ -2,6 +2,8 @@
 
 English · [日本語](PRIVACY.ja.md) · [Português](PRIVACY.pt-BR.md) · [Español](PRIVACY.es.md)
 
+Effective November 17, 2026. This policy covers the Meetlaud app for iPhone, iPad, and Android, including the Android app on Google Play, published there under the developer name NovaAppsBR.
+
 This page is the plain-language version of what the code does, in the iPhone app and in the Android app alike. The build enforces most of it: see `ios/Tools/check-privacy` and `Tools/check-android`, and the allowlists `ios/Tools/privacy-allowlist.json` and `android/privacy-allowlist.json`.
 
 ## What leaves your device
@@ -49,3 +51,30 @@ Recording people may require their consent, depending on where you are. That is 
 
 - AI can be wrong. Summaries and answers link to their source so that you can check them.
 - Anyone who can unlock your phone can open the app, unless you turn on the app lock.
+
+## Model downloads and Hugging Face
+
+A model download is an ordinary web request to Hugging Face, so Hugging Face sees your IP address and the file asked for, as with any website. The app sends nothing else: no account, no identifier, and nothing from your meetings. Hugging Face's own privacy policy covers what it does with its server logs.
+
+## What each Android permission is for
+
+| Permission | Why |
+|---|---|
+| Microphone | To record, only while you are recording |
+| Notifications | The recording controls, and reminders and finished transcripts if you turn them on |
+| Calendar (read) | Optional. Shows upcoming meetings and names recordings after them, on the device |
+| Biometrics | Optional. The app lock |
+| Internet and network state | Model downloads, and the computer you pair (see above) |
+| Foreground services | Keep recording, transcribing, and downloading with the screen off |
+
+## How long data is kept
+
+Everything stays on your device until you delete it: a recording, everything in the trash, or all of it at once with Erase everything. Uninstalling the app removes it too, except any copy in a device backup you turned on. Nobody else holds a copy, so nobody else can delete it for you, or recover it.
+
+## Children
+
+Meetlaud is not made for children and does not knowingly collect anything from anyone, since it collects nothing at all.
+
+## Changes and contact
+
+Any change to this policy is made in this file, with its full history in the repository, and the date above changes with it. Questions are welcome in [the repository's discussions](https://github.com/geovanneb/meetlaud/discussions). For a privacy or security problem, use private reporting as described in [SECURITY.md](../SECURITY.md).
