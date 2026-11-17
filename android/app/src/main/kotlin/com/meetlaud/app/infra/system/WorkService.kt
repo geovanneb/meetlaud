@@ -20,20 +20,34 @@ import com.meetlaud.domain.BackgroundWorkLease
 /**
  * Keeps long work going with the screen off: a transcription, or a model download. Android stops a background app
  * within minutes, and a foreground service with its notification is the honest way to ask for more, as iOS's
- * background task does. One service for all of it, showing the first piece of work that asked.
+ * background task does. One service for all of it, showing the first piece of work that asked, and declaring the
+ * kind of each piece of work running: Google Play checks that the declared type matches what the app does.
  */
 class WorkService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val notification = ForegroundWork.notification(this) ?: run {
-            stopSelf()
-            return START_NOT_STICKY
-        }
-        // Processing on Android 15 and later, which is what transcription is. Data sync before, which allows it.
-        val type = if (Build.VERSION.SDK_INT >= 35) ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROCESSING else ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
-        runCatching { startForeground(ForegroundWork.ID, notification, type) }.onFailure { stopSelf() }
+        if (!declare()) stopSelf()
         return START_NOT_STICKY
+    }
+
+    /**
+     * Puts the service in the foreground with the types of the work running now. Called again when they change: a
+     * running service may change its own types from the background, where starting it again is not allowed.
+     */
+    internal fun declare(): Boolean {
+        val notification = ForegroundWork.notification(this) ?: return false
+        return runCatching { startForeground(ForegroundWork.ID, notification, ForegroundWork.serviceType()) }.isSuccess
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        ForegroundWork.running = this
+    }
+
+    override fun onDestroy() {
+        if (ForegroundWork.running === this) ForegroundWork.running = null
+        super.onDestroy()
     }
 
     override fun onTimeout(startId: Int, fgsType: Int) {
@@ -42,14 +56,24 @@ class WorkService : Service() {
     }
 }
 
+/** What a piece of long work does, which decides the foreground service type Android and Google Play see. */
+enum class WorkKind {
+    /** Turning a recording into text on the device. */
+    PROCESSING,
+    /** Moving files over the network: a model download. */
+    TRANSFER,
+}
+
 /** Who needs the service right now, and what its notification says. */
 object ForegroundWork {
     internal const val ID = 2
     private const val CHANNEL = "work"
-    private data class Holder(val title: String, val progress: Double?)
+    private data class Holder(val title: String, val progress: Double?, val kind: WorkKind)
     private val holders = LinkedHashMap<String, Holder>()
     /** Null until install, as in unit tests: the work then runs without a service. */
     private var context: Context? = null
+    /** The service while it runs, to change its types without starting it again. */
+    @Volatile internal var running: WorkService? = null
 
     fun install(context: Context) {
         this.context = context.applicationContext
@@ -58,22 +82,51 @@ object ForegroundWork {
     }
 
     @Synchronized
-    fun hold(key: String, title: String, progress: Double? = null) {
+    fun hold(key: String, title: String, progress: Double? = null, kind: WorkKind = WorkKind.PROCESSING) {
         val isFirst = holders.isEmpty()
-        holders[key] = Holder(title, progress)
+        val before = kinds()
+        holders[key] = Holder(title, progress, kind)
         val context = context ?: return
-        if (isFirst) {
-            runCatching { ContextCompat.startForegroundService(context, Intent(context, WorkService::class.java)) }
-        } else {
-            refresh()
+        when {
+            isFirst -> runCatching { ContextCompat.startForegroundService(context, Intent(context, WorkService::class.java)) }
+            before != kinds() -> redeclare()
+            else -> refresh()
         }
     }
 
+    /** The running service declares the types of the work now running. */
+    private fun redeclare() {
+        val service = running ?: return
+        ContextCompat.getMainExecutor(service).execute { service.declare() }
+    }
+
+    private fun kinds(): Set<WorkKind> = holders.values.mapTo(mutableSetOf()) { it.kind }
+
+    /** The types of the work running now. */
+    @Synchronized
+    internal fun serviceType(): Int = serviceType(kinds(), Build.VERSION.SDK_INT)
+
+    /**
+     * Data sync for downloads. Media processing for transcription, from Android 15, which added that type; before, data
+     * sync is the type that allows it.
+     */
+    internal fun serviceType(kinds: Set<WorkKind>, sdk: Int): Int = kinds.fold(0) { type, kind ->
+        type or when (kind) {
+            WorkKind.TRANSFER -> ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+            WorkKind.PROCESSING -> if (sdk >= 35) ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROCESSING else ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+        }
+    }.takeIf { it != 0 } ?: ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+
     @Synchronized
     fun release(key: String) {
+        val before = kinds()
         if (holders.remove(key) == null) return
         val context = context ?: return
-        if (holders.isEmpty()) context.stopService(Intent(context, WorkService::class.java)) else refresh()
+        when {
+            holders.isEmpty() -> context.stopService(Intent(context, WorkService::class.java))
+            before != kinds() -> redeclare()
+            else -> refresh()
+        }
     }
 
     private fun refresh() {
