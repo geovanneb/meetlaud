@@ -3,7 +3,7 @@ agp = "9.1.0"
 # The NDK and CMake that build whisper.cpp and llama.cpp, as installed by the SDK manager.
 ndk = "28.2.13676358"
 cmake = "3.22.1"
-kotlin = "2.3.0"
+kotlin = "2.4.21"
 coroutines = "1.10.2"
 composeBom = "2026.06.00"
 activityCompose = "1.11.0"
