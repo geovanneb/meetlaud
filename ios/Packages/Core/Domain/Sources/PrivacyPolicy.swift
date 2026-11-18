@@ -6,9 +6,15 @@ public enum PrivacyPolicy {
     /// The bundled file for the app's language, such as "PRIVACY.ja". English for any other language.
     public static func fileName(language: String?) -> String {
         let code = (language ?? "").lowercased()
-        if code.hasPrefix("ja") { return "PRIVACY.ja" }
-        if code.hasPrefix("pt") { return "PRIVACY.pt-BR" }
-        if code.hasPrefix("es") { return "PRIVACY.es" }
+        if code.hasPrefix("ja") {
+            return "PRIVACY.ja"
+        }
+        if code.hasPrefix("pt") {
+            return "PRIVACY.pt-BR"
+        }
+        if code.hasPrefix("es") {
+            return "PRIVACY.es"
+        }
         return "PRIVACY"
     }
 

@@ -58,7 +58,11 @@ struct Composition {
         case .licenses:
             DocumentView(title: L10n.System.licenses, text: container.licensesText, identifier: "screen.licenses")
         case .privacyPolicy:
-            DocumentView(title: L10n.System.privacyPolicy, text: container.privacyPolicyText, identifier: "screen.privacyPolicy")
+            DocumentView(
+                title: L10n.System.privacyPolicy,
+                text: container.privacyPolicyText,
+                identifier: "screen.privacyPolicy",
+            )
         case .storage: StorageBackupView(controller: container.system)
         case .notifications: NotificationsView(controller: container.system)
         case .calendars: CalendarsView(model: container.calendars)
