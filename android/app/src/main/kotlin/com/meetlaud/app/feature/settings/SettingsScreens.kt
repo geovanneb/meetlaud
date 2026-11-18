@@ -247,10 +247,11 @@ sealed interface MarkdownBlock {
     }
 }
 
+/** A document that ships inside the app, shown from its Markdown: the licenses, or the privacy policy. */
 @Composable
-fun LicensesScreen(text: String) {
+fun DocumentScreen(title: String, text: String, tag: String) {
     val blocks = remember(text) { MarkdownBlock.parse(text) }
-    Screen(title = L10n.System.licenses, modifier = Modifier.testTag("screen.licenses")) {
+    Screen(title = title, modifier = Modifier.testTag(tag)) {
         SelectionContainer {
             Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(Spacing.medium), verticalArrangement = Arrangement.spacedBy(Spacing.compact)) {
                 for (block in blocks) {
@@ -296,6 +297,7 @@ fun HelpScreen() {
 
 @Composable
 fun PrivacySecurityScreen(controller: SystemController, lock: AppLockController) {
+    val router = LocalRouter.current
     val scope = rememberCoroutineScope()
     var isErasing by remember { mutableStateOf(false) }
     Screen(title = L10n.System.privacyTitle, modifier = Modifier.testTag("screen.privacy")) {
@@ -306,7 +308,10 @@ fun PrivacySecurityScreen(controller: SystemController, lock: AppLockController)
             // Showing meetings in the system's search is iPhone only for now: the Android counterpart is on the roadmap,
             // and a switch that does nothing would mislead (docs/android.md).
             ListSection(L10n.System.promiseTitle) {
-                ListRow(Modifier.testTag("privacy.promise"), divider = false) { Text(PlatformText.promiseBody, style = DsType.rowTitle, color = Ds.primaryText.value) }
+                ListRow(Modifier.testTag("privacy.promise")) { Text(PlatformText.promiseBody, style = DsType.rowTitle, color = Ds.primaryText.value) }
+                ListRow(Modifier.testTag("privacy.policy"), divider = false, onClick = { router.push(AppRoute.PrivacyPolicy) }) {
+                    SettingsRowLabel(L10n.System.privacyPolicy, symbol = "doc.text")
+                }
             }
             ListSection {
                 ListRow(Modifier.testTag("privacy.erase"), divider = false, onClick = { isErasing = true }) { Text(L10n.System.eraseEverything, style = DsType.rowTitle, color = Ds.record.value) }

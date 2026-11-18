@@ -37,6 +37,7 @@ public enum AppRoute: Hashable, Sendable {
     case calendars
     case vocabulary
     case privacy
+    case privacyPolicy
     case about
     case helpCenter
 
@@ -47,7 +48,7 @@ public enum AppRoute: Hashable, Sendable {
         case .ask, .askSkill: .ask
         case .modelSettings, .preferences, .networkActivity, .licenses, .people, .memory, .storage, .notifications,
              .vocabulary, .calendars,
-             .privacy, .about, .helpCenter: .settings
+             .privacy, .privacyPolicy, .about, .helpCenter: .settings
         }
     }
 

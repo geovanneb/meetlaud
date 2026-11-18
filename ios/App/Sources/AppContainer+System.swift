@@ -20,6 +20,14 @@ extension AppContainer {
             .flatMap { try? String(contentsOf: $0, encoding: .utf8) } ?? ""
     }
 
+    /// The privacy policy of docs/, the same text the store listing links to, in the app's language.
+    var privacyPolicyText: String {
+        let name = PrivacyPolicy.fileName(language: Bundle.main.preferredLocalizations.first)
+        let text = Bundle.main.url(forResource: name, withExtension: "md")
+            .flatMap { try? String(contentsOf: $0, encoding: .utf8) } ?? ""
+        return PrivacyPolicy.readable(text)
+    }
+
     /// Follows the library while the preference is on. Turning it off, or erasing everything, clears the index.
     func keepSpotlight(enabled: Bool) async {
         let index = SpotlightIndex()

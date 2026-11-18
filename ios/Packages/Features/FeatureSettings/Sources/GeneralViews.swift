@@ -79,10 +79,15 @@ public struct AboutView: View {
     }
 }
 
-public struct LicensesView: View {
+/// A document that ships inside the app, shown from its Markdown: the licenses, or the privacy policy.
+public struct DocumentView: View {
+    private let title: String
+    private let identifier: String
     private let blocks: [MarkdownBlock]
 
-    public init(text: String) {
+    public init(title: String, text: String, identifier: String) {
+        self.title = title
+        self.identifier = identifier
         blocks = MarkdownBlock.parse(text)
     }
 
@@ -97,10 +102,10 @@ public struct LicensesView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .screenBackground()
-        .navigationTitle(L10n.System.licenses)
+        .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
         .accessibilityElement(children: .contain)
-        .accessibilityIdentifier("screen.licenses")
+        .accessibilityIdentifier(identifier)
     }
 
     @ViewBuilder private func view(for block: MarkdownBlock) -> some View {

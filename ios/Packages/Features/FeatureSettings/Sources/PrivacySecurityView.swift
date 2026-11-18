@@ -6,6 +6,7 @@ import Localization
 import SwiftUI
 
 public struct PrivacySecurityView: View {
+    @Environment(AppRouter.self) private var router
     private let controller: SystemController
     private let lock: AppLockController
     @State private var isErasing = false
@@ -48,6 +49,13 @@ public struct PrivacySecurityView: View {
             Section(title: L10n.System.promiseTitle) {
                 Text(L10n.System.promiseBody)
                     .accessibilityIdentifier("privacy.promise")
+                Button {
+                    router.push(.privacyPolicy)
+                } label: {
+                    SettingsRowLabel(L10n.System.privacyPolicy, symbol: "doc.text")
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("privacy.policy")
             }
             .listRowBackground(Color.clear)
             .listSectionSeparator(.hidden, edges: .top)

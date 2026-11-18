@@ -11,6 +11,7 @@ import com.meetlaud.app.infra.capture.RecordingCommand
 import com.meetlaud.app.infra.capture.RecordingCommandBridge
 import com.meetlaud.app.infra.capture.RecordingNotificationPresenter
 import com.meetlaud.domain.RecordingCoordinator
+import com.meetlaud.domain.PrivacyPolicy
 import com.meetlaud.domain.CaptureStatus
 import com.meetlaud.app.routing.AppRoute
 import kotlinx.coroutines.launch
@@ -192,6 +193,12 @@ class AppContainer(context: Context, showcase: Boolean) {
     private val versionName: String = context.packageManager.getPackageInfo(context.packageName, 0).let { "${it.versionName} (${it.longVersionCode})" }
     val versionText: String get() = versionName
     val licensesText: String by lazy { runCatching { context.assets.open("THIRD_PARTY_NOTICES.md").bufferedReader().readText() }.getOrDefault("") }
+    private val appContext: Context = context.applicationContext
+    /** The privacy policy of docs/, the same text the store listing links to, in the app's language. */
+    val privacyPolicyText: String get() = runCatching {
+        val name = PrivacyPolicy.fileName(appContext.resources.configuration.locales[0].toLanguageTag())
+        PrivacyPolicy.readable(appContext.assets.open("$name.md").bufferedReader().readText())
+    }.getOrDefault("")
 
     init {
         if (showcase) {
