@@ -4,6 +4,8 @@ All notable changes to Meetlaud are listed here. The format follows [Keep a Chan
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-11-18
+
 The first public version. Everything below runs on the device.
 
 ### Android
