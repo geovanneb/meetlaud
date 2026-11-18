@@ -16,6 +16,7 @@ import com.meetlaud.app.feature.library.LibraryScreen
 import com.meetlaud.app.feature.library.SearchScreen
 import com.meetlaud.app.feature.library.TrashScreen
 import com.meetlaud.app.routing.AppRoute
+import com.meetlaud.app.localization.L10n
 import com.meetlaud.app.routing.Destination
 import com.meetlaud.app.feature.settings.AboutScreen
 import com.meetlaud.app.feature.models.AIModelsScreen
@@ -31,7 +32,7 @@ import com.meetlaud.app.feature.people.PersonScreen
 import com.meetlaud.app.feature.settings.CalendarsModel
 import com.meetlaud.app.feature.settings.CalendarsScreen
 import com.meetlaud.app.feature.settings.HelpScreen
-import com.meetlaud.app.feature.settings.LicensesScreen
+import com.meetlaud.app.feature.settings.DocumentScreen
 import com.meetlaud.app.feature.settings.NotificationsScreen
 import com.meetlaud.app.feature.settings.PrivacySecurityScreen
 import com.meetlaud.app.feature.settings.SettingsScreen
@@ -86,7 +87,8 @@ class Composition(private val container: AppContainer) {
             AppRoute.Calendar -> CalendarScreen(container.home, ::record)
             AppRoute.Notifications -> NotificationsScreen(container.system)
             AppRoute.About -> AboutScreen(container.versionText)
-            AppRoute.Licenses -> LicensesScreen(container.licensesText)
+            AppRoute.Licenses -> DocumentScreen(L10n.System.licenses, container.licensesText, "screen.licenses")
+            AppRoute.PrivacyPolicy -> DocumentScreen(L10n.System.privacyPolicy, container.privacyPolicyText, "screen.privacyPolicy")
             AppRoute.HelpCenter -> HelpScreen()
             AppRoute.Privacy -> PrivacySecurityScreen(container.system, container.lock)
             AppRoute.Storage -> StorageBackupScreen(container.system)

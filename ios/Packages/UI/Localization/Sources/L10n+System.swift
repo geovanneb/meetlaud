@@ -47,6 +47,7 @@ public extension L10n {
         public static var errorIncompatible: String { text("system.error_incompatible") }
         public static var errorOther: String { text("system.error_other") }
         public static var privacyTitle: String { text("system.privacy_title") }
+        public static var privacyPolicy: String { text("system.privacy_policy") }
         public static var security: String { text("system.security") }
         public static var appLock: String { text("system.app_lock") }
         public static var appLockNote: String { text("system.app_lock_note") }

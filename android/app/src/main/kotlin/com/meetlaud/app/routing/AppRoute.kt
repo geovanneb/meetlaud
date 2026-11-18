@@ -49,6 +49,7 @@ sealed interface AppRoute {
     data object Calendars : AppRoute
     data object Vocabulary : AppRoute
     data object Privacy : AppRoute
+    data object PrivacyPolicy : AppRoute
     data object About : AppRoute
     data object HelpCenter : AppRoute
     /** A template in Tools, which iOS opens with a NavigationLink inside the same stack. */

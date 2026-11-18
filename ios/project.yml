@@ -25,6 +25,15 @@ targets:
       - Extensions/Shared
       - path: ../THIRD_PARTY_NOTICES.md
         buildPhase: resources
+      # The privacy policy, shown in Settings > Privacy & security, as Google Play and the App Store ask.
+      - path: ../docs/PRIVACY.md
+        buildPhase: resources
+      - path: ../docs/PRIVACY.ja.md
+        buildPhase: resources
+      - path: ../docs/PRIVACY.pt-BR.md
+        buildPhase: resources
+      - path: ../docs/PRIVACY.es.md
+        buildPhase: resources
     dependencies:
       - package: MeetlaudKit
         products:

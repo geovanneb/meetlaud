@@ -71,6 +71,8 @@ android.sourceSets["main"].kotlin.directories.add(generatedStrings.get().dir("ko
 val generatedNotices = layout.buildDirectory.dir("generated/notices")
 val copyNotices by tasks.registering(Copy::class) {
     from(repoRoot.resolve("THIRD_PARTY_NOTICES.md"))
+    // The privacy policy, in every language, shown in Settings > Privacy & security as Google Play asks.
+    from(repoRoot.resolve("docs")) { include("PRIVACY*.md") }
     // The speed test clip, the same 30 seconds iOS uses (public domain, see the notices).
     from(repoRoot.resolve("ios/App/Resources/speed-test.m4a"))
     into(generatedNotices)

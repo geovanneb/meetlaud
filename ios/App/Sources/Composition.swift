@@ -9,6 +9,7 @@ import FeaturePeople
 import FeatureRecording
 import FeatureSettings
 import FeatureTools
+import Localization
 import SwiftUI
 
 /// The only place that knows every feature.
@@ -54,7 +55,10 @@ struct Composition {
         case .trash: TrashView(library: container.library)
         case .calendar: CalendarScreen(model: container.home, onRecordEvent: record)
         case .ask(recording: nil), .record: EmptyView()
-        case .licenses: LicensesView(text: container.licensesText)
+        case .licenses:
+            DocumentView(title: L10n.System.licenses, text: container.licensesText, identifier: "screen.licenses")
+        case .privacyPolicy:
+            DocumentView(title: L10n.System.privacyPolicy, text: container.privacyPolicyText, identifier: "screen.privacyPolicy")
         case .storage: StorageBackupView(controller: container.system)
         case .notifications: NotificationsView(controller: container.system)
         case .calendars: CalendarsView(model: container.calendars)
