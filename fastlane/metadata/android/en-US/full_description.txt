@@ -1,0 +1,38 @@
+Meetlaud records your meetings, transcribes them, tells you who said what, writes the summary, and answers your questions about them. All of it runs on your phone. Your recordings never go to a server, because there is no server.
+
+NOTHING LEAVES YOUR PHONE
+• No account and no sign-up.
+• No cloud: transcription, speaker detection, summaries, and chat all run on the device.
+• No analytics, no ads, no tracking.
+• Once the AI models are downloaded, it works in airplane mode.
+• The Network activity screen lists every connection the app has made. On a fresh install it says "Nothing has left this device".
+
+RECORD
+• One tap to record. It keeps going with the screen off or the app in the background, with a notification you can control.
+• A call or a crash does not cost you the meeting: the recording is recovered.
+• Mark moments, add notes, and take photos while you record.
+• Import audio or video files you already have.
+
+UNDERSTAND
+• Transcription with Whisper, in English, Japanese, Portuguese, and Spanish. Tap any line to hear it.
+• Speaker detection: see who spoke when. Name a voice once, and Meetlaud can suggest that person next time. Voice prints are optional and stay on your phone.
+• Summaries from templates for meetings, one-on-ones, interviews, lectures, and calls, or one you write. Every key point, decision, and action item links to the moment it was said, so you can check it.
+• Ask: question one meeting, a folder, or your whole library. Answers cite their sources.
+• Send action items to your tasks app, see a mind map, add names and jargon to a custom vocabulary, and read a clean version without "um" and "uh".
+
+STAY IN CONTROL
+• Folders, search across every transcript, and a calendar view of your meetings.
+• Lock the app with your fingerprint or screen lock.
+• Export your whole library as one password-protected file. It also opens in the iPhone app.
+• The AI models screen lets you pick the model for each job, see what fits your phone, and run a speed test on your own audio.
+• In English, Japanese, Portuguese, and Spanish, with TalkBack and large text.
+
+FREE AND OPEN SOURCE
+No subscription and no limit on minutes. The code is open under the Apache 2.0 license, so anyone can check every promise on this page:
+https://github.com/geovanneb/meetlaud
+
+GOOD TO KNOW
+• The first time, Meetlaud downloads its AI models (about 2 GB for everything). Use Wi-Fi for that.
+• It needs a 64-bit phone with Android 10 or later. At least 4 GB of memory is recommended. Newer phones are much faster.
+• AI can be wrong. That is why summaries and answers link to their source.
+• Recording people may require their consent where you are. Please ask first.

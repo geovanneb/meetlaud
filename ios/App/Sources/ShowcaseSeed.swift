@@ -111,7 +111,7 @@ enum ShowcaseSeed {
 
     private static func summary(of id: RecordingID, at date: Date) -> Summary {
         Summary(
-            recordingID: id, templateName: "Meeting", modelID: "fake-chat", language: "en",
+            recordingID: id, templateName: "Summary", modelID: "fake-chat", language: "en",
             sections: [
                 SummarySection(title: "Key points", kind: .bullets, items: [
                     SummaryItem(text: "The campaign leads with short customer videos, then email.", sourceTime: 9),

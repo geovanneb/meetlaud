@@ -1,0 +1,38 @@
+O Meetlaud grava suas reuniões, transcreve, mostra quem disse o quê, escreve o resumo e responde perguntas sobre elas. Tudo isso roda no seu celular. Suas gravações nunca vão para um servidor, porque não existe servidor.
+
+NADA SAI DO SEU CELULAR
+• Sem conta e sem cadastro.
+• Sem nuvem: transcrição, identificação de falantes, resumos e chat rodam no próprio aparelho.
+• Sem analytics, sem anúncios, sem rastreamento.
+• Depois de baixar os modelos de IA, funciona até no modo avião.
+• A tela Atividade de rede lista cada conexão que o app fez. Numa instalação nova, ela mostra "Nada saiu deste aparelho".
+
+GRAVE
+• Grave com um toque. Continua gravando com a tela apagada ou com o app em segundo plano, com uma notificação para controlar.
+• Uma ligação ou um travamento não fazem você perder a reunião: a gravação é recuperada.
+• Marque momentos, faça anotações e tire fotos enquanto grava.
+• Importe arquivos de áudio ou vídeo que você já tem.
+
+ENTENDA
+• Transcrição com Whisper, em português, inglês, japonês e espanhol. Toque em qualquer frase para ouvir.
+• Identificação de falantes: veja quem falou e quando. Dê nome a uma voz uma vez e o Meetlaud pode sugerir essa pessoa na próxima reunião. As impressões de voz são opcionais e ficam no seu celular.
+• Resumos a partir de modelos para reuniões, 1:1, entrevistas, aulas e ligações, ou um modelo seu. Cada ponto principal, decisão e tarefa leva ao momento em que foi dito, para você conferir.
+• Pergunte: faça perguntas sobre uma reunião, uma pasta ou toda a sua biblioteca. As respostas mostram as fontes.
+• Envie tarefas para o seu app de tarefas, veja um mapa mental, cadastre nomes e jargões num vocabulário próprio e leia uma versão limpa, sem "é..." e "hã".
+
+VOCÊ NO CONTROLE
+• Pastas, busca em todas as transcrições e uma visão de calendário das suas reuniões.
+• Bloqueie o app com a digital ou o bloqueio de tela.
+• Exporte toda a biblioteca num único arquivo protegido por senha. Ele também abre no app do iPhone.
+• Na tela Modelos de IA, escolha o modelo de cada tarefa, veja o que cabe no seu celular e faça um teste de velocidade com o seu próprio áudio.
+• Em português, inglês, japonês e espanhol, com TalkBack e texto grande.
+
+GRÁTIS E DE CÓDIGO ABERTO
+Sem assinatura e sem limite de minutos. O código é aberto, sob a licença Apache 2.0, para que qualquer pessoa confira cada promessa desta página:
+https://github.com/geovanneb/meetlaud
+
+BOM SABER
+• Na primeira vez, o Meetlaud baixa os modelos de IA (cerca de 2 GB no total). Use o Wi-Fi para isso.
+• Precisa de um celular de 64 bits com Android 10 ou mais recente. Recomendamos pelo menos 4 GB de memória. Celulares mais novos são bem mais rápidos.
+• A IA pode errar. Por isso os resumos e as respostas levam à fonte.
+• Gravar outras pessoas pode exigir o consentimento delas, dependendo de onde você está. Pergunte antes.

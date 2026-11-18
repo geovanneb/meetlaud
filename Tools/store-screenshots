@@ -1,0 +1,49 @@
+#!/bin/sh
+# Takes the Google Play screenshots on the connected Android device or emulator, in every language of the app.
+#
+# Usage: Tools/store-screenshots <out dir> [locales]
+#
+# Needs a debug build with its tests installed (./gradlew installDebug installDebugAndroidTest), and the showcase's
+# models in place, so that screens show them as installed: copy each model folder from the catalog into
+# files/Showcase/models/<id>/ with a .complete file (see docs/store/README.md). The showcase library lives apart from
+# the person's own, and is rebuilt here for each language. Output: <out>/<locale>/*.png.
+set -eu
+out=$1
+locales=${2:-"en-US ja-JP pt-BR es-419"}
+app=com.meetlaud.app
+adb shell pm grant $app android.permission.RECORD_AUDIO
+adb shell pm grant $app android.permission.POST_NOTIFICATIONS 2>/dev/null || true
+
+# A clean status bar: full battery and signal, Wi-Fi, no notifications, a fixed time.
+adb shell settings put global sysui_demo_allowed 1
+demo() { adb shell am broadcast -a com.android.systemui.demo -e command "$@" >/dev/null; }
+demo enter
+demo clock -e hhmm 0941
+demo battery -e level 100 -e plugged false
+demo network -e wifi show -e level 4 -e mobile hide
+demo notifications -e visible false
+demo status -e alarm hide -e bluetooth hide -e volume hide
+
+old_name=$(adb shell settings get global device_name)
+for locale in $locales; do
+    adb shell am force-stop $app
+    # Models shows the phone's name, as the person set it. An emulator's model name means nothing to a reader.
+    case $locale in
+        ja*) name="マイスマホ" ;; pt*) name="Meu celular" ;; es*) name="Mi teléfono" ;; *) name="My phone" ;;
+    esac
+    adb shell settings put global device_name "'$name'"
+    # Only the showcase's own library: models stay, the meetings are seeded again in this language.
+    adb shell "run-as $app sh -c 'cd files/Showcase && ls -A | grep -v ^models\$ | xargs rm -rf; cd ../.. && rm -f shared_prefs/meetlaud-showcase.xml'"
+    adb shell cmd locale set-app-locales $app --locales "$locale"
+    adb shell rm -rf "/sdcard/Android/data/$app/files/store"
+    adb shell am instrument -w -e class $app.StoreScreenshots -e storeScreenshots true \
+        $app.test/androidx.test.runner.AndroidJUnitRunner | tail -n 3
+    mkdir -p "$out/$locale"
+    adb pull "/sdcard/Android/data/$app/files/store/." "$out/$locale" >/dev/null
+    echo "store-screenshots: $locale: $(ls "$out/$locale" | wc -l | tr -d ' ') screenshots"
+done
+
+adb shell am force-stop $app
+adb shell cmd locale set-app-locales $app --locales "" 2>/dev/null || true
+adb shell settings put global device_name "'$old_name'"
+demo exit

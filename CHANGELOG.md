@@ -11,6 +11,7 @@ The first public version. Everything below runs on the device.
 - On Android, settings and help for iPhone-only features (widgets, system search, the Action Button) stay hidden until Android has them, and text that named iPhone, iOS, or Face ID now speaks Android's own words.
 - Releases: a tag publishes both apps on GitHub, an Android App Bundle and APK signed with the release key, and an unsigned iPhone build for sideloading, with checksums and build provenance. TestFlight receives a signed build when App Store Connect is set up. See [Releasing](docs/releasing.md).
 - CI checks both apps on every pull request, including Android's instrumented tests on an emulator, and the required check waits for both platforms.
+- The Google Play listing in English, Japanese, Portuguese, and Spanish, with screenshots of the real app in each language, made again with two commands. See [the store guide](docs/store/README.md). The privacy policy now also says what each Android permission is for, how long data is kept, and how to reach us.
 - New features and bug fixes land on both platforms together. The rules are in CONTRIBUTING.md and AGENTS.md.
 
 ### Record
