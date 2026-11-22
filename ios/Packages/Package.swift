@@ -63,7 +63,7 @@ let package = Package(
         .package(url: "https://github.com/groue/GRDB.swift", from: "7.0.0"),
         .package(url: "https://github.com/argmaxinc/argmax-oss-swift", from: "0.9.0"),
         .package(url: "https://github.com/FluidInference/FluidAudio", from: "0.17.0"),
-        .package(url: "https://github.com/ml-explore/mlx-swift-lm", .upToNextMinor(from: "3.32.3")),
+        .package(url: "https://github.com/ml-explore/mlx-swift-lm", .upToNextMinor(from: "3.33.0")),
         // Pinned to the range WhisperKit requires, since a package can only resolve to one version.
         .package(url: "https://github.com/huggingface/swift-transformers", .upToNextMinor(from: "1.1.6")),
     ],
