@@ -16,6 +16,10 @@ English · <a href="README.ja.md">日本語</a> · <a href="README.pt-BR.md">Por
 <img alt="Works offline" src="https://img.shields.io/badge/AI-100%25%20on%20device-2ea44f">
 </p>
 
+<p align="center">
+<a href="https://play.google.com/store/apps/details?id=com.meetlaud.app"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" height="80"></a>
+</p>
+
 Meetlaud records your meetings, transcribes them, tells you who said what, writes the summary, and answers your questions about them. All of it runs on your phone: iPhone, iPad, or Android.
 
 - **Nothing to buy.** No recorder, no clip-on device. The phone in your pocket already has a great microphone and a chip built for AI.
@@ -32,7 +36,7 @@ Meetlaud records your meetings, transcribes them, tells you who said what, write
 
 <p align="center"><sub>Screenshots use fictional meetings and people. They show the iPhone app; the Android app has the same screens.</sub></p>
 
-> **Status: pre-release.** Every feature below is built and tested, and the core flows (record, transcribe, speakers, summaries, ask) have run on a real iPhone 17 and a real Android phone. It is not on the App Store or Google Play yet. You can build it today ([how](#build-it-yourself)). Releases will publish an Android APK and an iPhone build on the [Releases](../../releases) page, then a public TestFlight and a Google Play test.
+> **Status: 1.0 on Android.** Meetlaud for Android is on [Google Play](https://play.google.com/store/apps/details?id=com.meetlaud.app). The iPhone and iPad app is not on the App Store yet. You can build it yourself ([how](#build-it-yourself)) or install the unsigned build from the [Releases](../../releases) page. A public TestFlight and the App Store come next.
 
 ## Why Meetlaud
 

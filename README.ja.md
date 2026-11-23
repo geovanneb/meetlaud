@@ -16,6 +16,10 @@
 <img alt="オフラインで動作" src="https://img.shields.io/badge/AI-100%25%20%E7%AB%AF%E6%9C%AB%E5%86%85-2ea44f">
 </p>
 
+<p align="center">
+<a href="https://play.google.com/store/apps/details?id=com.meetlaud.app"><img alt="Google Play で手に入れよう" src="https://play.google.com/intl/en_us/badges/static/images/badges/ja_badge_web_generic.png" height="80"></a>
+</p>
+
 Meetlaud は会議を録音し、文字に起こし、誰が何を話したかを示し、要約を書き、会議についての質問に答えます。すべてスマートフォンの中で動きます。iPhone、iPad、Android に対応しています。
 
 - **買うものはありません。** 専用レコーダーもクリップ型デバイスも不要です。ポケットの iPhone には、優れたマイクと AI のためのチップがすでに入っています。
@@ -32,7 +36,7 @@ Meetlaud は会議を録音し、文字に起こし、誰が何を話したか�
 
 <p align="center"><sub>画像の会議と人物は架空のものです。画像は英語表示ですが、アプリは日本語にも対応しています。画像は iPhone 版ですが、Android 版も同じ画面です。</sub></p>
 
-> **ステータス: リリース前。** 以下の機能はすべて実装・テスト済みで、主要な流れ(録音、文字起こし、話者の識別、要約、質問)は実機の iPhone 17 と Android 端末で動作を確認しています。App Store と Google Play にはまだありません。今すぐ自分でビルドできます(「自分でビルドする」を参照)。リリースでは [Releases](../../releases) ページに Android の APK と iPhone 用のビルドを公開し、その後、公開 TestFlight と Google Play のテストを予定しています。
+> **ステータス: Android 版 1.0 を公開中。** Android 版の Meetlaud は [Google Play](https://play.google.com/store/apps/details?id=com.meetlaud.app) で入手できます。iPhone と iPad のアプリはまだ App Store にありません。自分でビルドする(「自分でビルドする」を参照)か、[Releases](../../releases) ページの署名なしビルドをインストールできます。次は公開 TestFlight と App Store を予定しています。
 
 ## なぜ Meetlaud なのか
 
