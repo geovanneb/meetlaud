@@ -4,6 +4,9 @@ All notable changes to Meetlaud are listed here. The format follows [Keep a Chan
 
 ## [Unreleased]
 
+### Android
+- Meetlaud is on [Google Play](https://play.google.com/store/apps/details?id=com.meetlaud.app). The README in all four languages links to it with the Google Play badge.
+
 ## [1.0.0] - 2026-11-18
 
 The first public version. Everything below runs on the device.

@@ -15,7 +15,8 @@ Every 1.0 feature is built, on iPhone and on Android. What is left is proving it
 - [ ] Android on more phones: from 4 GB entry-level to recent flagships, and Xiaomi, Samsung, and Pixel system quirks
 - [ ] Android's counterparts of the iOS extras: Home Screen widgets, a Quick Settings tile, app shortcuts, and system search
 - [ ] The Get Things Done connector on Android
-- [ ] Public TestFlight and a Google Play open test, then the App Store and Google Play with the "no data collected" labels
+- [x] Android on [Google Play](https://play.google.com/store/apps/details?id=com.meetlaud.app)
+- [ ] Public TestFlight, then the App Store with the "no data collected" label
 
 ## Next
 

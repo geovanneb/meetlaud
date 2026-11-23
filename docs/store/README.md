@@ -1,5 +1,7 @@
 # Google Play listing
 
+The live listing: [Meetlaud on Google Play](https://play.google.com/store/apps/details?id=com.meetlaud.app).
+
 Everything the Play Console asks for, in one place. The listing text and pictures live in
 [`fastlane/metadata/android`](../../fastlane/metadata/android), the layout Play tools and F-Droid both read:
 
